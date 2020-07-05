@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://christmasferret.github.io/</id>
     <title>Christmas Ferret</title>
-    <updated>2020-07-05T04:58:29.822Z</updated>
+    <updated>2020-07-05T05:03:05.282Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://christmasferret.github.io/"/>
     <link rel="self" href="https://christmasferret.github.io/atom.xml"/>
@@ -15,8 +15,8 @@
         <id>https://christmasferret.github.io/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/</id>
         <link href="https://christmasferret.github.io/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/">
         </link>
-        <updated>2020-07-02T11:20:51.000Z</updated>
-        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://christmasferret.github.io//post-images/1593924057576.png" alt="" loading="lazy"></figure>
+        <updated>2020-07-01T22:20:51.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://christmasferret.github.io//post-images/1593925320385.PNG" alt="" loading="lazy"></figure>
 <p>In this tutorial we’ll build our own distributed job scheduler in Spring Boot with the help of ETCD, a distributed key-value store. To demonstrate the framework, jobs are distributively scheduled on worker nodes to fetch weather data of locations through REST calls and update an in-memory cache.</p>
 ]]></content>
     </entry>

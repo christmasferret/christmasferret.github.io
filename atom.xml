@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://christmasferret.github.io/</id>
-    <title>Yu&apos;s Github</title>
-    <updated>2020-07-05T04:31:42.617Z</updated>
+    <title>Christmas Ferret</title>
+    <updated>2020-07-05T04:38:53.287Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://christmasferret.github.io/"/>
     <link rel="self" href="https://christmasferret.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
+    <subtitle>Whiskers</subtitle>
     <logo>https://christmasferret.github.io/images/avatar.png</logo>
     <icon>https://christmasferret.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, Yu&apos;s Github</rights>
+    <rights>All rights reserved 2020, Christmas Ferret</rights>
     <entry>
         <title type="html"><![CDATA[Write your own distributed job scheduling framework using ETCD and Spring Boot]]></title>
         <id>https://christmasferret.github.io/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/</id>

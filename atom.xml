@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://christmasferret.github.io/</id>
     <title>Christmas Ferret</title>
-    <updated>2020-07-08T22:00:49.024Z</updated>
+    <updated>2020-07-08T22:03:23.215Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://christmasferret.github.io/"/>
     <link rel="self" href="https://christmasferret.github.io/atom.xml"/>
@@ -15,9 +15,11 @@
         <id>https://christmasferret.github.io/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/</id>
         <link href="https://christmasferret.github.io/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/">
         </link>
-        <updated>2020-06-30T20:20:51.000Z</updated>
-        <content type="html"><![CDATA[<p>I published a tutorial on writing distributed job scheduler in Spring Boot with the help of ETCD on medium.com. ETCD, a distributed key-value store saves the job list and provides a distributed lock for worker nodes. Spring Boot manages the connections to Redis Cluster cache and ETCD. The code for master and worker nodes are integrated in one repository and seperately deployed using spring @profile annotation.<br>
-<img src="https://christmasferret.github.io//post-images/1593925320385.PNG" alt="" loading="lazy"></p>
+        <updated>2020-06-30T07:20:51.000Z</updated>
+        <content type="html"><![CDATA[<p>I published a tutorial on writing distributed job scheduler in Spring Boot with the help of ETCD on medium.com. ETCD, a distributed key-value store saves the job list and provides a distributed lock for worker nodes. Spring Boot manages the connections to Redis Cluster cache and ETCD. The code for master and worker nodes are integrated in one repository and seperately deployed using spring @profile annotation.</p>
+<p>Here is a link to the story,<br>
+<strong>https://medium.com/@ywang412/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot-7ed51442eada</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://christmasferret.github.io//post-images/1593925320385.PNG" alt="" loading="lazy"></figure>
 <p>Today I found I earned two cents. I consider it is a huge step for me. Here is a link to my github repository https://github.com/ywang412/ants-job.<br>
 <img src="https://christmasferret.github.io//post-images/1594245174658.PNG" alt="" loading="lazy"></p>
 ]]></content>

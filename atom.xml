@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.ferretninja.com</id>
     <title>Ferret Ninja</title>
-    <updated>2020-07-12T22:32:58.901Z</updated>
+    <updated>2020-07-12T22:33:42.310Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.ferretninja.com"/>
     <link rel="self" href="https://blog.ferretninja.com/atom.xml"/>
@@ -26,7 +26,7 @@ https://www.ferretninja.com/</p>
         <id>https://blog.ferretninja.com/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/</id>
         <link href="https://blog.ferretninja.com/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/">
         </link>
-        <updated>2020-06-28T03:20:51.000Z</updated>
+        <updated>2020-06-27T14:20:51.000Z</updated>
         <content type="html"><![CDATA[<p>I published a tutorial on writing distributed job scheduler in Spring Boot with the help of ETCD on medium.com. ETCD, a distributed key-value store saves the job list and provides a distributed lock for worker nodes. Spring Boot manages the connections to Redis Cluster cache and ETCD. The code for master and worker nodes are integrated in one repository and seperately deployed using spring @profile annotation.</p>
 <p>Here is a link to the story,<br>
 <strong>https://medium.com/@ywang412/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot-83dbdb1a056b</strong></p>

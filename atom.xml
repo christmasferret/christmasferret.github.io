@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.ferretninja.com</id>
     <title>Ferret Ninja</title>
-    <updated>2020-07-12T23:06:59.599Z</updated>
+    <updated>2020-07-13T02:04:08.481Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.ferretninja.com"/>
     <link rel="self" href="https://blog.ferretninja.com/atom.xml"/>
@@ -15,10 +15,12 @@
         <id>https://blog.ferretninja.com/post/build-your-own-image-hosting-website-using-reactspring-bootvsftpd/</id>
         <link href="https://blog.ferretninja.com/post/build-your-own-image-hosting-website-using-reactspring-bootvsftpd/">
         </link>
-        <updated>2020-07-11T07:20:49.000Z</updated>
+        <updated>2020-07-10T18:20:49.000Z</updated>
         <content type="html"><![CDATA[<p>Over the weekend, I have built an image hosting website.<br>
 https://www.ferretninja.com/</p>
-<p>An image hosting service helps to store images oneline and save local storage space. It provides easy image sharing by URL that can be used by other websites.</p>
+<p>An image hosting service helps to store images online and save local storage space. It provides a reliable backup and easy image sharing by URL that can be used by other websites. Moreover, the images will be available anytime so that one can share the link more easily with clients or friends.</p>
+<p>The details are published at<br>
+https://medium.com/@ywang412/build-your-own-image-hosting-website-using-react-spring-boot-vsftpd-on-aws-ec2-b1578522fda0</p>
 ]]></content>
     </entry>
     <entry>

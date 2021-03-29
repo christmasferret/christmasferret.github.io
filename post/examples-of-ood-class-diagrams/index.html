@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Examples of OOD class diagrams | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617056589176">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617056589176" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Examples of OOD class diagrams</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2020-03-19</span>
+            
+          </div>
+          <div class="post-content">
+            <p>Shopping<br>
+<img src="https://blog.ferretninja.com/post-images/1561869983328.png" alt="" loading="lazy"><br>
+Parking<br>
+<img src="https://blog.ferretninja.com/post-images/1561693897171.png" alt="" loading="lazy"><br>
+Library<br>
+<img src="https://blog.ferretninja.com/post-images/1561693905367.png" alt="" loading="lazy"><br>
+StackOverflow<br>
+<img src="https://blog.ferretninja.com/post-images/1562126076022.png" alt="" loading="lazy"><br>
+Movie<br>
+<img src="https://blog.ferretninja.com/post-images/1562126239722.png" alt="" loading="lazy"><br>
+Flight<br>
+<img src="https://blog.ferretninja.com/post-images/1562126309435.png" alt="" loading="lazy"><br>
+ATM<br>
+<img src="https://blog.ferretninja.com/post-images/1562126330414.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1580083775549.png" alt="" loading="lazy"></p>
+<pre><code>public enum TransactionType {
+  BALANCE_INQUIRY, DEPOSIT_CASH, DEPOSIT_CHECK, WITHDRAW, TRANSFER
+}
+public enum TransactionStatus {
+  SUCCESS, FAILURE, BLOCKED, FULL, PARTIAL, NONE
+}
+public enum CustomerStatus {
+  ACTIVE, BLOCKED, BANNED, COMPROMISED, ARCHIVED, CLOSED, UNKNOWN
+}
+
+public class Customer {
+  private String name;
+  private String email;
+  private String phone;
+  private Address address;
+  private CustomerStatus status;
+
+  private Card card;
+  private Account account;
+
+  public boolean makeTransaction(Transaction transaction);
+  public Address getBillingAddress();
+}
+
+public class Card {
+  private String cardNumber;
+  private String customerName;
+  private Date cardExpiry;
+  private int pin;
+
+  public Address getBillingAddress();
+}
+
+public class Account {
+  private int accountNumber;
+  private double totalBalance;
+  private double availableBalance;
+
+  public double getAvailableBalance();
+}
+
+public class SavingAccount extends Account {
+  private double withdrawLimit;
+}
+
+public class CheckingAccount extends Account {
+  private String debitCardNumber;
+}
+
+public class ATM {
+  private int atmID;
+  private Address location;
+
+  private CashDispenser cashDispenser;
+  private Keypad keypad;
+  private Screen screen;
+  private Printer printer;
+  private CheckDeposit checkDeposit;
+  private CashDeposit cashDeposit;
+
+  public boolean authenticateUser();
+  public boolean makeTransaction(Customer customer, Transaction transaction);
+}
+
+public abstract class Transaction {
+  private int transactionId;
+  private Date creationTime;
+  private TransactionStatus status;
+  public boolean makeTransation();
+}
+
+public class BalanceInquiry extends Transaction {
+  private int accountId;
+  public double getAccountId();
+}
+
+public abstract class Deposit extends Transaction {
+  private double amount;
+  public double getAmount();
+}
+
+public class CheckDeposit extends Deposit {
+  private String checkNumber;
+  private String bankCode;
+
+  public String getCheckNumber();
+}
+
+public class CashDeposit extends Deposit {
+  private double cashDepositLimit;
+}
+
+public class Withdraw extends Transaction {
+  private double amount;
+  public double getAmount();
+}
+
+public class Transfer extends Transaction {
+  private int destinationAccountNumber;
+  public int getDestinationAccount();
+}
+
+</code></pre>
+<p>BlackJack<br>
+<img src="https://blog.ferretninja.com/post-images/1562127573365.png" alt="" loading="lazy"><br>
+Car rental<br>
+<img src="https://blog.ferretninja.com/post-images/1562818933938.png" alt="" loading="lazy"><br>
+Chess<br>
+<img src="https://blog.ferretninja.com/post-images/1562818948581.png" alt="" loading="lazy"><br>
+Stock<br>
+<img src="https://blog.ferretninja.com/post-images/1562818966353.png" alt="" loading="lazy"><br>
+Cric Info<br>
+<img src="https://blog.ferretninja.com/post-images/1562818980878.png" alt="" loading="lazy"><br>
+Hotel<br>
+<img src="https://blog.ferretninja.com/post-images/1562818993543.png" alt="" loading="lazy"><br>
+Linkedin<br>
+<img src="https://blog.ferretninja.com/post-images/1562819007254.png" alt="" loading="lazy"><br>
+Facebook<br>
+<img src="https://blog.ferretninja.com/post-images/1562819025938.png" alt="" loading="lazy"><br>
+Restaurants<br>
+<img src="https://blog.ferretninja.com/post-images/1562819148411.png" alt="" loading="lazy"></p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/hello-gridea/">
+              <h3 class="post-title">
+                下一篇：Hello Gridea
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

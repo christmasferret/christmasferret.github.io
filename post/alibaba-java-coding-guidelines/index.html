@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Alibaba Java Coding Guidelines | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617056589176">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617056589176" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Alibaba Java Coding Guidelines</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <ol>
+<li>Switch add comment to case with no break.</li>
+</ol>
+<pre><code>switch(condition){
+case ABC:
+statements;
+/*程序继续执行直到 DEF 分支*/
+case DEF:
+statements;
+break;
+case XYZ:
+statements;
+break;
+default:
+statements;
+break;
+}
+</code></pre>
+<ol start="2">
+<li>collections to array</li>
+</ol>
+<pre><code>List&lt;String&gt; list = new ArrayList&lt;String&gt;(2);
+list.add(&quot;guan&quot;);
+list.add(&quot;bao&quot;);
+String[] array = new String[list.size()];
+array = list.toArray(array);
+</code></pre>
+<ol start="3">
+<li>
+<p>RuntimeException<br>
+validate data and don't catch runtime exception</p>
+</li>
+<li>
+<p>try catch in transaction<br>
+roll back transaction in catch manually or use spring @Transactional annotation</p>
+</li>
+<li>
+<p>Log</p>
+</li>
+</ol>
+<p>use SLF4J API facade pattern not log4j or logback.</p>
+<pre><code>import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class HelloWorld{
+private static final Logger logger =
+    LoggerFactory.getLogger(HelloWorld.class);
+ public static void main(String[] args){
+ logger.info(&quot;please use SLF4J,rather than logback or log4j&quot;);
+ }
+}
+</code></pre>
+<p>log retention 15 days</p>
+<ol start="6">
+<li>Unit test</li>
+</ol>
+<p>use assert not system.out<br>
+test cases don't call each other (use mock) and order independent</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-2-index/">
+              <h3 class="post-title">
+                下一篇：SQL 2 - Index
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

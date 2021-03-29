@@ -2,14 +2,836 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.ferretninja.com</id>
     <title>Ferret Ninja</title>
-    <updated>2020-07-20T03:34:13.519Z</updated>
+    <updated>2021-03-29T22:23:15.654Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.ferretninja.com"/>
     <link rel="self" href="https://blog.ferretninja.com/atom.xml"/>
     <subtitle>Whiskers</subtitle>
     <logo>https://blog.ferretninja.com/images/avatar.png</logo>
     <icon>https://blog.ferretninja.com/favicon.ico</icon>
-    <rights>All rights reserved 2020, Ferret Ninja</rights>
+    <rights>All rights reserved 2021, Ferret Ninja</rights>
+    <entry>
+        <title type="html"><![CDATA[SQL 3 - Lock]]></title>
+        <id>https://blog.ferretninja.com/post/sql-3-lock/</id>
+        <link href="https://blog.ferretninja.com/post/sql-3-lock/">
+        </link>
+        <updated>2021-03-29T09:22:33.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>FLUSH TABLES WITH READ LOCK;
+UNLOCK TABLES;
+</code></pre>
+<p>lock all tables. all tables read-only. current session write fail</p>
+<p>lock tables t14 write;<br>
+current session can read and write, other session read/write will block.</p>
+<p>lock tables t14 read;<br>
+all session can read. current session write will fail. other session write will block.</p>
+<p>metadata locking<br>
+avoid long transaction and avoid ddl during database busy hour</p>
+<p>InnoDB support transaction and row locking</p>
+<p>S read row lock<br>
+select * from table where ... lock in share mode;<br>
+X write row lock<br>
+select * from table whre ... for update;</p>
+<p>InnoBD locks:<br>
+record lock on index keys<br>
+gap lock between index keys<br>
+next-key lock : record lock + gap lock</p>
+<p>if select doesn't use index, innoDB will lock table.</p>
+<p>Transactions level:<br>
+Read uncommited. dirty read<br>
+read commited. phantom read<br>
+repeatable read. mysql default.<br>
+serializable.</p>
+<p>for RC level,<br>
+if select without index, table lock<br>
+if unique index, lock matched index and corresponding clustered index<br>
+if non unique index, lock matched index and corresponding clustered index</p>
+<p>for RR level<br>
+if non unique index, GAP lock will lock the gap around matched index.<br>
+if no index, table lock and gap lock locks all gaps.<br>
+if unique index, same as RC level.</p>
+<p><strong>Dead Lock</strong></p>
+<p>to fix dead lock<br>
+1 innodb_deadlock_detect on to return error<br>
+2 innodb_lock_wait_timeout to time out</p>
+<p>Scenario<br>
+different session lock different rows (same or different table) in different order.<br>
+RR level, different session lock rows and write the row locked by each other.</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java TCP / UDP / HTTP / BIO / NIO]]></title>
+        <id>https://blog.ferretninja.com/post/java-tcp-udp-http-bio-nio/</id>
+        <link href="https://blog.ferretninja.com/post/java-tcp-udp-http-bio-nio/">
+        </link>
+        <updated>2021-03-29T09:22:19.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1574474560226.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1574474564715.png" alt="" loading="lazy"></figure>
+<pre><code>class QuoteService {
+	
+	Map&lt;String, String&gt; productInfo = new HashMap&lt;String,String&gt;();
+	
+	public QuoteService() {
+		productInfo.put(&quot;a&quot;, &quot;100&quot;);
+		productInfo.put(&quot;b&quot;, &quot;200&quot;);
+	}
+	
+	public String getQuote(String product) {
+		return productInfo.get(product);
+	}
+}
+
+class ServiceThread extends Thread {
+
+	Socket sock;
+	
+	QuoteService quoteService = new QuoteService();
+	
+	public ServiceThread(Socket sock) {
+		this.sock = sock;
+	}
+	
+	public void run() {
+		try {
+			InputStream in = sock.getInputStream();
+			OutputStream out = sock.getOutputStream();
+			
+			System.out.println(&quot;Waiting for product information from the client.&quot;);
+			
+			byte request[] = new byte[100];
+			in.read(request);
+			
+			String product = new String(request).trim();
+			
+			System.out.println(&quot;Received product name - &quot; + product );
+			
+			String price = quoteService.getQuote(product);
+			if (price == null) {
+				price = &quot;Invalid product&quot;;
+			}
+			
+			out.write(price.getBytes());
+			
+			System.out.println(&quot;Response sent...&quot;);
+			
+			sock.close();
+		} catch(Exception e) {}
+	}
+	
+}
+
+public class Server {
+
+	public static void main(String[] args) throws IOException {
+		
+		ServerSocket serSocket = new ServerSocket(9999);
+		
+		System.out.println(&quot;Started listening to 9999&quot;);
+		
+		while (true) {
+			
+			System.out.println(&quot;Waiting for client..&quot;);
+			Socket sock = serSocket.accept();
+			
+			// create a new thread to service client.
+			System.out.println(&quot;Starting a thread which will service the client&quot;);
+			new ServiceThread(sock).start();
+		}
+		
+
+	}
+
+}
+public class Client {
+
+	public static void main(String[] args) throws UnknownHostException, IOException {
+
+		System.out.println(&quot;Connecting to the server...&quot;);
+		Socket sock = new Socket(&quot;127.0.0.1&quot;, 9999);
+		System.out.println(&quot;Connected to the server..&quot;);
+
+		System.out.println(&quot;Enter product name : &quot;);
+		Scanner scan = new Scanner(System.in);
+		String product = scan.nextLine();
+		
+		InputStream in = sock.getInputStream();
+		OutputStream out = sock.getOutputStream();
+		
+		System.out.println(&quot;Sending product information..&quot;);
+		out.write(product.getBytes());
+		
+		byte [] response = new byte[100];
+		in.read(response);
+		
+		String strResponse = new String(response).trim();
+		
+		System.out.println(&quot;Obtained response is - &quot; + strResponse);
+		
+		sock.close();
+		
+	}
+
+}
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1574474572857.png" alt="" loading="lazy"></figure>
+<pre><code>public class Server {
+
+	public static void main(String[] args) throws IOException {
+		
+		DatagramSocket dgSock = new DatagramSocket(8989);
+		
+		DatagramPacket packet = new DatagramPacket(new byte[1000], 1000);
+		
+		dgSock.receive(packet);
+		
+		System.out.println( new String(packet.getData()) );
+		System.out.println(&quot;Obtained from IP - &quot; + packet.getAddress() );
+		System.out.println(&quot;Obtained from Port - &quot; + packet.getPort() );
+		
+		dgSock.close();
+		
+	}
+
+}
+
+public class Client {
+
+	public static void main(String[] args) throws IOException {
+		
+		DatagramSocket dgSock = new DatagramSocket();
+		
+		String message = &quot;Hello from so and so...&quot;;
+		byte [] data = message.getBytes();
+		
+		DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getLocalHost(), 8989);
+		
+		dgSock.send(packet);
+		
+		dgSock.close();
+			
+	}
+
+}
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1574474578338.png" alt="" loading="lazy"></figure>
+<pre><code>public class RequestHandler {
+	
+	ResourceLoader resourceLoader = new ResourceLoader();
+	
+	public void handleRequest(Socket sock) {
+		OutputStream out = null;
+
+		try {
+			out = sock.getOutputStream();
+			String request = HttpUtils.getRequest(sock);
+
+			String uri = HttpUtils.getRequestUri(request);
+			System.out.println(&quot;Received request for - &quot; + uri);
+
+			InputStream in = resourceLoader.getResource(uri);
+
+			if (in == null) {
+				System.out.println(&quot;Sending resource not found &quot;);
+				HttpResponseUtils.sendResourceNotFound(out);
+				return;
+			}
+
+			System.out.println(&quot;Sending response &quot;);
+			HttpResponseUtils.sendSuccessResponse(in, out);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (out != null) {
+				try {
+					System.out.println(&quot;Sending internal error &quot;);
+					HttpResponseUtils.sendInternalError(out);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} finally {
+			try {
+				sock.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+}
+public class ServiceRequestTask implements Runnable {
+	
+	Socket sock;
+	RequestHandler requestHandler = new RequestHandler();
+	
+	public ServiceRequestTask(Socket sock) {
+		this.sock = sock;
+	}
+
+	@Override
+	public void run() {
+		requestHandler.handleRequest(sock);
+	}
+
+}
+public class Server {
+
+	public static void main(String[] args) throws Exception {
+		
+		ServerSocket serSock = new ServerSocket(8000);
+		ExecutorService executor = Executors.newFixedThreadPool(5);
+		
+		while (true) {
+			System.out.println(&quot;Waiting for client...&quot;);
+			Socket sock = serSock.accept();
+			
+			System.out.println(&quot;Task submitted&quot;);
+			executor.submit(new ServiceRequestTask(sock));
+		}	
+	}
+}
+
+</code></pre>
+<p>BIO problem:<br>
+blocking ServerSocket.accept()<br>
+blocking InputStream.read(), outputStream.write()<br>
+cannot handle multiple Stream I/O in same thread</p>
+<p>NIO:<br>
+use Channel to replace Stream<br>
+use Selector to monitor Channel status<br>
+process multiple channel I/O in one thread</p>
+<p>Channel:<br>
+FileChannel<br>
+ServerSocketChannel<br>
+SocketChannel</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Alibaba Java Coding Guidelines]]></title>
+        <id>https://blog.ferretninja.com/post/alibaba-java-coding-guidelines/</id>
+        <link href="https://blog.ferretninja.com/post/alibaba-java-coding-guidelines/">
+        </link>
+        <updated>2021-03-29T09:21:35.000Z</updated>
+        <content type="html"><![CDATA[<ol>
+<li>Switch add comment to case with no break.</li>
+</ol>
+<pre><code>switch(condition){
+case ABC:
+statements;
+/*程序继续执行直到 DEF 分支*/
+case DEF:
+statements;
+break;
+case XYZ:
+statements;
+break;
+default:
+statements;
+break;
+}
+</code></pre>
+<ol start="2">
+<li>collections to array</li>
+</ol>
+<pre><code>List&lt;String&gt; list = new ArrayList&lt;String&gt;(2);
+list.add(&quot;guan&quot;);
+list.add(&quot;bao&quot;);
+String[] array = new String[list.size()];
+array = list.toArray(array);
+</code></pre>
+<ol start="3">
+<li>
+<p>RuntimeException<br>
+validate data and don't catch runtime exception</p>
+</li>
+<li>
+<p>try catch in transaction<br>
+roll back transaction in catch manually or use spring @Transactional annotation</p>
+</li>
+<li>
+<p>Log</p>
+</li>
+</ol>
+<p>use SLF4J API facade pattern not log4j or logback.</p>
+<pre><code>import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+public class HelloWorld{
+private static final Logger logger =
+    LoggerFactory.getLogger(HelloWorld.class);
+ public static void main(String[] args){
+ logger.info(&quot;please use SLF4J,rather than logback or log4j&quot;);
+ }
+}
+</code></pre>
+<p>log retention 15 days</p>
+<ol start="6">
+<li>Unit test</li>
+</ol>
+<p>use assert not system.out<br>
+test cases don't call each other (use mock) and order independent</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SQL 2 - Index]]></title>
+        <id>https://blog.ferretninja.com/post/sql-2-index/</id>
+        <link href="https://blog.ferretninja.com/post/sql-2-index/">
+        </link>
+        <updated>2021-03-29T09:18:07.000Z</updated>
+        <content type="html"><![CDATA[<p>B tree<br>
+<img src="https://blog.ferretninja.com/post-images/1570566488064.png" alt="" loading="lazy"><br>
+vs B+ tree<br>
+<img src="https://blog.ferretninja.com/post-images/1570566504268.png" alt="" loading="lazy"></p>
+<p>Auto increment primary key can prevent breaking the B+ tree.<br>
+<img src="https://blog.ferretninja.com/post-images/1571012532447.png" alt="" loading="lazy"></p>
+<p>Clustered index - primary key if exist<br>
+If no primary key, first not-nullable unique index or rowid.<br>
+Only one clustered index and one B+ tree for a table.</p>
+<p>Non-clustered index<br>
+B+ tree leaf node only have index field and primary key<br>
+Search query will find primary key first and then fetch the record, therefore more costly.</p>
+<p><strong>Where to have index</strong></p>
+<ol>
+<li>where clause<br>
+<code>select * from t9_1 where d = 90000;</code></li>
+<li>aggregate function<br>
+<code>select max(d) from t9_1;</code><br>
+<code>select count(*) from t9_1;</code><br>
+because count(*) use non-clustered index (only index and primary key) which is faster than clustered index.</li>
+<li>order by</li>
+<li>use only non-clustered index<br>
+<code>select b,c from t9_1 where b=90000;</code><br>
+use idx_b_c</li>
+<li>Join clause<br>
+turn BNL to NLJ search</li>
+</ol>
+<p><strong>Difference between unique index and non-unique index</strong></p>
+<p>non-clustered non-unique index use change buffer to combine multiple insert.<br>
+Unique index has to load data into memory to check uniqueness.</p>
+<p>Although non-unique index will continue after finding the first matching record, it is highly possible that all matching records are loaded into memory in same page. Therefore, search query for unique index and non-unique index are the same.</p>
+<p><strong>Multi-column indexes</strong><br>
+<code>select * from t11 where a=1 and b=1 and c=1;</code>  use idx_a_b_c<br>
+<code>select * from t11 where c=1 and b=1 and a=1; /* sql2 */</code>  same as first query, order doesn't matter</p>
+<p><code>select * from t11 where a=2 and b in (1,2) and c=2; /* sql3 */</code><br>
+<code>select * from t11 where a=1 and b=2 order by c; /* sql4 */</code><br>
+<code>select * from t11 where a=1 order by b,c; /* sql5 */</code><br>
+use idx_a_b_c</p>
+<p>idx_a_b_c is equivalent to idx_a, idx_a_b, idx_a_b_c.</p>
+<p><code>select * from t11 where a=2 and b in (3,4) order by c; /* sql13 */</code>  will only use idx_a_b<br>
+<code>select * from t11 where b=1 and c=1; /* sql34 */</code> cannot use idx_a_b_c</p>
+<p><strong>Cardinality</strong><br>
+<code>show index from t13;</code><br>
+Cardinality is the estimate of distinct index values. Query will use index of larger cardinality.</p>
+<p>If returned rows number is large, query may use the primary key index to fetch all records. Use force index to force specified index.</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Flash sale website system design]]></title>
+        <id>https://blog.ferretninja.com/post/flash-sale-website-system-design/</id>
+        <link href="https://blog.ferretninja.com/post/flash-sale-website-system-design/">
+        </link>
+        <updated>2021-03-29T09:17:04.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>Multi-level rate limiter</strong></p>
+<ol>
+<li>
+<p>prevent malicious requests<br>
+add verification code<br>
+redirect page after 5 seconds delay<br>
+block ip</p>
+</li>
+<li>
+<p>hardware load-balancing - 2nd layer<br>
+LVS load-balancing - 4th layer<br>
+nginx reverse proxy to multiple tomcat - 7th layer</p>
+</li>
+<li>
+<p>tomcat max thread / max connection<br>
+(io intensive, increase threads, increase throughput<br>
+cpu intensive, decrease threads, increase cpu efficiency)<br>
+message queue<br>
+server cpu/mem monitoring<br>
+RateLimiter</p>
+</li>
+</ol>
+<p><strong>Multi-level cache</strong></p>
+<p>html css javascript in object storage service / CDN<br>
+ajax / axis requests</p>
+<p>cache database requests in memory<br>
+Cache penetration: malicous requests for nonexisting information<br>
+use value = &quot;&quot; to cache malicous requests<br>
+Cache breakdow: hot cache expiration, many request at the same expired cache<br>
+use a thread to monitor cache near expiration and refresh cache<br>
+use longer time for hot cache<br>
+Cache avalanche: many cache expire at the same time<br>
+use redis cluster and use different cache expiration time</p>
+<p>use local guavacache plus remote redis cluster<br>
+use message queue as request buffer</p>
+<p><strong>Fault Tolerance and service degradation</strong></p>
+<p>Spring Cloud Hystrix<br>
+manual shutdown of less important services</p>
+<p><strong>Database cluster</strong></p>
+<p>master dml -&gt; binlog -&gt; slave relay log -&gt; slave dml<br>
+mycat cluster (use HaProxy + Keepalived) to sharding database write/read</p>
+<p><strong>Thread safety</strong></p>
+<p>lock/synchronzed keyword<br>
+AtomicInteger compare and swap</p>
+<p><strong>RateLimiter</strong></p>
+<p>Leaky bucket<br>
+smooth burst<br>
+p drain rate</p>
+<p>Token bucket<br>
+permit burst but bands it<br>
+in any T, rate &lt; b + t * p, b bucket size, p token rate<br>
+long term &lt; p</p>
+<p><strong>JVM Reference</strong></p>
+<p>Strong reference GC when reference = null or method exit<br>
+SoftReference GC when memory not enough before throw OOM<br>
+WeakReference collect whenever GC  system.gc()<br>
+PhantomReference put object in a queue when GC for further analysis</p>
+<p>use SoftReference to make cache, collect to prevent OOM</p>
+<pre><code>class BigValue {
+   ...
+   //模拟大容量对象
+}
+
+public class ReferenceCache {
+    Map&lt;String, SoftReference&lt;BigValue&gt;&gt; caches = new HashMap();
+    //根据id存储缓存对象（缓存对象被装饰在了软引用中）
+    void setCache(String id, BigValue bigValue) {
+        caches.put(id, new SoftReference&lt;BigValue&gt;(bigValue));
+    }
+    //根据id获取缓存对象
+    BigValue getCache(String id) {
+        //根据id，获取缓存对象的软引用
+        SoftReference&lt;BigValue&gt; softRef = caches.get(id);
+        return softRef == null ? null : softRef.get();
+    }
+}
+</code></pre>
+<p><strong>Message Queue Idempotent</strong></p>
+<p>order -&gt; payment</p>
+<ol>
+<li>use db primary key to prevent duplicate insert<br>
+use order id or unique mapping of order id as payment id</li>
+<li>use set or redis to make a history table to check before insert</li>
+<li>implement CAS to prevent update</li>
+</ol>
+<p><strong>Message Queue Scaling</strong></p>
+<ol>
+<li>increase consumer and partition</li>
+<li>write to new temparory queue and consume at new queue</li>
+<li>prevent retry</li>
+</ol>
+<p><strong>Protobuf + Netty</strong></p>
+<pre><code>package com.yanqun.protobuf ;
+option java_package = &quot;com.yanqun.protobuf&quot; ;
+option java_outer_classname = &quot;MyMessage&quot; ;
+message MyMessage
+{
+    required string name = 1 ;
+    optional int32 age = 2 ;
+}
+</code></pre>
+<p><strong>cookie and session</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1576358563615.png" alt="" loading="lazy"></figure>
+<p>If cookie not allowed, put token in response.</p>
+<p>distributed session</p>
+<ol>
+<li>nginx ip_hash   same ip goes to same server</li>
+<li>tomcat cluster  copy session among all servers</li>
+<li>redis cluster</li>
+</ol>
+<p><strong>Redis distributed lock</strong></p>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1576380520490.png" alt="" loading="lazy"></figure>
+<p><strong>Deployment</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1577220832834.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220853581.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220858149.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220862517.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220866697.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220870319.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220880028.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220884068.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577220887699.png" alt="" loading="lazy"></p>
+<p><img src="https://blog.ferretninja.com/post-images/1577225088623.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225094858.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225099881.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225103560.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225115561.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225125985.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225130929.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225138021.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225143326.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225146952.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225152040.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225160161.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225164613.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225169227.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225173565.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225182544.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225188533.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577225192300.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java IO stream]]></title>
+        <id>https://blog.ferretninja.com/post/java-io-stream/</id>
+        <link href="https://blog.ferretninja.com/post/java-io-stream/">
+        </link>
+        <updated>2021-03-29T09:16:47.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573445636324.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1569816542486.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1569816549973.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1569816555204.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SQL 1 - Optimization and Best Practice]]></title>
+        <id>https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/</id>
+        <link href="https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/">
+        </link>
+        <updated>2021-03-29T09:08:23.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>Best practice</strong></p>
+<ol>
+<li>use &quot;=&quot; not &quot;&lt;&gt;&quot; on index</li>
+<li>use Limit 1 if only return 1 record</li>
+<li>use TINYINT before SMALLINT and INT</li>
+<li>break big DELETE, UPDATE or INSERT into small ones</li>
+<li>use UNION ALL instead of UNION because ALL allows duplicate</li>
+<li>don't use select * which will not use index</li>
+<li>add index to where, join, order by</li>
+<li>use limit to return page</li>
+</ol>
+<p><strong>Locate slow SQL query</strong></p>
+<p>Use slow query log</p>
+<pre><code>mysql&gt; set global slow_query_log = on;
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; show global variables like &quot;datadir&quot;;
+
++---------------+------------------------+
+| Variable_name | Value                  |
++---------------+------------------------+
+| datadir       | /data/mysql/data/3306/ |
++---------------+------------------------+
+
+1 row in set (0.00 sec)
+
+mysql&gt; show global variables like &quot;slow_query_log_file&quot;;
+
++---------------------+----------------+
+| Variable_name       | Value          |
++---------------------+----------------+
+| slow_query_log_file | mysql-slow.log |
++---------------------+----------------+
+
+1 row in set (0.00 sec)
+</code></pre>
+<p>Query_time:<br>
+Lock_time: waiting for acquiring lock<br>
+Rows_sent: number of rows returned<br>
+Rows_examined:</p>
+<pre><code>[root@mysqltest ~]# tail -n5 /data/mysql/data/3306/mysql-slow.log
+
+Time: 2019-05-21T09:15:06.255554+08:00
+
+User@Host: root[root] @ localhost []  Id: 8591152
+
+Query_time: 10.000260  Lock_time: 0.000000 Rows_sent: 1  Rows_examined: 0
+
+SET timestamp=1558401306;
+select sleep(10);
+</code></pre>
+<p><strong>Use explain to analyze SQL query</strong></p>
+<p><code>mysql&gt; explain select * from t1 where b=100;</code></p>
+<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1570332651442.png" alt="" loading="lazy"></figure>
+<p><strong>Scenario where Index won't be used</strong></p>
+<p><code>mysql&gt; explain select * from t1 where date(c) ='2019-05-21';</code><br>
+<img src="https://blog.ferretninja.com/post-images/1570334471167.png" alt="" loading="lazy"></p>
+<p>Using native data format will use index condition.</p>
+<p><code>mysql&gt; explain select * from t1 where c&gt;='2019-05-21 00:00:00' and c&lt;='2019-05-21 23:59:59';</code></p>
+<p>Implicit conversion won't use index. tele_phone is Varchar(20)</p>
+<pre><code>select user_name,tele_phone from user_info where tele_phone =11111111111; /* SQL 1 */
+</code></pre>
+<p>Like clause using heading % won't. But if only trailing %, it can use index.<br>
+<code>mysql&gt; explain select * from t1 where a like '%1111%';</code></p>
+<p>Large range won't use index<br>
+<code>mysql&gt; explain select * from t1 where b&gt;=1 and b &lt;=2000;</code></p>
+<p>b -1 = 100 won't and b = 100 + 1 can.</p>
+<pre><code>mysql&gt; explain select * from t1 where b-1 =1000;
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1570337862625.png" alt="" loading="lazy"></figure>
+<p><strong>Batch insert submission</strong></p>
+<p>Insert multiple rows at a time</p>
+<p>create the batch insert sql</p>
+<p><code>[root@mysqltest muke]# mysqldump -utest_user3 -p'userBcdQ19Ic' -h127.0.0.1 --set-gtid-purged=off --single-transaction --skip-add-locks muke t1 &gt;t1.sql</code></p>
+<p>t1.sql</p>
+<pre><code>......
+DROP TABLE IF EXISTS `t1`;		
+......
+CREATE TABLE `t1`......
+......
+INSERT INTO `t1` VALUES (1,'1',1,'2019-05-24 15:44:10'),(2,'2',2,'2019-05-24 15:44:10'),(3,'3',3,'2019-05-24 15:44:10')......
+......
+</code></pre>
+<p><code>[root@mysqltest muke]# mysqldump -utest_user3 -p'userBcdQ19Ic' -h127.0.0.1 --set-gtid-purged=off --single-transaction --skip-add-locks --skip-extended-insert muke t1 &gt;t1_row.sql</code></p>
+<p>-skip-extended-insert will insert one record at a time</p>
+<pre><code>......
+INSERT INTO `t1` VALUES (1,'1',1,'2019-05-24 15:44:10');
+INSERT INTO `t1` VALUES (2,'2',2,'2019-05-24 15:44:10');
+INSERT INTO `t1` VALUES (3,'3',3,'2019-05-24 15:44:10');
+......
+</code></pre>
+<p>Run sql script</p>
+<pre><code>[root@mysqltest ~]# time mysql -utest_user3 -p'userBcdQ19Ic' -h127.0.0.1 muke &lt;t1.sql
+</code></pre>
+<ol>
+<li>Set auto commit off</li>
+<li>Adjust innodb_flush_log_at_trx_commmit and sync_binlog = 0</li>
+</ol>
+<p><strong>Order by and Group by</strong></p>
+<p>mySql order by use two kinds of sorting.<br>
+1) using index<br>
+2) using filesort</p>
+<p>If data size &lt; sort_buffer_size, sort in memory (number of tmp files 0), else in disk (number of tmp files &gt; 0).</p>
+<p>Filesort has 3 modes.<br>
+&lt;sort_key, rowid&gt; only sort rowid and fetch records after<br>
+max_length_for_sort_data &lt; length of all fields<br>
+&lt;sort_key, additional_fields&gt; loads all fields and sort<br>
+max_length_for_sort_data &gt; length of all fields<br>
+&lt;sort_key, packed_additional_fields&gt;</p>
+<ol>
+<li>Add index to sort by field</li>
+<li>order by (a , b)  use  index (a, b) not (b, a)</li>
+<li>where a = 1000 order by b  use index (a, b)</li>
+<li>select * from t1 order by a,b;      won't use index<br>
+because scan index and fetch all records costs more than filesort.<br>
+select id,a,b from t1 order by a,b;</li>
+<li>explain select id,a,b from t1 where a&gt;9000 order by b;  won't use index<br>
+because in range a &gt; 9000, data is not sorted by b. it is sorted by (a, b)</li>
+<li>explain select id,a,b from t1 order by a asc,b desc; won't use index</li>
+</ol>
+<p>Group by can use &quot;order by null&quot; to disable sorting.</p>
+<p><strong>SQL Paging</strong></p>
+<p><code>select * from t1 limit 99000,2;</code></p>
+<ol>
+<li>use auto-increment continuous primary key<br>
+<code>select * from t1 where id &gt;99000 limit 2;</code></li>
+</ol>
+<p><code>select * from t1 order by a limit 99000,2;</code><br>
+won't use index because scan index and fetch all records costs more than filesort.<br>
+2. return id when sort<br>
+<code>select * from t1 f inner join (select id from t1 order by a limit 99000,2)g on f.id = g.id;</code></p>
+<p>Rewrite <code>select * from t1 limit 99000,2;</code><br>
+to <code>select * from t1 as a join (select id from t1 limit 99000, 2) as b on a.id = b.id;</code></p>
+<p><strong>SQL join</strong></p>
+<p>Index Nested-Loop Join<br>
+if join on index key. Small table will be the driving table. T ~ 2*N(small table).</p>
+<p>Block Nested-Loop join<br>
+if join on key without index. Load small table into join_buffer. Scan each row of big table and compare it to each row in join_buffer.<br>
+Total number of scanned row is M(big table) + N(small table). T ~ M(big table)*N(small table).</p>
+<ol>
+<li>join on index key</li>
+<li>use small table as driving table <code>select * from t2 straight_join t1 on t2.a = t1.a;</code></li>
+<li>temporary table<br>
+Add index to field b in temp table</li>
+</ol>
+<pre><code>CREATE TEMPORARY TABLE `t1_tmp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `a` int(11) DEFAULT NULL,
+  `b` int(11) DEFAULT NULL,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_a` (`a`),
+  KEY `idx_b` (b)
+) ENGINE=InnoDB ;
+</code></pre>
+<pre><code>insert into t1_tmp select * from t1;
+select * from t1_tmp join t2 on t1_tmp.b= t2.b;
+</code></pre>
+<p><strong>Count (*)</strong></p>
+<p>Count(a) will not count null but Count(*) will.  Count(1) and Count(*) will be the same.<br>
+MyISAM has meta information about total number of rows. InnoDB doesn't have the meta information because it allows concurrent transactions to have different row count.</p>
+<p>MySql will use smallest non-clustered index to calculate count(*). If there is no non-clustered index, it will use clustered-index. Because non-clustered index (secondary) only store primary key while clustered-index (primary key) stores entire row.</p>
+<ol>
+<li>
+<p><code>show table status like 't1';</code> will give an estimate of rows.</p>
+</li>
+<li>
+<p>use redis</p>
+</li>
+</ol>
+<pre><code>select count(\*) from t1;
+set   t1_count  10002
+insert into t1(a,b,c,d) values (10003,10003,10003,10003);
+INCR t1_count
+delete from t1 where id=10003;
+DECR t1_count
+get t1_count
+</code></pre>
+<p>problem: different session can read inaccurate result.</p>
+<ol start="3">
+<li>Add inno db counting table<br>
+<img src="https://blog.ferretninja.com/post-images/1570402853197.png" alt="" loading="lazy"></li>
+</ol>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[JVM performance tuning]]></title>
+        <id>https://blog.ferretninja.com/post/jvm-performance-tuning/</id>
+        <link href="https://blog.ferretninja.com/post/jvm-performance-tuning/">
+        </link>
+        <updated>2021-03-28T20:19:56.000Z</updated>
+        <content type="html"><![CDATA[<p>Thread status - new, runnable, blocked, waiting, timed-waiting</p>
+<p>Thread dumps<br>
+When the CPU Usage is Abnormally High<br>
+Extract the thread that has the highest CPU usage. After acquiring the thread dump, check the thread's action. Extract thread dumps several times every hour, and check the status change of the threads to determine the problem.</p>
+<p>When the Processing Performance is Abnormally Slow<br>
+After acquiring thread dumps several times, find the list of threads with BLOCKED status. Acquire the list of threads with BLOCKED status after getting the thread dumps several times.</p>
+<p>Heap dumps<br>
+All Objects<br>
+All Classes<br>
+Garbage collection roots<br>
+Thread Stacks and Local Variables</p>
+<p>Collector Types</p>
+<ul>
+<li>Throughput Collectors</li>
+</ul>
+<ol>
+<li>Serial</li>
+<li>Parallel</li>
+</ol>
+<ul>
+<li>Low Pause Collectors</li>
+</ul>
+<ol>
+<li>Concurrent Mark Sweep</li>
+<li>G1</li>
+</ol>
+<p><img src="https://blog.ferretninja.com/post-images/1577147265246.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147281198.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147286161.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147289960.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147294313.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147298730.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147303088.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147308590.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147313988.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147318496.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577147322467.png" alt="" loading="lazy"></p>
+<p><img src="https://blog.ferretninja.com/post-images/1577157639836.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157646324.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157650696.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157655590.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157659980.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157663741.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157668840.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157673304.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157678832.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157683185.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157688078.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157691713.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1577157695298.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Build your own image hosting website using React/Spring Boot/Vsftpd]]></title>
         <id>https://blog.ferretninja.com/post/build-your-own-image-hosting-website-using-reactspring-bootvsftpd/</id>
@@ -36,38 +858,6 @@ https://medium.com/nerd-for-tech/build-your-own-image-hosting-website-using-reac
 <p>Today I found I earned two cents for this writing. I consider it is a significant step for me.<br>
 The source code is hosted at github, <strong>https://github.com/ywang412/ants-job</strong><br>
 <img src="https://blog.ferretninja.com/post-images/1594245174658.PNG" alt="" loading="lazy"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>https://blog.ferretninja.com/post/hello-gridea/</id>
-        <link href="https://blog.ferretninja.com/post/hello-gridea/">
-        </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-<!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
 ]]></content>
     </entry>
 </feed>

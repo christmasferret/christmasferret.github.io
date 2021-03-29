@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Java TCP / UDP / HTTP / BIO / NIO | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617056589176">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617056589176" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Java TCP / UDP / HTTP / BIO / NIO</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1574474560226.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1574474564715.png" alt="" loading="lazy"></figure>
+<pre><code>class QuoteService {
+	
+	Map&lt;String, String&gt; productInfo = new HashMap&lt;String,String&gt;();
+	
+	public QuoteService() {
+		productInfo.put(&quot;a&quot;, &quot;100&quot;);
+		productInfo.put(&quot;b&quot;, &quot;200&quot;);
+	}
+	
+	public String getQuote(String product) {
+		return productInfo.get(product);
+	}
+}
+
+class ServiceThread extends Thread {
+
+	Socket sock;
+	
+	QuoteService quoteService = new QuoteService();
+	
+	public ServiceThread(Socket sock) {
+		this.sock = sock;
+	}
+	
+	public void run() {
+		try {
+			InputStream in = sock.getInputStream();
+			OutputStream out = sock.getOutputStream();
+			
+			System.out.println(&quot;Waiting for product information from the client.&quot;);
+			
+			byte request[] = new byte[100];
+			in.read(request);
+			
+			String product = new String(request).trim();
+			
+			System.out.println(&quot;Received product name - &quot; + product );
+			
+			String price = quoteService.getQuote(product);
+			if (price == null) {
+				price = &quot;Invalid product&quot;;
+			}
+			
+			out.write(price.getBytes());
+			
+			System.out.println(&quot;Response sent...&quot;);
+			
+			sock.close();
+		} catch(Exception e) {}
+	}
+	
+}
+
+public class Server {
+
+	public static void main(String[] args) throws IOException {
+		
+		ServerSocket serSocket = new ServerSocket(9999);
+		
+		System.out.println(&quot;Started listening to 9999&quot;);
+		
+		while (true) {
+			
+			System.out.println(&quot;Waiting for client..&quot;);
+			Socket sock = serSocket.accept();
+			
+			// create a new thread to service client.
+			System.out.println(&quot;Starting a thread which will service the client&quot;);
+			new ServiceThread(sock).start();
+		}
+		
+
+	}
+
+}
+public class Client {
+
+	public static void main(String[] args) throws UnknownHostException, IOException {
+
+		System.out.println(&quot;Connecting to the server...&quot;);
+		Socket sock = new Socket(&quot;127.0.0.1&quot;, 9999);
+		System.out.println(&quot;Connected to the server..&quot;);
+
+		System.out.println(&quot;Enter product name : &quot;);
+		Scanner scan = new Scanner(System.in);
+		String product = scan.nextLine();
+		
+		InputStream in = sock.getInputStream();
+		OutputStream out = sock.getOutputStream();
+		
+		System.out.println(&quot;Sending product information..&quot;);
+		out.write(product.getBytes());
+		
+		byte [] response = new byte[100];
+		in.read(response);
+		
+		String strResponse = new String(response).trim();
+		
+		System.out.println(&quot;Obtained response is - &quot; + strResponse);
+		
+		sock.close();
+		
+	}
+
+}
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1574474572857.png" alt="" loading="lazy"></figure>
+<pre><code>public class Server {
+
+	public static void main(String[] args) throws IOException {
+		
+		DatagramSocket dgSock = new DatagramSocket(8989);
+		
+		DatagramPacket packet = new DatagramPacket(new byte[1000], 1000);
+		
+		dgSock.receive(packet);
+		
+		System.out.println( new String(packet.getData()) );
+		System.out.println(&quot;Obtained from IP - &quot; + packet.getAddress() );
+		System.out.println(&quot;Obtained from Port - &quot; + packet.getPort() );
+		
+		dgSock.close();
+		
+	}
+
+}
+
+public class Client {
+
+	public static void main(String[] args) throws IOException {
+		
+		DatagramSocket dgSock = new DatagramSocket();
+		
+		String message = &quot;Hello from so and so...&quot;;
+		byte [] data = message.getBytes();
+		
+		DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getLocalHost(), 8989);
+		
+		dgSock.send(packet);
+		
+		dgSock.close();
+			
+	}
+
+}
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1574474578338.png" alt="" loading="lazy"></figure>
+<pre><code>public class RequestHandler {
+	
+	ResourceLoader resourceLoader = new ResourceLoader();
+	
+	public void handleRequest(Socket sock) {
+		OutputStream out = null;
+
+		try {
+			out = sock.getOutputStream();
+			String request = HttpUtils.getRequest(sock);
+
+			String uri = HttpUtils.getRequestUri(request);
+			System.out.println(&quot;Received request for - &quot; + uri);
+
+			InputStream in = resourceLoader.getResource(uri);
+
+			if (in == null) {
+				System.out.println(&quot;Sending resource not found &quot;);
+				HttpResponseUtils.sendResourceNotFound(out);
+				return;
+			}
+
+			System.out.println(&quot;Sending response &quot;);
+			HttpResponseUtils.sendSuccessResponse(in, out);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (out != null) {
+				try {
+					System.out.println(&quot;Sending internal error &quot;);
+					HttpResponseUtils.sendInternalError(out);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} finally {
+			try {
+				sock.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+}
+public class ServiceRequestTask implements Runnable {
+	
+	Socket sock;
+	RequestHandler requestHandler = new RequestHandler();
+	
+	public ServiceRequestTask(Socket sock) {
+		this.sock = sock;
+	}
+
+	@Override
+	public void run() {
+		requestHandler.handleRequest(sock);
+	}
+
+}
+public class Server {
+
+	public static void main(String[] args) throws Exception {
+		
+		ServerSocket serSock = new ServerSocket(8000);
+		ExecutorService executor = Executors.newFixedThreadPool(5);
+		
+		while (true) {
+			System.out.println(&quot;Waiting for client...&quot;);
+			Socket sock = serSock.accept();
+			
+			System.out.println(&quot;Task submitted&quot;);
+			executor.submit(new ServiceRequestTask(sock));
+		}	
+	}
+}
+
+</code></pre>
+<p>BIO problem:<br>
+blocking ServerSocket.accept()<br>
+blocking InputStream.read(), outputStream.write()<br>
+cannot handle multiple Stream I/O in same thread</p>
+<p>NIO:<br>
+use Channel to replace Stream<br>
+use Selector to monitor Channel status<br>
+process multiple channel I/O in one thread</p>
+<p>Channel:<br>
+FileChannel<br>
+ServerSocketChannel<br>
+SocketChannel</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/alibaba-java-coding-guidelines/">
+              <h3 class="post-title">
+                下一篇：Alibaba Java Coding Guidelines
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

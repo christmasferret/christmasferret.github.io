@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Java IO stream | Ferret Ninja</title>
+<title>Javascript 4 - ES6 | Ferret Ninja</title>
 <meta name="description" content="Whiskers">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,25 +80,98 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Java IO stream</h2>
+          <h2 class="post-title">Javascript 4 - ES6</h2>
           <div class="post-info post-detail-info">
             <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
             
           </div>
           <div class="post-content">
-            <figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573445636324.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1569816542486.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1569816549973.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1569816555204.png" alt="" loading="lazy"></figure>
+            <figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1588020833158.png" alt="" loading="lazy"></figure>
+<p><strong>let/const block scope</strong></p>
+<pre><code>let arr = [1,2,3,4]
+for (let i = 0; i &lt; arr.length; i++) {
+}
+console.log(i); // error
+
+let arr = [1,2,3,4]
+for (var i = 0; i &lt; arr.length; i++) {
+}
+console.log(i); // 4
+</code></pre>
+<p><strong>Hoisting</strong></p>
+<pre><code>console.log(foo);
+var foo = 1;
+</code></pre>
+<p><strong>Arrow function</strong></p>
+<p>Arrow function no this, cannot be constructor, no prototype</p>
+<pre><code>// 函数声明
+function test() {}
+// 函数表达式
+const test = function() {}
+// 箭头函数
+const test = () =&gt; {}
+
+var obj = {
+	commonFn : function() {
+		console.log(this);
+	},
+	arrowFn : () =&gt; {
+		console.log(this);
+	}
+}
+
+obj.commonFn();
+obj.arrowFn();
+VM372:3 {commonFn: ƒ, arrowFn: ƒ}
+VM372:6 Window {parent: Window, opener: null, top: Window, length: 2, frames: Window, …}
+</code></pre>
+<p><strong>Template string</strong></p>
+<pre><code>let getName = () =&gt; {
+    return 'test';
+}
+let str = `
+&lt;div&gt;
+ &lt;h1 class = &quot;title&quot;&gt;${getName()}&lt;/h1&gt;
+&lt;/div&gt;
+`;
+document.querySelector('body').innerHTML = str;
+</code></pre>
+<p><strong>object</strong></p>
+<pre><code>var name = 'test',
+	age = 18;
+var obj = {
+	name: name,
+	age: age,
+	getName: function() {
+		return this.name;
+	},
+	getAge: function() {
+		return this.age;
+	}
+}
+
+let name = 'test',
+	age = 18;
+let obj = {
+	name,
+	age,
+	getName() {
+		return this.name;
+	},
+	['get' + 'Age']() {
+		return this.age;
+	}
+}
+</code></pre>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/javascript-3-http-request/">
               <h3 class="post-title">
-                下一篇：SQL 1 - Optimization and Best Practice
+                下一篇：Javascript 3 - http request
               </h3>
             </a>
           </div>

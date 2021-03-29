@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Java IO stream | Ferret Ninja</title>
+<title>Java JUC (java.util.concurrent) 5 - ThreadPool and ThreadLocal | Ferret Ninja</title>
 <meta name="description" content="Whiskers">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,25 +80,49 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Java IO stream</h2>
+          <h2 class="post-title">Java JUC (java.util.concurrent) 5 - ThreadPool and ThreadLocal</h2>
           <div class="post-info post-detail-info">
             <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
             
           </div>
           <div class="post-content">
-            <figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573445636324.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1569816542486.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1569816549973.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1569816555204.png" alt="" loading="lazy"></figure>
+            <p>Java use Thread Pool pattern to save resources in a multithreaded application, and also to contain the parallelism in certain predefined limits. It controls several re-used threads for executing these tasks.</p>
+<pre><code>ExecutorService executorService = Executors.newCachedThreadPool();
+for (int i = 0; i &lt; 10; i++) {
+		final int index = i;
+		executorService.execute(new Runnable() {
+				@Override
+				public void run() {
+						log.info(&quot;task:{}&quot;, index);
+				}
+		});
+}
+executorService.shutdown();
+</code></pre>
+<p>There are several pre-defined threadpool for various scenarios.</p>
+<pre><code>ExecutorService executorService = Executors.newFixedThreadPool(3);
+ExecutorService executorService = Executors.newSingleThreadExecutor();
+ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+</code></pre>
+<p><strong>newFixedThreadPool = ThreadPoolExecutor with default</strong></p>
+<pre><code> public static ExecutorService newFixedThreadPool(int nThreads) {
+    return new ThreadPoolExecutor(nThreads, nThreads,
+                                  0L, TimeUnit.MILLISECONDS,
+                                  new LinkedBlockingQueue&lt;Runnable&gt;());
+}
+</code></pre>
+<p>The TheadLocal construct allows us to store data that will be accessible only by a specific thread.</p>
+<pre><code>private final static ThreadLocal&lt;Long&gt; requestHolder = new ThreadLocal&lt;&gt;();
+</code></pre>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-4-lock/">
               <h3 class="post-title">
-                下一篇：SQL 1 - Optimization and Best Practice
+                下一篇：Java JUC (java.util.concurrent) 4 - Lock
               </h3>
             </a>
           </div>

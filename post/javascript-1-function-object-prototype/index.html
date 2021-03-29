@@ -1,0 +1,425 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Javascript 1 - function, object, prototype | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Javascript 1 - function, object, prototype</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p><strong>Function definition</strong></p>
+<pre><code>//函数声明式定义
+function foo(num1,num2){
+    return num1 + num2;
+}
+//函数表达式定义
+var foo = function(num1,num2){
+    return num1 + num2;
+};
+//使用Function构造函数定义
+var foo = new Function(&quot;num1&quot;,&quot;num2&quot;,&quot;return num1 + num2&quot;);
+//实际上创建一个Function实例并不一定要赋值给具体的指针，可以直接执行
+(function(x,y){return x+y})(1,2);
+//之所以用圆括号把function(){}括起来是因为js解释器会将function解释为函数声明，而函数声明不能直接跟着(x,y)，我们需要将其转换为函数表达式。
+//(1,2)表示要传递跟函数的参数。
+
+</code></pre>
+<p><strong>IIFE</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1590531678788.png" alt="" loading="lazy"></p>
+<p>An IIFE (Immediately Invoked Function Expression) is a JavaScript function that runs as soon as it is defined. (function () { statements })();.</p>
+<p>In jQuery, the fn property is just an alias to the prototype property. jQuery identifier (or $) is just a constructor function.</p>
+<pre><code>function Test() {
+  this.a = 'a';
+}
+Test.prototype.b = 'b';
+
+var test = new Test(); 
+test.a; // &quot;a&quot;, own property
+test.b; // &quot;b&quot;, inherited property
+
+(function() {
+  var foo = function(arg) { // core constructor
+    // ensure to use the `new` operator
+    if (!(this instanceof foo))
+      return new foo(arg);
+    // store an argument for this example
+    this.myArg = arg;
+    //..
+  };
+
+  // create `fn` alias to `prototype` property
+  foo.fn = foo.prototype = {
+    init: function () {/*...*/}
+    //...
+  };
+
+  // expose the library
+  window.foo = foo;
+})();
+
+// Extension:
+
+foo.fn.myPlugin = function () {
+  alert(this.myArg);
+  return this; // return `this` for chainability
+};
+
+foo(&quot;bar&quot;).myPlugin(); // alerts &quot;bar&quot;
+</code></pre>
+<p>Before ES6, to avoid global method name conflicts, add method to a object. After ES6, use commonJS.</p>
+<pre><code>// bad
+let find = () =&gt; {};
+let remove = () =&gt; {};
+
+// good
+$.fn.find = () =&gt; {};
+$.fn.remove = () =&gt; {};
+
+// good
+(function($) {
+    let find = () =&gt; {};
+    let remove = () =&gt; {};
+    $.fn.find = find;
+    $.fn.remove = remove;
+}(jQuery))
+</code></pre>
+<p><strong>函数作为构造函数进行调用，this指向new出的那个对象</strong></p>
+<pre><code>color = 'red';
+var o = {color: 'blue'};
+function sayColor() {
+    console.log(this.color);
+}
+sayColor(); //red
+sayColor.call(this); //red
+sayColor.call(o); //blue
+
+&lt;script&gt; 
+var x = 0;
+function test(){
+    this.x = 1;
+}
+var obj = new test();
+console.log(obj.x);    //1（说明this指向obj）
+&lt;/script&gt;
+
+</code></pre>
+<p><strong>JavaScript has no overload</strong></p>
+<pre><code>var sum(){
+    return arguments[0] + arguments[1];    //通过arguments对象执行内部操作
+}
+console.log(sum(1, 2));    //3
+
+function add(num1, num2){
+    return num1 + num2;
+}
+function add(value){
+    return value + 100;
+}
+console.log(add(1, 2));    //101
+</code></pre>
+<p><strong>instance.<strong>proto</strong> === constructor.prototype</strong></p>
+<pre><code>var 对象 = new 函数()
+对象.__proto__ === 对象的构造函数.prototype
+
+</code></pre>
+<p>constructor1.prototype = instance2<br>
+鉴于上述游戏规则生效,如果试图引用constructor1构造的实例instance1的某个属性p1:<br>
+1).首先会在instance1内部属性中找一遍;<br>
+2).接着会在instance1.<strong>proto</strong>(constructor1.prototype)中找一遍,而constructor1.prototype 实际上是instance2, 也就是说在instance2中寻找该属性p1;<br>
+3).如果instance2中还是没有,此时程序不会灰心,它会继续在instance2.<strong>proto</strong>(constructor2.prototype)中寻找...直至Object的原型对象</p>
+<p>搜索轨迹: instance1--&gt; instance2 --&gt; constructor2.prototype…--&gt;Object.prototype</p>
+<pre><code>
+function Father(){
+	this.property = true;
+}
+Father.prototype.getFatherValue = function(){
+	return this.property;
+}
+function Son(){
+	this.sonProperty = false;
+}
+//继承 Father
+Son.prototype = new Father();//Son.prototype被重写,导致Son.prototype.constructor也一同被重写
+Son.prototype.getSonVaule = function(){
+	return this.sonProperty;
+}
+var instance = new Son();
+alert(instance.getFatherValue());//true
+ 
+alert(instance instanceof Object);//true
+alert(instance instanceof Father);//true
+alert(instance instanceof Son);//true
+alert(Object.prototype.isPrototypeOf(instance));//true
+alert(Father.prototype.isPrototypeOf(instance));//true
+alert(Son.prototype.isPrototypeOf(instance));//true
+</code></pre>
+<p><strong>New</strong><br>
+第一行，我们创建了一个空对象obj;<br>
+第二行，我们将这个空对象的__proto__成员指向了F函数对象prototype成员对象;<br>
+第三行，我们将F函数对象的this指针替换成obj，然后再调用F函数.</p>
+<pre><code>var obj  = {};
+obj.__proto__ = F.prototype;
+F.call(obj);
+</code></pre>
+<p>Another way:<br>
+subClass.prototype = superClass.prototype;//直接指向超类型prototype</p>
+<pre><code>function Person() {
+
+}
+
+var person = new Person();
+
+console.log(person.__proto__ == Person.prototype) // true
+console.log(Person.prototype.constructor == Person) // true
+// 顺便学习一个ES5的方法,可以获得对象的原型
+console.log(Object.getPrototypeOf(person) === Person.prototype) // true
+
+console.log(person.constructor === Person); // true
+</code></pre>
+<p>当获取 person.constructor 时，其实 person 中并没有 constructor 属性,当不能读取到constructor 属性时，会从 person 的原型也就是 Person.prototype 中读取，正好原型中有该属性，所以：person.constructor === Person.prototype.constructor<br>
+<img src="https://blog.ferretninja.com/post-images/1586643507831.png" alt="" loading="lazy"></p>
+<p><strong>function vs object</strong></p>
+<p>function is a object with prototype</p>
+<pre><code>var o1 = {}; 
+var o2 =new Object();
+var o3 = new f1();
+
+function f1(){}; 
+var f2 = function(){};
+var f3 = new Function('str','console.log(str)');
+
+console.log(typeof Object); //function 
+console.log(typeof Function); //function  
+
+console.log(typeof f1); //function 
+console.log(typeof f2); //function 
+console.log(typeof f3); //function   
+
+console.log(typeof o1); //object 
+console.log(typeof o2); //object 
+console.log(typeof o3); //object
+</code></pre>
+<p><strong>prototype</strong></p>
+<pre><code>function Person() {}
+Person.prototype = {
+    name:  'Zaxlct',
+    age: 28,
+    job: 'Software Engineer',
+    sayName: function() {
+        console.log(this.name);
+    }
+}
+
+var person1 = new Person();
+person1.sayName(); // 'Zaxlct'
+var person2 = new Person();
+person2.sayName(); // 'Zaxlct'
+console.log(person1.sayName == person2.sayName); //true
+</code></pre>
+<p>问：为什么 [1, 2, 3].map(parseInt) 返回 [1,NaN,NaN]?<br>
+答：parseInt 函数的第二个参数表示要解析的数字的基数。该值介于 2 ~ 36 之间。map will pass both value and index.</p>
+<p>... for shallow copy<br>
+var a = { name: 'ygy', age: 20 };<br>
+var b = { ...a };</p>
+<p>use &amp;&amp; to replace if<br>
+// old<br>
+if (callback) callback();<br>
+// new<br>
+callback &amp;&amp; callback();</p>
+<p>// use &amp;&amp; to get value<br>
+var obj = {<br>
+info: {<br>
+name: 'ygy'<br>
+}<br>
+}<br>
+obj.info &amp;&amp; obj.info.name; // 'ygy'</p>
+<p>|| to get default value<br>
+var b = a || 10; // 如果a是空值，那么b就是10</p>
+<p><strong>This</strong></p>
+<pre><code>var a = 1;
+var obj1 = {
+    a:2,
+    fn:function(){
+        console.log(this.a);
+    }
+}
+var fn1 = obj1.fn;
+var fn1bind = fn1.bind(obj1);
+fn1();//1    //window
+obj1.fn();//2   //object 
+fn1bind();//2
+fn1.call(obj1);//2
+fn1.apply(obj1);//2
+
+document.addEventListener('click', function(e){
+    console.log(this);  //document
+    setTimeout(function(){
+        console.log(this); //window
+    }, 200);
+}, false); 
+
+//constructor的this都指向实例
+function Person(name,age){
+    this.name = name;
+    this.age = age;
+    this.sayAge = function(){
+        console.log(this.age);
+    }
+}
+ 
+var dot = new Person('Dot',2);
+dot.sayAge();//2  
+
+</code></pre>
+<p>Use closure to make variable private</p>
+<pre><code>// 闭包版
+const Student = function(age, sex) {
+    let _age = age, _sex = sex;
+    const setAge = (newAge) =&gt; {
+        _age = 20;
+    }
+    const getAge = () =&gt; {
+        return _age;
+    }
+    return {
+        setAge,
+        getAge
+    }
+}
+const student = new Student(20, 'female');
+console.log(student._age); // undefined
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/data-metrics/">
+              <h3 class="post-title">
+                下一篇：Data Metrics
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Java JUC (java.util.concurrent) 3 - Synchronized and Synchronized Container | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Java JUC (java.util.concurrent) 3 - Synchronized and Synchronized Container</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p><code>Synchronized</code> keyword bounds monitor to an object and has made concurrency programing simple. It can be added to method or object to achieve object level synchronization. It can also modify static method or class for class level synchronization.</p>
+<pre><code>// 修饰一个代码块
+public void test1(int j) {
+		synchronized (this) {
+				for (int i = 0; i &lt; 10; i++) {
+						log.info(&quot;test1 {} - {}&quot;, j, i);
+				}
+		}
+}
+
+// 修饰一个方法
+public synchronized void test2(int j) {
+		for (int i = 0; i &lt; 10; i++) {
+				log.info(&quot;test2 {} - {}&quot;, j, i);
+		}
+}
+
+public static void main(String[] args) {
+		SynchronizedExample1 example1 = new SynchronizedExample1();
+		SynchronizedExample1 example2 = new SynchronizedExample1();
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		executorService.execute(() -&gt; {
+				example1.test2(1);
+		});
+		executorService.execute(() -&gt; {
+				example2.test2(2);
+		});
+}
+</code></pre>
+<pre><code>// 修饰一个类
+public static void test1(int j) {
+		synchronized (SynchronizedExample2.class) {
+				for (int i = 0; i &lt; 10; i++) {
+						log.info(&quot;test1 {} - {}&quot;, j, i);
+				}
+		}
+}
+
+// 修饰一个静态方法
+public static synchronized void test2(int j) {
+		for (int i = 0; i &lt; 10; i++) {
+				log.info(&quot;test2 {} - {}&quot;, j, i);
+		}
+}
+
+public static void main(String[] args) {
+		SynchronizedExample2 example1 = new SynchronizedExample2();
+		SynchronizedExample2 example2 = new SynchronizedExample2();
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		executorService.execute(() -&gt; {
+				example1.test1(1);
+		});
+		executorService.execute(() -&gt; {
+				example2.test1(2);
+		});
+}
+</code></pre>
+<p>Java provide several thread safe synchronized containers out of the box.</p>
+<pre><code>private static List&lt;Integer&gt; list = Collections.synchronizedList(Lists.newArrayList());
+private static Set&lt;Integer&gt; set = Collections.synchronizedSet(Sets.newHashSet());
+private static Map&lt;Integer, Integer&gt; map = Collections.synchronizedMap(new HashMap&lt;&gt;());
+private static Map&lt;Integer, Integer&gt; map = new Hashtable&lt;&gt;();
+private static List&lt;Integer&gt; list = new Vector&lt;&gt;();
+</code></pre>
+<p>Java and Guava also provide several immutable containers out of the box.</p>
+<pre><code>private static Map&lt;Integer, Integer&gt; map = Maps.newHashMap();
+static {
+		map.put(1, 2);
+		map.put(3, 4);
+		map.put(5, 6);
+		map = Collections.unmodifiableMap(map);
+}
+</code></pre>
+<pre><code>import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+private final static ImmutableList&lt;Integer&gt; list = ImmutableList.of(1, 2, 3);
+private final static ImmutableSet set = ImmutableSet.copyOf(list);
+private final static ImmutableMap&lt;Integer, Integer&gt; map = ImmutableMap.of(1, 2, 3, 4);
+private final static ImmutableMap&lt;Integer, Integer&gt; map2 = ImmutableMap.&lt;Integer, Integer&gt;builder()
+				.put(1, 2).put(3, 4).put(5, 6).build();
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-2-atomic-variables-and-concurrent-collection/">
+              <h3 class="post-title">
+                下一篇：Java JUC (java.util.concurrent) 2 - Atomic Variables and Concurrent Collection
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

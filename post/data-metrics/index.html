@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Data Metrics | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Data Metrics</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p>meaningful metrics -&gt; daily sessions per user<br>
+time spent/session (the user is idle on the page)<br>
+reactions, comments and shares in newfeed content. Reactions would include: likes, hearts, sad face, angry face etc.<br>
+average number of interactions a user has per visit to the Newsfeed.<br>
+click through rate for ads; this would help us understand whether ads are relevant</p>
+<p>Grow business -&gt; user retention or user acquisition<br>
+user retention -&gt; increasing user engagement -&gt; metrics with time threshold ( Average likes per user per day)</p>
+<p>Improve product -&gt; feature demand that users already doing something despite a complicated user flow. Simplifying the flow will most likely improve your target metrics</p>
+<p>optimize a long term metric like retention rate or lifetime value -&gt; find a short term metric that can predict the long term one</p>
+<p>pick variables -&gt; pick a combination of user characteristics (age, sex, country, etc.) and behavioral ones (device, they came from ads/SEO/direct link, session time, etc.)</p>
+<p>Engagement on FB -&gt; proportion of users who take at least one action per day<br>
+response rate on Quora -&gt; percentage of questions that get at least one response with at least 3 up-votes within a day<br>
+Airbnb -&gt; if you want to go to a given place, you can do it<br>
+uber new UI -&gt; AB test in two comparable markets (To identify required sample size, choose power, significance level, minimum difference between test and control, and std deviation)</p>
+<p>novelty effect -&gt; control for this by subsetting by drivers for which it is the first experience. Look at test results between new users in the control group vs new users in test group</p>
+<p>A/B test win but cost of change -&gt; Human labor costs (engineering time to make the change), opportunity-cost (not working on something else with a possibly higher expected value), Risk of bugs</p>
+<p>missing value in a varibale (Uber trips without rider review) -&gt; missing value is important information. predict missing value or use -1 as missing value</p>
+<p>e-commerce demand -&gt; going to a site and searching for &quot;jeans&quot;,  ads click-through-rate (CTR)</p>
+<p>e-commerce supply -&gt; # conversions/# searches only considering people who used filters in their search. Or people whose session time is above a given value.</p>
+<p>site funnel -&gt; home page, search results, click on item, buy it</p>
+<p>predict Y (Instagram usage), how to find out whether X (here mobile Operative System - OS ) is a discriminant variable or not -&gt; 1. build a decision tree using user-related variables + OS to predict Instagram usage. 2.  building two models: one including OS and one without. 3. generate simulated datasets where you adjust the distributions of all other variables. So that now you have the same age, country, etc, distribution for both iOS and Android</p>
+<p>subscription retention -&gt;  percentage of users who don't unsubscribe within the first 12 months too long -&gt; proportion of people who unsubscribed or never used my product within the first week / three weeks</p>
+<p>user demographic vs behavioral characteristics -&gt; 1. Looking at a user browsing history gives information about what a user is interested in buying regardless of whether it is a gift or for herself. 2. Timing Browsing data tells the moment in which a certain user is thinking about buying a product.</p>
+<p>acquiring new users -&gt; new sign ups per day from users who send at least 1 message within the first 2 days<br>
+retain current users -&gt; engagement -&gt; average messages per day per user</p>
+<p>new feature -&gt; find something that people are already doing, but in a complicated way requiring multiple steps. An example of this could be identifying that the last message of a conversation is about calling Uber, ordering food, or using any kind of other app. And a possible next step could be to integrate that functionality from within WhatsApp, kind of like Google Map can be called from inside WhatsApp.</p>
+<p>user lifetime value -&gt; pay for a click -&gt; revenue coming from that user within the first year -&gt; using short term data to predict -&gt; find features user location, user device, operative system, type of browser, source</p>
+<p>recommendation -&gt; shared connection, shared cluster (work friends, high school friends, university friends)</p>
+<p>predict fraud -&gt; Device ID, IP address, Ratings, Price, pictures, description, Browsing behavior that led to the seller creating the account.</p>
+<p>A/B test drawbacks -&gt; never be as similar markets, no full independence. Check one metric that's not supposed to be affected by your test. Make sure that during the test keeps behaving similarly for both markets</p>
+<p>customer service performance measurement -&gt; average user lifetime value (1 year) -&gt; user bought within 1 year after the ticket -&gt; Build a model to predict -&gt; response time and user feedback feature</p>
+<p>whether to add new feature -&gt; 1. good for site? engagement 2. demand. already doing it. 3. simply current flow.</p>
+<p>Two step authentication -&gt; ROC threshold -&gt; cost of false negatives (actual frauds happening) and value of true negatives (value of a legitimate user) -&gt; A/B testing, is the number of bad actors that two-step is blocking worth the number of good actors that the site is losing since it is harder to log-in.</p>
+<p>why a metric is down? -&gt; year over year metrics -&gt; numerator and denominator -&gt; if numberator down -&gt; new user are not liking as much as the usual ones or number of users is normal and number of likes suddenly down. -&gt; if new users are less engaged, find feature to predict &quot;up week&quot; new user and previous week old user -&gt; way more users from China this week. This might depend on a marketing campaign there that got a huge number of users, but these users are less engaged, as often when users come from sudden marketing campaigns. Or that all these new users come from very few different IP addresses. That would mean that all these users are probably fake accounts.</p>
+<p>30 tests and 1 test (20 data segment countries and 1 segment country win) wins with p-value 0.04 -&gt; Bonferroni correction, simply dividing 0.05 by the number of tests and this becomes the new threshold for significance. -&gt; make the change only if test is better and p-value were less than 0.05/30.</p>
+<p>Test wins by 5%, Will that metric actually go up by ~5%, more, or less? -&gt;  Control group numbers are likely inflated and it is likely that, if applied to all users, this change will lead to a larger gain than 5% vs old UI.</p>
+<p>cost of a false positive is way higher than false negative -&gt; recruiting process</p>
+<p>cost of a false positive is way lower than false negative -&gt; cancer detection</p>
+<p>how long I should run an A/B test? -&gt; 1. Significance level, usually 0.05. 2. Power, usually 0.8. 3. Expected standard deviation of the change in the metric. 4. Minimum effect size you are interested in detecting via your test. If the final number is less than 14 days, you still want to run the test for 14 days in order to reliably capture weekly patterns.</p>
+<p>We found a drop in pictures uploads. How to find out the reason?  segment users by various features, such as browser, device, country, etc. Then you assume that you discovered that one segment dropped to zero. So you say it is likely a bug and, finally, explain where the bug could be.</p>
+<p>Isolate the impact of the algorithm and the UI change -&gt; Version 1 is the old version. Version 2 is the site with new Feature and machine learning model. Version 3 is the site with the People You May Know Feature, but suggestions are random or history-based model.</p>
+<p>detect fake information school -&gt; 1. email validation negatively affect legitimate users 2. user info from their profile + how they interacted with LinkedIn. (how many connection requests they sent, how they were distributed over time, acceptance rate, whether they visited other people profiles before sending the connection request.) build clusters.</p>
+<p>small dataset -&gt; 1. cross-validate 2. bootstrapping your original dataset. bagging</p>
+<p>predict job change -&gt; monthly -&gt; user profile data, data about when you took the snapshot, user behavior on the site, and some external data about job demand.</p>
+<p>response time of an inquiry at Airbnb -&gt; percentage of responses within 16 hrs is better than average response time considering only responses within 16 hrs because percentage consider all the population including people who never response.</p>
+<p>re-run the same A/B test -&gt; the underlying distribution of users has changed. early adopter vs new users</p>
+<p>identify clickbait -&gt; high than usual CTR + medium term (say 2 weeks) change in CTR</p>
+<p>revenue -&gt; 1. Increase CTR by better targeting. 2. Increase number of page views. 3. maximizing probability of conversion or working with the advertisers to improve the user flow after people click on an ad.</p>
+<p>H0 mu = 20<br>
+Ha mu &gt;= 20</p>
+<p>A/B test power-&gt; p(reject H0 | H0 false) = 1 - p(not reject H0 | H0 false) = 1 - Type II error</p>
+<p>A/B test alpha 0.05 -&gt; Significance level. p-value lower than significance level reject null hypothesis</p>
+<p>A/B test p-value -&gt; take sample mean = 25, P(mu &gt;= sample mean| H0 true) &lt; 0.05 reject null hypothesis</p>
+<p>Uber:<br>
+Monthly active platform consumer<br>
+number of unique consumers who completed a ride or received an eats on platform in a given month<br>
+Trips:<br>
+number of completed ride or uber meal deliveries in a period<br>
+Gross bookings:<br>
+total dollar value</p>
+<p>Lyft:<br>
+Active Rider<br>
+Revenue per active rider</p>
+<p>Netflix:<br>
+Paid membership subscription<br>
+average avenue per user</p>
+<p>Pinterest:<br>
+Mau<br>
+authenticated user who visit at least once during 30 days<br>
+ARPU<br>
+total revenue divided by average number of mau in a period</p>
+<p>Facebook:<br>
+DAU:<br>
+A logged in user who visit at least one of the family product once on a given day<br>
+MauL<br>
+A logged in user who visit at least one of the family product once in the last 30 days<br>
+ARPU</p>
+<p>Expedia:<br>
+Room night growth<br>
+gross booking: total retail value of transaction booked<br>
+revenue per room night</p>
+<p>Spotify:<br>
+Total monthly active user<br>
+premium subscribers<br>
+ad-supported MAUs<br>
+ARPU</p>
+<p>Twitter:<br>
+Monetizable DAU<br>
+Logged in user that are able to show ads</p>
+<p>Snapchat:<br>
+ARPU<br>
+DAU registered user who opens application at least once during 24 hours</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/dau-and-retention-analysis/">
+              <h3 class="post-title">
+                下一篇：DAU and retention analysis
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

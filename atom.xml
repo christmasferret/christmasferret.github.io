@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.ferretninja.com</id>
     <title>Ferret Ninja</title>
-    <updated>2021-03-29T22:23:15.654Z</updated>
+    <updated>2021-03-29T22:42:09.850Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.ferretninja.com"/>
     <link rel="self" href="https://blog.ferretninja.com/atom.xml"/>
@@ -11,853 +11,1204 @@
     <icon>https://blog.ferretninja.com/favicon.ico</icon>
     <rights>All rights reserved 2021, Ferret Ninja</rights>
     <entry>
-        <title type="html"><![CDATA[SQL 3 - Lock]]></title>
-        <id>https://blog.ferretninja.com/post/sql-3-lock/</id>
-        <link href="https://blog.ferretninja.com/post/sql-3-lock/">
+        <title type="html"><![CDATA[Javascript 5 - DOM]]></title>
+        <id>https://blog.ferretninja.com/post/javascript-5-dom/</id>
+        <link href="https://blog.ferretninja.com/post/javascript-5-dom/">
         </link>
-        <updated>2021-03-29T09:22:33.000Z</updated>
-        <content type="html"><![CDATA[<pre><code>FLUSH TABLES WITH READ LOCK;
-UNLOCK TABLES;
-</code></pre>
-<p>lock all tables. all tables read-only. current session write fail</p>
-<p>lock tables t14 write;<br>
-current session can read and write, other session read/write will block.</p>
-<p>lock tables t14 read;<br>
-all session can read. current session write will fail. other session write will block.</p>
-<p>metadata locking<br>
-avoid long transaction and avoid ddl during database busy hour</p>
-<p>InnoDB support transaction and row locking</p>
-<p>S read row lock<br>
-select * from table where ... lock in share mode;<br>
-X write row lock<br>
-select * from table whre ... for update;</p>
-<p>InnoBD locks:<br>
-record lock on index keys<br>
-gap lock between index keys<br>
-next-key lock : record lock + gap lock</p>
-<p>if select doesn't use index, innoDB will lock table.</p>
-<p>Transactions level:<br>
-Read uncommited. dirty read<br>
-read commited. phantom read<br>
-repeatable read. mysql default.<br>
-serializable.</p>
-<p>for RC level,<br>
-if select without index, table lock<br>
-if unique index, lock matched index and corresponding clustered index<br>
-if non unique index, lock matched index and corresponding clustered index</p>
-<p>for RR level<br>
-if non unique index, GAP lock will lock the gap around matched index.<br>
-if no index, table lock and gap lock locks all gaps.<br>
-if unique index, same as RC level.</p>
-<p><strong>Dead Lock</strong></p>
-<p>to fix dead lock<br>
-1 innodb_deadlock_detect on to return error<br>
-2 innodb_lock_wait_timeout to time out</p>
-<p>Scenario<br>
-different session lock different rows (same or different table) in different order.<br>
-RR level, different session lock rows and write the row locked by each other.</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Java TCP / UDP / HTTP / BIO / NIO]]></title>
-        <id>https://blog.ferretninja.com/post/java-tcp-udp-http-bio-nio/</id>
-        <link href="https://blog.ferretninja.com/post/java-tcp-udp-http-bio-nio/">
-        </link>
-        <updated>2021-03-29T09:22:19.000Z</updated>
-        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1574474560226.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1574474564715.png" alt="" loading="lazy"></figure>
-<pre><code>class QuoteService {
-	
-	Map&lt;String, String&gt; productInfo = new HashMap&lt;String,String&gt;();
-	
-	public QuoteService() {
-		productInfo.put(&quot;a&quot;, &quot;100&quot;);
-		productInfo.put(&quot;b&quot;, &quot;200&quot;);
-	}
-	
-	public String getQuote(String product) {
-		return productInfo.get(product);
-	}
-}
+        <updated>2021-03-29T09:41:41.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1590533131285.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1590533375585.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1590533753402.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1590536478146.png" alt="" loading="lazy"></figure>
+<p><img src="https://blog.ferretninja.com/post-images/1590546015133.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1590551341532.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="5"><img src="https://blog.ferretninja.com/post-images/1590551353706.png" alt="" loading="lazy"></figure>
+<p><img src="https://blog.ferretninja.com/post-images/1590551365472.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1590551374368.png" alt="" loading="lazy"></p>
+<p>position: absolute;<br>
+An element with position: absolute; is positioned relative to the nearest positioned ancestor</p>
+<p>position: relative;<br>
+An element with position: relative; is positioned relative to its normal position.</p>
+<pre><code>&lt;div id=&quot;box1&quot;&gt;&lt;!--参照定位的元素--&gt;
+    &lt;div id=&quot;box2&quot;&gt;相对参照元素进行定位&lt;/div&gt;&lt;!--相对定位元素--&gt;
+&lt;/div&gt;
 
-class ServiceThread extends Thread {
-
-	Socket sock;
-	
-	QuoteService quoteService = new QuoteService();
-	
-	public ServiceThread(Socket sock) {
-		this.sock = sock;
-	}
-	
-	public void run() {
-		try {
-			InputStream in = sock.getInputStream();
-			OutputStream out = sock.getOutputStream();
-			
-			System.out.println(&quot;Waiting for product information from the client.&quot;);
-			
-			byte request[] = new byte[100];
-			in.read(request);
-			
-			String product = new String(request).trim();
-			
-			System.out.println(&quot;Received product name - &quot; + product );
-			
-			String price = quoteService.getQuote(product);
-			if (price == null) {
-				price = &quot;Invalid product&quot;;
-			}
-			
-			out.write(price.getBytes());
-			
-			System.out.println(&quot;Response sent...&quot;);
-			
-			sock.close();
-		} catch(Exception e) {}
-	}
-	
-}
-
-public class Server {
-
-	public static void main(String[] args) throws IOException {
-		
-		ServerSocket serSocket = new ServerSocket(9999);
-		
-		System.out.println(&quot;Started listening to 9999&quot;);
-		
-		while (true) {
-			
-			System.out.println(&quot;Waiting for client..&quot;);
-			Socket sock = serSocket.accept();
-			
-			// create a new thread to service client.
-			System.out.println(&quot;Starting a thread which will service the client&quot;);
-			new ServiceThread(sock).start();
-		}
-		
-
-	}
-
-}
-public class Client {
-
-	public static void main(String[] args) throws UnknownHostException, IOException {
-
-		System.out.println(&quot;Connecting to the server...&quot;);
-		Socket sock = new Socket(&quot;127.0.0.1&quot;, 9999);
-		System.out.println(&quot;Connected to the server..&quot;);
-
-		System.out.println(&quot;Enter product name : &quot;);
-		Scanner scan = new Scanner(System.in);
-		String product = scan.nextLine();
-		
-		InputStream in = sock.getInputStream();
-		OutputStream out = sock.getOutputStream();
-		
-		System.out.println(&quot;Sending product information..&quot;);
-		out.write(product.getBytes());
-		
-		byte [] response = new byte[100];
-		in.read(response);
-		
-		String strResponse = new String(response).trim();
-		
-		System.out.println(&quot;Obtained response is - &quot; + strResponse);
-		
-		sock.close();
-		
-	}
-
+#box1{
+    width:200px;
+    height:200px;
+    position:relative;        
+} 
+#box2{
+    position:absolute;
+    top:20px;
+    left:30px;         
 }
 </code></pre>
-<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1574474572857.png" alt="" loading="lazy"></figure>
-<pre><code>public class Server {
-
-	public static void main(String[] args) throws IOException {
-		
-		DatagramSocket dgSock = new DatagramSocket(8989);
-		
-		DatagramPacket packet = new DatagramPacket(new byte[1000], 1000);
-		
-		dgSock.receive(packet);
-		
-		System.out.println( new String(packet.getData()) );
-		System.out.println(&quot;Obtained from IP - &quot; + packet.getAddress() );
-		System.out.println(&quot;Obtained from Port - &quot; + packet.getPort() );
-		
-		dgSock.close();
-		
-	}
-
-}
-
-public class Client {
-
-	public static void main(String[] args) throws IOException {
-		
-		DatagramSocket dgSock = new DatagramSocket();
-		
-		String message = &quot;Hello from so and so...&quot;;
-		byte [] data = message.getBytes();
-		
-		DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getLocalHost(), 8989);
-		
-		dgSock.send(packet);
-		
-		dgSock.close();
-			
-	}
-
-}
-</code></pre>
-<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1574474578338.png" alt="" loading="lazy"></figure>
-<pre><code>public class RequestHandler {
-	
-	ResourceLoader resourceLoader = new ResourceLoader();
-	
-	public void handleRequest(Socket sock) {
-		OutputStream out = null;
-
-		try {
-			out = sock.getOutputStream();
-			String request = HttpUtils.getRequest(sock);
-
-			String uri = HttpUtils.getRequestUri(request);
-			System.out.println(&quot;Received request for - &quot; + uri);
-
-			InputStream in = resourceLoader.getResource(uri);
-
-			if (in == null) {
-				System.out.println(&quot;Sending resource not found &quot;);
-				HttpResponseUtils.sendResourceNotFound(out);
-				return;
-			}
-
-			System.out.println(&quot;Sending response &quot;);
-			HttpResponseUtils.sendSuccessResponse(in, out);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (out != null) {
-				try {
-					System.out.println(&quot;Sending internal error &quot;);
-					HttpResponseUtils.sendInternalError(out);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
-		} finally {
-			try {
-				sock.close();
-			} catch (Exception e) {
-			}
-		}
-	}
-}
-public class ServiceRequestTask implements Runnable {
-	
-	Socket sock;
-	RequestHandler requestHandler = new RequestHandler();
-	
-	public ServiceRequestTask(Socket sock) {
-		this.sock = sock;
-	}
-
-	@Override
-	public void run() {
-		requestHandler.handleRequest(sock);
-	}
-
-}
-public class Server {
-
-	public static void main(String[] args) throws Exception {
-		
-		ServerSocket serSock = new ServerSocket(8000);
-		ExecutorService executor = Executors.newFixedThreadPool(5);
-		
-		while (true) {
-			System.out.println(&quot;Waiting for client...&quot;);
-			Socket sock = serSock.accept();
-			
-			System.out.println(&quot;Task submitted&quot;);
-			executor.submit(new ServiceRequestTask(sock));
-		}	
-	}
-}
-
-</code></pre>
-<p>BIO problem:<br>
-blocking ServerSocket.accept()<br>
-blocking InputStream.read(), outputStream.write()<br>
-cannot handle multiple Stream I/O in same thread</p>
-<p>NIO:<br>
-use Channel to replace Stream<br>
-use Selector to monitor Channel status<br>
-process multiple channel I/O in one thread</p>
-<p>Channel:<br>
-FileChannel<br>
-ServerSocketChannel<br>
-SocketChannel</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Alibaba Java Coding Guidelines]]></title>
-        <id>https://blog.ferretninja.com/post/alibaba-java-coding-guidelines/</id>
-        <link href="https://blog.ferretninja.com/post/alibaba-java-coding-guidelines/">
-        </link>
-        <updated>2021-03-29T09:21:35.000Z</updated>
-        <content type="html"><![CDATA[<ol>
-<li>Switch add comment to case with no break.</li>
-</ol>
-<pre><code>switch(condition){
-case ABC:
-statements;
-/*程序继续执行直到 DEF 分支*/
-case DEF:
-statements;
-break;
-case XYZ:
-statements;
-break;
-default:
-statements;
-break;
-}
-</code></pre>
-<ol start="2">
-<li>collections to array</li>
-</ol>
-<pre><code>List&lt;String&gt; list = new ArrayList&lt;String&gt;(2);
-list.add(&quot;guan&quot;);
-list.add(&quot;bao&quot;);
-String[] array = new String[list.size()];
-array = list.toArray(array);
-</code></pre>
-<ol start="3">
-<li>
-<p>RuntimeException<br>
-validate data and don't catch runtime exception</p>
-</li>
-<li>
-<p>try catch in transaction<br>
-roll back transaction in catch manually or use spring @Transactional annotation</p>
-</li>
-<li>
-<p>Log</p>
-</li>
-</ol>
-<p>use SLF4J API facade pattern not log4j or logback.</p>
-<pre><code>import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-public class HelloWorld{
-private static final Logger logger =
-    LoggerFactory.getLogger(HelloWorld.class);
- public static void main(String[] args){
- logger.info(&quot;please use SLF4J,rather than logback or log4j&quot;);
- }
-}
-</code></pre>
-<p>log retention 15 days</p>
-<ol start="6">
-<li>Unit test</li>
-</ol>
-<p>use assert not system.out<br>
-test cases don't call each other (use mock) and order independent</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[SQL 2 - Index]]></title>
-        <id>https://blog.ferretninja.com/post/sql-2-index/</id>
-        <link href="https://blog.ferretninja.com/post/sql-2-index/">
-        </link>
-        <updated>2021-03-29T09:18:07.000Z</updated>
-        <content type="html"><![CDATA[<p>B tree<br>
-<img src="https://blog.ferretninja.com/post-images/1570566488064.png" alt="" loading="lazy"><br>
-vs B+ tree<br>
-<img src="https://blog.ferretninja.com/post-images/1570566504268.png" alt="" loading="lazy"></p>
-<p>Auto increment primary key can prevent breaking the B+ tree.<br>
-<img src="https://blog.ferretninja.com/post-images/1571012532447.png" alt="" loading="lazy"></p>
-<p>Clustered index - primary key if exist<br>
-If no primary key, first not-nullable unique index or rowid.<br>
-Only one clustered index and one B+ tree for a table.</p>
-<p>Non-clustered index<br>
-B+ tree leaf node only have index field and primary key<br>
-Search query will find primary key first and then fetch the record, therefore more costly.</p>
-<p><strong>Where to have index</strong></p>
-<ol>
-<li>where clause<br>
-<code>select * from t9_1 where d = 90000;</code></li>
-<li>aggregate function<br>
-<code>select max(d) from t9_1;</code><br>
-<code>select count(*) from t9_1;</code><br>
-because count(*) use non-clustered index (only index and primary key) which is faster than clustered index.</li>
-<li>order by</li>
-<li>use only non-clustered index<br>
-<code>select b,c from t9_1 where b=90000;</code><br>
-use idx_b_c</li>
-<li>Join clause<br>
-turn BNL to NLJ search</li>
-</ol>
-<p><strong>Difference between unique index and non-unique index</strong></p>
-<p>non-clustered non-unique index use change buffer to combine multiple insert.<br>
-Unique index has to load data into memory to check uniqueness.</p>
-<p>Although non-unique index will continue after finding the first matching record, it is highly possible that all matching records are loaded into memory in same page. Therefore, search query for unique index and non-unique index are the same.</p>
-<p><strong>Multi-column indexes</strong><br>
-<code>select * from t11 where a=1 and b=1 and c=1;</code>  use idx_a_b_c<br>
-<code>select * from t11 where c=1 and b=1 and a=1; /* sql2 */</code>  same as first query, order doesn't matter</p>
-<p><code>select * from t11 where a=2 and b in (1,2) and c=2; /* sql3 */</code><br>
-<code>select * from t11 where a=1 and b=2 order by c; /* sql4 */</code><br>
-<code>select * from t11 where a=1 order by b,c; /* sql5 */</code><br>
-use idx_a_b_c</p>
-<p>idx_a_b_c is equivalent to idx_a, idx_a_b, idx_a_b_c.</p>
-<p><code>select * from t11 where a=2 and b in (3,4) order by c; /* sql13 */</code>  will only use idx_a_b<br>
-<code>select * from t11 where b=1 and c=1; /* sql34 */</code> cannot use idx_a_b_c</p>
-<p><strong>Cardinality</strong><br>
-<code>show index from t13;</code><br>
-Cardinality is the estimate of distinct index values. Query will use index of larger cardinality.</p>
-<p>If returned rows number is large, query may use the primary key index to fetch all records. Use force index to force specified index.</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Flash sale website system design]]></title>
-        <id>https://blog.ferretninja.com/post/flash-sale-website-system-design/</id>
-        <link href="https://blog.ferretninja.com/post/flash-sale-website-system-design/">
-        </link>
-        <updated>2021-03-29T09:17:04.000Z</updated>
-        <content type="html"><![CDATA[<p><strong>Multi-level rate limiter</strong></p>
-<ol>
-<li>
-<p>prevent malicious requests<br>
-add verification code<br>
-redirect page after 5 seconds delay<br>
-block ip</p>
-</li>
-<li>
-<p>hardware load-balancing - 2nd layer<br>
-LVS load-balancing - 4th layer<br>
-nginx reverse proxy to multiple tomcat - 7th layer</p>
-</li>
-<li>
-<p>tomcat max thread / max connection<br>
-(io intensive, increase threads, increase throughput<br>
-cpu intensive, decrease threads, increase cpu efficiency)<br>
-message queue<br>
-server cpu/mem monitoring<br>
-RateLimiter</p>
-</li>
-</ol>
-<p><strong>Multi-level cache</strong></p>
-<p>html css javascript in object storage service / CDN<br>
-ajax / axis requests</p>
-<p>cache database requests in memory<br>
-Cache penetration: malicous requests for nonexisting information<br>
-use value = &quot;&quot; to cache malicous requests<br>
-Cache breakdow: hot cache expiration, many request at the same expired cache<br>
-use a thread to monitor cache near expiration and refresh cache<br>
-use longer time for hot cache<br>
-Cache avalanche: many cache expire at the same time<br>
-use redis cluster and use different cache expiration time</p>
-<p>use local guavacache plus remote redis cluster<br>
-use message queue as request buffer</p>
-<p><strong>Fault Tolerance and service degradation</strong></p>
-<p>Spring Cloud Hystrix<br>
-manual shutdown of less important services</p>
-<p><strong>Database cluster</strong></p>
-<p>master dml -&gt; binlog -&gt; slave relay log -&gt; slave dml<br>
-mycat cluster (use HaProxy + Keepalived) to sharding database write/read</p>
-<p><strong>Thread safety</strong></p>
-<p>lock/synchronzed keyword<br>
-AtomicInteger compare and swap</p>
-<p><strong>RateLimiter</strong></p>
-<p>Leaky bucket<br>
-smooth burst<br>
-p drain rate</p>
-<p>Token bucket<br>
-permit burst but bands it<br>
-in any T, rate &lt; b + t * p, b bucket size, p token rate<br>
-long term &lt; p</p>
-<p><strong>JVM Reference</strong></p>
-<p>Strong reference GC when reference = null or method exit<br>
-SoftReference GC when memory not enough before throw OOM<br>
-WeakReference collect whenever GC  system.gc()<br>
-PhantomReference put object in a queue when GC for further analysis</p>
-<p>use SoftReference to make cache, collect to prevent OOM</p>
-<pre><code>class BigValue {
-   ...
-   //模拟大容量对象
-}
-
-public class ReferenceCache {
-    Map&lt;String, SoftReference&lt;BigValue&gt;&gt; caches = new HashMap();
-    //根据id存储缓存对象（缓存对象被装饰在了软引用中）
-    void setCache(String id, BigValue bigValue) {
-        caches.put(id, new SoftReference&lt;BigValue&gt;(bigValue));
+<p>**已知宽高实现盒子水平垂直居中 **</p>
+<pre><code>&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;已知宽高实现盒子水平垂直居中&lt;/title&gt;
+    &lt;style type=&quot;text/css&quot;&gt;
+    .box {
+        border: 1px solid #00ee00;
+        height: 300px;
+        position: relative;
     }
-    //根据id获取缓存对象
-    BigValue getCache(String id) {
-        //根据id，获取缓存对象的软引用
-        SoftReference&lt;BigValue&gt; softRef = caches.get(id);
-        return softRef == null ? null : softRef.get();
+
+    .box1 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -100px 0px 0px -100px;
+        
+        width: 200px;
+        height: 200px;
+        border: 1px solid red;
+    }
+    &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;div class=&quot;box&quot;&gt;
+        &lt;div class=&quot;box1&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+<p>宽高不定实现盒子水平垂直居中</p>
+<pre><code>&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;宽高不定实现盒子水平垂直居中&lt;/title&gt;
+    &lt;style type=&quot;text/css&quot;&gt;
+    .box {
+        border: 1px solid #00ee00;
+        height: 300px;
+        position: relative;
+    }
+
+    .box1 {
+        border: 1px solid red;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;div class=&quot;box&quot;&gt;
+        &lt;div class=&quot;box1&quot;&gt;
+            网网网网网网网网网网网网网网网网网网网网网网
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Javascript 4 - ES6]]></title>
+        <id>https://blog.ferretninja.com/post/javascript-4-es6/</id>
+        <link href="https://blog.ferretninja.com/post/javascript-4-es6/">
+        </link>
+        <updated>2021-03-29T09:41:18.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1588020833158.png" alt="" loading="lazy"></figure>
+<p><strong>let/const block scope</strong></p>
+<pre><code>let arr = [1,2,3,4]
+for (let i = 0; i &lt; arr.length; i++) {
+}
+console.log(i); // error
+
+let arr = [1,2,3,4]
+for (var i = 0; i &lt; arr.length; i++) {
+}
+console.log(i); // 4
+</code></pre>
+<p><strong>Hoisting</strong></p>
+<pre><code>console.log(foo);
+var foo = 1;
+</code></pre>
+<p><strong>Arrow function</strong></p>
+<p>Arrow function no this, cannot be constructor, no prototype</p>
+<pre><code>// 函数声明
+function test() {}
+// 函数表达式
+const test = function() {}
+// 箭头函数
+const test = () =&gt; {}
+
+var obj = {
+	commonFn : function() {
+		console.log(this);
+	},
+	arrowFn : () =&gt; {
+		console.log(this);
+	}
+}
+
+obj.commonFn();
+obj.arrowFn();
+VM372:3 {commonFn: ƒ, arrowFn: ƒ}
+VM372:6 Window {parent: Window, opener: null, top: Window, length: 2, frames: Window, …}
+</code></pre>
+<p><strong>Template string</strong></p>
+<pre><code>let getName = () =&gt; {
+    return 'test';
+}
+let str = `
+&lt;div&gt;
+ &lt;h1 class = &quot;title&quot;&gt;${getName()}&lt;/h1&gt;
+&lt;/div&gt;
+`;
+document.querySelector('body').innerHTML = str;
+</code></pre>
+<p><strong>object</strong></p>
+<pre><code>var name = 'test',
+	age = 18;
+var obj = {
+	name: name,
+	age: age,
+	getName: function() {
+		return this.name;
+	},
+	getAge: function() {
+		return this.age;
+	}
+}
+
+let name = 'test',
+	age = 18;
+let obj = {
+	name,
+	age,
+	getName() {
+		return this.name;
+	},
+	['get' + 'Age']() {
+		return this.age;
+	}
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Javascript 3 - http request]]></title>
+        <id>https://blog.ferretninja.com/post/javascript-3-http-request/</id>
+        <link href="https://blog.ferretninja.com/post/javascript-3-http-request/">
+        </link>
+        <updated>2021-03-29T09:40:59.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>url parsing</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1588015088492.png" alt="" loading="lazy"></p>
+<p><strong>dns</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1588015159663.png" alt="" loading="lazy"></p>
+<p><strong>request</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1588015638581.png" alt="" loading="lazy"></p>
+<p><strong>dom</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1588015705473.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Javascript 2 - Chrome dev tools]]></title>
+        <id>https://blog.ferretninja.com/post/javascript-2-chrome-dev-tools/</id>
+        <link href="https://blog.ferretninja.com/post/javascript-2-chrome-dev-tools/">
+        </link>
+        <updated>2021-03-29T09:40:40.000Z</updated>
+        <content type="html"><![CDATA[<p>ctrl + shift + i open dev tools<br>
+ctrl + shift + C select element</p>
+<p>network: request status</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Javascript 1 - function, object, prototype]]></title>
+        <id>https://blog.ferretninja.com/post/javascript-1-function-object-prototype/</id>
+        <link href="https://blog.ferretninja.com/post/javascript-1-function-object-prototype/">
+        </link>
+        <updated>2021-03-29T09:40:20.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>Function definition</strong></p>
+<pre><code>//函数声明式定义
+function foo(num1,num2){
+    return num1 + num2;
+}
+//函数表达式定义
+var foo = function(num1,num2){
+    return num1 + num2;
+};
+//使用Function构造函数定义
+var foo = new Function(&quot;num1&quot;,&quot;num2&quot;,&quot;return num1 + num2&quot;);
+//实际上创建一个Function实例并不一定要赋值给具体的指针，可以直接执行
+(function(x,y){return x+y})(1,2);
+//之所以用圆括号把function(){}括起来是因为js解释器会将function解释为函数声明，而函数声明不能直接跟着(x,y)，我们需要将其转换为函数表达式。
+//(1,2)表示要传递跟函数的参数。
+
+</code></pre>
+<p><strong>IIFE</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1590531678788.png" alt="" loading="lazy"></p>
+<p>An IIFE (Immediately Invoked Function Expression) is a JavaScript function that runs as soon as it is defined. (function () { statements })();.</p>
+<p>In jQuery, the fn property is just an alias to the prototype property. jQuery identifier (or $) is just a constructor function.</p>
+<pre><code>function Test() {
+  this.a = 'a';
+}
+Test.prototype.b = 'b';
+
+var test = new Test(); 
+test.a; // &quot;a&quot;, own property
+test.b; // &quot;b&quot;, inherited property
+
+(function() {
+  var foo = function(arg) { // core constructor
+    // ensure to use the `new` operator
+    if (!(this instanceof foo))
+      return new foo(arg);
+    // store an argument for this example
+    this.myArg = arg;
+    //..
+  };
+
+  // create `fn` alias to `prototype` property
+  foo.fn = foo.prototype = {
+    init: function () {/*...*/}
+    //...
+  };
+
+  // expose the library
+  window.foo = foo;
+})();
+
+// Extension:
+
+foo.fn.myPlugin = function () {
+  alert(this.myArg);
+  return this; // return `this` for chainability
+};
+
+foo(&quot;bar&quot;).myPlugin(); // alerts &quot;bar&quot;
+</code></pre>
+<p>Before ES6, to avoid global method name conflicts, add method to a object. After ES6, use commonJS.</p>
+<pre><code>// bad
+let find = () =&gt; {};
+let remove = () =&gt; {};
+
+// good
+$.fn.find = () =&gt; {};
+$.fn.remove = () =&gt; {};
+
+// good
+(function($) {
+    let find = () =&gt; {};
+    let remove = () =&gt; {};
+    $.fn.find = find;
+    $.fn.remove = remove;
+}(jQuery))
+</code></pre>
+<p><strong>函数作为构造函数进行调用，this指向new出的那个对象</strong></p>
+<pre><code>color = 'red';
+var o = {color: 'blue'};
+function sayColor() {
+    console.log(this.color);
+}
+sayColor(); //red
+sayColor.call(this); //red
+sayColor.call(o); //blue
+
+&lt;script&gt; 
+var x = 0;
+function test(){
+    this.x = 1;
+}
+var obj = new test();
+console.log(obj.x);    //1（说明this指向obj）
+&lt;/script&gt;
+
+</code></pre>
+<p><strong>JavaScript has no overload</strong></p>
+<pre><code>var sum(){
+    return arguments[0] + arguments[1];    //通过arguments对象执行内部操作
+}
+console.log(sum(1, 2));    //3
+
+function add(num1, num2){
+    return num1 + num2;
+}
+function add(value){
+    return value + 100;
+}
+console.log(add(1, 2));    //101
+</code></pre>
+<p><strong>instance.<strong>proto</strong> === constructor.prototype</strong></p>
+<pre><code>var 对象 = new 函数()
+对象.__proto__ === 对象的构造函数.prototype
+
+</code></pre>
+<p>constructor1.prototype = instance2<br>
+鉴于上述游戏规则生效,如果试图引用constructor1构造的实例instance1的某个属性p1:<br>
+1).首先会在instance1内部属性中找一遍;<br>
+2).接着会在instance1.<strong>proto</strong>(constructor1.prototype)中找一遍,而constructor1.prototype 实际上是instance2, 也就是说在instance2中寻找该属性p1;<br>
+3).如果instance2中还是没有,此时程序不会灰心,它会继续在instance2.<strong>proto</strong>(constructor2.prototype)中寻找...直至Object的原型对象</p>
+<p>搜索轨迹: instance1--&gt; instance2 --&gt; constructor2.prototype…--&gt;Object.prototype</p>
+<pre><code>
+function Father(){
+	this.property = true;
+}
+Father.prototype.getFatherValue = function(){
+	return this.property;
+}
+function Son(){
+	this.sonProperty = false;
+}
+//继承 Father
+Son.prototype = new Father();//Son.prototype被重写,导致Son.prototype.constructor也一同被重写
+Son.prototype.getSonVaule = function(){
+	return this.sonProperty;
+}
+var instance = new Son();
+alert(instance.getFatherValue());//true
+ 
+alert(instance instanceof Object);//true
+alert(instance instanceof Father);//true
+alert(instance instanceof Son);//true
+alert(Object.prototype.isPrototypeOf(instance));//true
+alert(Father.prototype.isPrototypeOf(instance));//true
+alert(Son.prototype.isPrototypeOf(instance));//true
+</code></pre>
+<p><strong>New</strong><br>
+第一行，我们创建了一个空对象obj;<br>
+第二行，我们将这个空对象的__proto__成员指向了F函数对象prototype成员对象;<br>
+第三行，我们将F函数对象的this指针替换成obj，然后再调用F函数.</p>
+<pre><code>var obj  = {};
+obj.__proto__ = F.prototype;
+F.call(obj);
+</code></pre>
+<p>Another way:<br>
+subClass.prototype = superClass.prototype;//直接指向超类型prototype</p>
+<pre><code>function Person() {
+
+}
+
+var person = new Person();
+
+console.log(person.__proto__ == Person.prototype) // true
+console.log(Person.prototype.constructor == Person) // true
+// 顺便学习一个ES5的方法,可以获得对象的原型
+console.log(Object.getPrototypeOf(person) === Person.prototype) // true
+
+console.log(person.constructor === Person); // true
+</code></pre>
+<p>当获取 person.constructor 时，其实 person 中并没有 constructor 属性,当不能读取到constructor 属性时，会从 person 的原型也就是 Person.prototype 中读取，正好原型中有该属性，所以：person.constructor === Person.prototype.constructor<br>
+<img src="https://blog.ferretninja.com/post-images/1586643507831.png" alt="" loading="lazy"></p>
+<p><strong>function vs object</strong></p>
+<p>function is a object with prototype</p>
+<pre><code>var o1 = {}; 
+var o2 =new Object();
+var o3 = new f1();
+
+function f1(){}; 
+var f2 = function(){};
+var f3 = new Function('str','console.log(str)');
+
+console.log(typeof Object); //function 
+console.log(typeof Function); //function  
+
+console.log(typeof f1); //function 
+console.log(typeof f2); //function 
+console.log(typeof f3); //function   
+
+console.log(typeof o1); //object 
+console.log(typeof o2); //object 
+console.log(typeof o3); //object
+</code></pre>
+<p><strong>prototype</strong></p>
+<pre><code>function Person() {}
+Person.prototype = {
+    name:  'Zaxlct',
+    age: 28,
+    job: 'Software Engineer',
+    sayName: function() {
+        console.log(this.name);
     }
 }
+
+var person1 = new Person();
+person1.sayName(); // 'Zaxlct'
+var person2 = new Person();
+person2.sayName(); // 'Zaxlct'
+console.log(person1.sayName == person2.sayName); //true
 </code></pre>
-<p><strong>Message Queue Idempotent</strong></p>
-<p>order -&gt; payment</p>
-<ol>
-<li>use db primary key to prevent duplicate insert<br>
-use order id or unique mapping of order id as payment id</li>
-<li>use set or redis to make a history table to check before insert</li>
-<li>implement CAS to prevent update</li>
-</ol>
-<p><strong>Message Queue Scaling</strong></p>
-<ol>
-<li>increase consumer and partition</li>
-<li>write to new temparory queue and consume at new queue</li>
-<li>prevent retry</li>
-</ol>
-<p><strong>Protobuf + Netty</strong></p>
-<pre><code>package com.yanqun.protobuf ;
-option java_package = &quot;com.yanqun.protobuf&quot; ;
-option java_outer_classname = &quot;MyMessage&quot; ;
-message MyMessage
+<p>问：为什么 [1, 2, 3].map(parseInt) 返回 [1,NaN,NaN]?<br>
+答：parseInt 函数的第二个参数表示要解析的数字的基数。该值介于 2 ~ 36 之间。map will pass both value and index.</p>
+<p>... for shallow copy<br>
+var a = { name: 'ygy', age: 20 };<br>
+var b = { ...a };</p>
+<p>use &amp;&amp; to replace if<br>
+// old<br>
+if (callback) callback();<br>
+// new<br>
+callback &amp;&amp; callback();</p>
+<p>// use &amp;&amp; to get value<br>
+var obj = {<br>
+info: {<br>
+name: 'ygy'<br>
+}<br>
+}<br>
+obj.info &amp;&amp; obj.info.name; // 'ygy'</p>
+<p>|| to get default value<br>
+var b = a || 10; // 如果a是空值，那么b就是10</p>
+<p><strong>This</strong></p>
+<pre><code>var a = 1;
+var obj1 = {
+    a:2,
+    fn:function(){
+        console.log(this.a);
+    }
+}
+var fn1 = obj1.fn;
+var fn1bind = fn1.bind(obj1);
+fn1();//1    //window
+obj1.fn();//2   //object 
+fn1bind();//2
+fn1.call(obj1);//2
+fn1.apply(obj1);//2
+
+document.addEventListener('click', function(e){
+    console.log(this);  //document
+    setTimeout(function(){
+        console.log(this); //window
+    }, 200);
+}, false); 
+
+//constructor的this都指向实例
+function Person(name,age){
+    this.name = name;
+    this.age = age;
+    this.sayAge = function(){
+        console.log(this.age);
+    }
+}
+ 
+var dot = new Person('Dot',2);
+dot.sayAge();//2  
+
+</code></pre>
+<p>Use closure to make variable private</p>
+<pre><code>// 闭包版
+const Student = function(age, sex) {
+    let _age = age, _sex = sex;
+    const setAge = (newAge) =&gt; {
+        _age = 20;
+    }
+    const getAge = () =&gt; {
+        return _age;
+    }
+    return {
+        setAge,
+        getAge
+    }
+}
+const student = new Student(20, 'female');
+console.log(student._age); // undefined
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Data Metrics]]></title>
+        <id>https://blog.ferretninja.com/post/data-metrics/</id>
+        <link href="https://blog.ferretninja.com/post/data-metrics/">
+        </link>
+        <updated>2021-03-29T09:39:48.000Z</updated>
+        <content type="html"><![CDATA[<p>meaningful metrics -&gt; daily sessions per user<br>
+time spent/session (the user is idle on the page)<br>
+reactions, comments and shares in newfeed content. Reactions would include: likes, hearts, sad face, angry face etc.<br>
+average number of interactions a user has per visit to the Newsfeed.<br>
+click through rate for ads; this would help us understand whether ads are relevant</p>
+<p>Grow business -&gt; user retention or user acquisition<br>
+user retention -&gt; increasing user engagement -&gt; metrics with time threshold ( Average likes per user per day)</p>
+<p>Improve product -&gt; feature demand that users already doing something despite a complicated user flow. Simplifying the flow will most likely improve your target metrics</p>
+<p>optimize a long term metric like retention rate or lifetime value -&gt; find a short term metric that can predict the long term one</p>
+<p>pick variables -&gt; pick a combination of user characteristics (age, sex, country, etc.) and behavioral ones (device, they came from ads/SEO/direct link, session time, etc.)</p>
+<p>Engagement on FB -&gt; proportion of users who take at least one action per day<br>
+response rate on Quora -&gt; percentage of questions that get at least one response with at least 3 up-votes within a day<br>
+Airbnb -&gt; if you want to go to a given place, you can do it<br>
+uber new UI -&gt; AB test in two comparable markets (To identify required sample size, choose power, significance level, minimum difference between test and control, and std deviation)</p>
+<p>novelty effect -&gt; control for this by subsetting by drivers for which it is the first experience. Look at test results between new users in the control group vs new users in test group</p>
+<p>A/B test win but cost of change -&gt; Human labor costs (engineering time to make the change), opportunity-cost (not working on something else with a possibly higher expected value), Risk of bugs</p>
+<p>missing value in a varibale (Uber trips without rider review) -&gt; missing value is important information. predict missing value or use -1 as missing value</p>
+<p>e-commerce demand -&gt; going to a site and searching for &quot;jeans&quot;,  ads click-through-rate (CTR)</p>
+<p>e-commerce supply -&gt; # conversions/# searches only considering people who used filters in their search. Or people whose session time is above a given value.</p>
+<p>site funnel -&gt; home page, search results, click on item, buy it</p>
+<p>predict Y (Instagram usage), how to find out whether X (here mobile Operative System - OS ) is a discriminant variable or not -&gt; 1. build a decision tree using user-related variables + OS to predict Instagram usage. 2.  building two models: one including OS and one without. 3. generate simulated datasets where you adjust the distributions of all other variables. So that now you have the same age, country, etc, distribution for both iOS and Android</p>
+<p>subscription retention -&gt;  percentage of users who don't unsubscribe within the first 12 months too long -&gt; proportion of people who unsubscribed or never used my product within the first week / three weeks</p>
+<p>user demographic vs behavioral characteristics -&gt; 1. Looking at a user browsing history gives information about what a user is interested in buying regardless of whether it is a gift or for herself. 2. Timing Browsing data tells the moment in which a certain user is thinking about buying a product.</p>
+<p>acquiring new users -&gt; new sign ups per day from users who send at least 1 message within the first 2 days<br>
+retain current users -&gt; engagement -&gt; average messages per day per user</p>
+<p>new feature -&gt; find something that people are already doing, but in a complicated way requiring multiple steps. An example of this could be identifying that the last message of a conversation is about calling Uber, ordering food, or using any kind of other app. And a possible next step could be to integrate that functionality from within WhatsApp, kind of like Google Map can be called from inside WhatsApp.</p>
+<p>user lifetime value -&gt; pay for a click -&gt; revenue coming from that user within the first year -&gt; using short term data to predict -&gt; find features user location, user device, operative system, type of browser, source</p>
+<p>recommendation -&gt; shared connection, shared cluster (work friends, high school friends, university friends)</p>
+<p>predict fraud -&gt; Device ID, IP address, Ratings, Price, pictures, description, Browsing behavior that led to the seller creating the account.</p>
+<p>A/B test drawbacks -&gt; never be as similar markets, no full independence. Check one metric that's not supposed to be affected by your test. Make sure that during the test keeps behaving similarly for both markets</p>
+<p>customer service performance measurement -&gt; average user lifetime value (1 year) -&gt; user bought within 1 year after the ticket -&gt; Build a model to predict -&gt; response time and user feedback feature</p>
+<p>whether to add new feature -&gt; 1. good for site? engagement 2. demand. already doing it. 3. simply current flow.</p>
+<p>Two step authentication -&gt; ROC threshold -&gt; cost of false negatives (actual frauds happening) and value of true negatives (value of a legitimate user) -&gt; A/B testing, is the number of bad actors that two-step is blocking worth the number of good actors that the site is losing since it is harder to log-in.</p>
+<p>why a metric is down? -&gt; year over year metrics -&gt; numerator and denominator -&gt; if numberator down -&gt; new user are not liking as much as the usual ones or number of users is normal and number of likes suddenly down. -&gt; if new users are less engaged, find feature to predict &quot;up week&quot; new user and previous week old user -&gt; way more users from China this week. This might depend on a marketing campaign there that got a huge number of users, but these users are less engaged, as often when users come from sudden marketing campaigns. Or that all these new users come from very few different IP addresses. That would mean that all these users are probably fake accounts.</p>
+<p>30 tests and 1 test (20 data segment countries and 1 segment country win) wins with p-value 0.04 -&gt; Bonferroni correction, simply dividing 0.05 by the number of tests and this becomes the new threshold for significance. -&gt; make the change only if test is better and p-value were less than 0.05/30.</p>
+<p>Test wins by 5%, Will that metric actually go up by ~5%, more, or less? -&gt;  Control group numbers are likely inflated and it is likely that, if applied to all users, this change will lead to a larger gain than 5% vs old UI.</p>
+<p>cost of a false positive is way higher than false negative -&gt; recruiting process</p>
+<p>cost of a false positive is way lower than false negative -&gt; cancer detection</p>
+<p>how long I should run an A/B test? -&gt; 1. Significance level, usually 0.05. 2. Power, usually 0.8. 3. Expected standard deviation of the change in the metric. 4. Minimum effect size you are interested in detecting via your test. If the final number is less than 14 days, you still want to run the test for 14 days in order to reliably capture weekly patterns.</p>
+<p>We found a drop in pictures uploads. How to find out the reason?  segment users by various features, such as browser, device, country, etc. Then you assume that you discovered that one segment dropped to zero. So you say it is likely a bug and, finally, explain where the bug could be.</p>
+<p>Isolate the impact of the algorithm and the UI change -&gt; Version 1 is the old version. Version 2 is the site with new Feature and machine learning model. Version 3 is the site with the People You May Know Feature, but suggestions are random or history-based model.</p>
+<p>detect fake information school -&gt; 1. email validation negatively affect legitimate users 2. user info from their profile + how they interacted with LinkedIn. (how many connection requests they sent, how they were distributed over time, acceptance rate, whether they visited other people profiles before sending the connection request.) build clusters.</p>
+<p>small dataset -&gt; 1. cross-validate 2. bootstrapping your original dataset. bagging</p>
+<p>predict job change -&gt; monthly -&gt; user profile data, data about when you took the snapshot, user behavior on the site, and some external data about job demand.</p>
+<p>response time of an inquiry at Airbnb -&gt; percentage of responses within 16 hrs is better than average response time considering only responses within 16 hrs because percentage consider all the population including people who never response.</p>
+<p>re-run the same A/B test -&gt; the underlying distribution of users has changed. early adopter vs new users</p>
+<p>identify clickbait -&gt; high than usual CTR + medium term (say 2 weeks) change in CTR</p>
+<p>revenue -&gt; 1. Increase CTR by better targeting. 2. Increase number of page views. 3. maximizing probability of conversion or working with the advertisers to improve the user flow after people click on an ad.</p>
+<p>H0 mu = 20<br>
+Ha mu &gt;= 20</p>
+<p>A/B test power-&gt; p(reject H0 | H0 false) = 1 - p(not reject H0 | H0 false) = 1 - Type II error</p>
+<p>A/B test alpha 0.05 -&gt; Significance level. p-value lower than significance level reject null hypothesis</p>
+<p>A/B test p-value -&gt; take sample mean = 25, P(mu &gt;= sample mean| H0 true) &lt; 0.05 reject null hypothesis</p>
+<p>Uber:<br>
+Monthly active platform consumer<br>
+number of unique consumers who completed a ride or received an eats on platform in a given month<br>
+Trips:<br>
+number of completed ride or uber meal deliveries in a period<br>
+Gross bookings:<br>
+total dollar value</p>
+<p>Lyft:<br>
+Active Rider<br>
+Revenue per active rider</p>
+<p>Netflix:<br>
+Paid membership subscription<br>
+average avenue per user</p>
+<p>Pinterest:<br>
+Mau<br>
+authenticated user who visit at least once during 30 days<br>
+ARPU<br>
+total revenue divided by average number of mau in a period</p>
+<p>Facebook:<br>
+DAU:<br>
+A logged in user who visit at least one of the family product once on a given day<br>
+MauL<br>
+A logged in user who visit at least one of the family product once in the last 30 days<br>
+ARPU</p>
+<p>Expedia:<br>
+Room night growth<br>
+gross booking: total retail value of transaction booked<br>
+revenue per room night</p>
+<p>Spotify:<br>
+Total monthly active user<br>
+premium subscribers<br>
+ad-supported MAUs<br>
+ARPU</p>
+<p>Twitter:<br>
+Monetizable DAU<br>
+Logged in user that are able to show ads</p>
+<p>Snapchat:<br>
+ARPU<br>
+DAU registered user who opens application at least once during 24 hours</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[DAU and retention analysis]]></title>
+        <id>https://blog.ferretninja.com/post/dau-and-retention-analysis/</id>
+        <link href="https://blog.ferretninja.com/post/dau-and-retention-analysis/">
+        </link>
+        <updated>2021-03-29T09:39:15.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>Comparing test and control groups</strong></p>
+<pre><code>SELECT date_trunc('day', e.occurred_at),
+    CASE WHEN flag = 'true' 
+      THEN 'treatment' ELSE 'control' END as flag,
+    COUNT(e.event_name)
+FROM tutorial.yammer_events e
+WHERE e.event_name = 'login'
+GROUP BY 1,2
+ORDER BY 1 DESC, 2 DESC
+</code></pre>
+<p><strong>Click through rates</strong></p>
+<pre><code>SELECT date_trunc('day', occurred_at) as day,
+  1.00 * COUNT (CASE WHEN action = 'email_clickthrough' THEN user_id ELSE NULL END) 
+        / COUNT (CASE WHEN action = 'email_open' THEN user_id ELSE NULL END) as CTR,
+  COUNT (CASE WHEN action = 'email_clickthrough' THEN user_id ELSE NULL END) as clickthroughs,
+  COUNT (CASE WHEN action = 'email_open' THEN user_id ELSE NULL END) as opens
+FROM tutorial.yammer_emails
+GROUP BY 1
+---
+
+WITH open as (
+  SELECT date_trunc('day', occurred_at) as day,
+         COUNT(action) as opens
+  FROM tutorial.yammer_emails
+  WHERE action = 'email_open'
+  GROUP BY 1
+),
+  clickthrough as (
+  SELECT date_trunc('day', occurred_at) as day,
+         COUNT(action) as clickthroughs
+  FROM tutorial.yammer_emails
+  WHERE action = 'email_clickthrough'
+  GROUP BY 1
+)
+
+SELECT clickthrough.day,
+       1.00*clickthroughs/opens as CTR, 
+       clickthroughs, 
+       opens
+FROM clickthrough
+JOIN open ON clickthrough.day = open.day
+ORDER BY 1 DESC
+</code></pre>
+<p><strong>DAU, WAU, MAU, and ratios between them</strong></p>
+<pre><code>WITH dailies AS (
+  SELECT DATE_TRUNC('day', e.occurred_at) as date,
+       COUNT(DISTINCT e.user_id) as dau
+  FROM tutorial.yammer_events e
+  WHERE e.event_name = 'login'
+  GROUP BY 1 
+)
+SELECT d, 
+    dau, 
+    (SELECT COUNT(DISTINCT e.user_id) as wau
+          FROM tutorial.yammer_events e
+          WHERE e.occurred_at::DATE BETWEEN 
+            dailies.date - 7 * Interval '1 day' AND dailies.date
+          AND e.event_name = 'login'
+          ) as wau_count,
+    (SELECT COUNT(DISTINCT e.user_id) as mau
+          FROM tutorial.yammer_events e
+          WHERE e.occurred_at::DATE BETWEEN 
+            dailies.date - 30 * Interval '1 day' AND dailies.date
+          AND e.event_name = 'login'
+          ) as mau_count,
+    100.00 * dau/(SELECT COUNT(DISTINCT e.user_id) as mau
+          FROM tutorial.yammer_events e
+          WHERE e.occurred_at::DATE BETWEEN 
+            dailies.date - 30 * Interval '1 day' AND dailies.date
+          AND e.event_name = 'login'
+          ) as dau_mau
+FROM dailies
+</code></pre>
+<p>UID,  first_active_date, last_active_date, previous_active_date</p>
+<p><strong>Retention</strong></p>
+<pre><code>with monthly_activity as (
+  select distinct
+    date_trunc('month', created_at) as month,
+    user_id
+  from events
+)
+select
+  this_month.month,
+  count(distinct user_id)
+from monthly_activity this_month
+join monthly_activity last_month
+  on this_month.user_id = last_month.user_id
+  and this_month.month = add_months(last_month.month,1)
+group by month
+</code></pre>
+<p><strong>Churn</strong></p>
+<pre><code>with monthly_activity as (
+  select distinct
+    date_trunc('month', created_at) as month,
+    user_id
+  from events
+)
+select
+  last_month.month + add_months(last_month.month,1),
+  count(distinct last_month.user_id)
+from monthly_activity last_month
+left join monthly_activity this_month
+  on this_month.user_id = last_month.user_id
+  and this_month.month = add_months(last_month.month,1)
+where this_month.user_id is null
+group by 1
+</code></pre>
+<p><strong>Reactivated Users</strong></p>
+<pre><code>with
+monthly_activity as (
+  select distinct
+    date_trunc('month', created_at) as month,
+    user_id
+  from events
+),
+first_activity as (
+  select user_id, date(min(created_at)) as month
+  from events
+  group by 1
+)
+select
+  this_month.month,
+  count(distinct user_id)
+from monthly_activity this_month
+left join monthly_activity last_month
+  on this_month.user_id = last_month.user_id
+  and this_month.month = add_months(last_month.month,1)
+join first_activity
+  on this_month.user_id = first_activity.user_id
+  and first_activity.month != this_month.month
+where last_month.user_id is null
+group by 1
+</code></pre>
+<p><strong>Percent Change</strong></p>
+<pre><code>with monthly_active_users as (
+ select
+   date_trunc('month', created_at) as month,
+   count (distinct user_id) as mau
+ from events
+ group by 1
+)
+select
+ this_month.month,
+ [(this_month.mau - last_month.mau)*1.0/last_month.mau:%] as pct_change
+from monthly_active_users this_month
+join monthly_active_users last_month
+ on this_month.month = add_months(last_month.month,1)
+</code></pre>
+<p><strong>Sessionization</strong></p>
+<pre><code>SELECT *
+      ,  extract(epoch from mytimestamp)
+         - lag(extract(epoch from mytimestamp))
+         over (PARTITION BY user_id order by mytimestamp) as time_interval
+FROM toy_data_psql;
+
+SELECT *
+  , CASE
+      WHEN EXTRACT(EPOCH FROM mytimestamp)
+           - LAG(EXTRACT(EPOCH FROM mytimestamp))
+           OVER (PARTITION BY user_id ORDER BY mytimestamp) &gt;= 30 * 60
+      THEN 1
+      ELSE 0
+    END as new_session
+FROM
+  toy_data_psql;
+
+SELECT *
+  , user_id || '_' || SUM(new_session)
+  OVER (PARTITION BY user_id ORDER BY mytimestamp) AS session_id
+FROM (
+  SELECT *
+    , CASE
+       WHEN EXTRACT(EPOCH FROM mytimestamp)
+          - LAG(EXTRACT(EPOCH FROM mytimestamp))
+            OVER (PARTITION BY user_id ORDER BY mytimestamp) &gt;= 30 * 60
+       THEN 1
+       ELSE 0
+      END as new_session
+    FROM
+      toy_data_psql
+) s1
+</code></pre>
+<pre><code>import dataiku
+import pandas as pd
+from datetime import timedelta
+
+# define treshold value
+T = timedelta(seconds=30*60)
+
+# load dataset
+toy_data = dataiku.Dataset(&quot;toy_data&quot;).get_dataframe()
+
+# add a column containing previous timestamp
+toy_data =  pd.concat([toy_data,
+                       toy_data.groupby('user_id').transform(lambda x:x.shift(1))]
+                      ,axis=1)
+toy_data.columns = ['user_id','mytimestamp','prev_mytimestamp']
+
+# create the new session column
+toy_data['new_session'] = ((toy_data['mytimestamp']
+                            - toy_data['prev_mytimestamp'])&gt;=T).astype(int)
+
+# create the session_id
+toy_data['increment'] = toy_data.groupby(&quot;user_id&quot;)['new_session'].cumsum()
+toy_data['session_id'] = toy_data['user_id'].astype(str) + '_'
+                                + toy_data['increment'].astype(str)
+
+# to get the same result as with hive/postgresql
+toy_data = toy_data.sort(['user_id','mytimestamp'])
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Rate limiting fundamentals]]></title>
+        <id>https://blog.ferretninja.com/post/rate-limiting-fundamentals/</id>
+        <link href="https://blog.ferretninja.com/post/rate-limiting-fundamentals/">
+        </link>
+        <updated>2021-03-29T09:38:48.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>Leaky bucket</strong></p>
+<pre><code>public abstract class RateLimiter {
+
+  protected final int maxRequestPerSec;
+  protected RateLimiter(int maxRequestPerSec) {
+    this.maxRequestPerSec = maxRequestPerSec;
+  }
+
+  abstract boolean allow();
+}
+
+public class LeakyBucket extends RateLimiter {
+
+  private long nextAllowedTime;
+  private final long REQUEST_INTERVAL_MILLIS;
+
+  protected LeakyBucket(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+    REQUEST_INTERVAL_MILLIS = 1000 / maxRequestPerSec;
+    nextAllowedTime = System.currentTimeMillis();
+  }
+
+  @Override
+  boolean allow() {
+    long curTime = System.currentTimeMillis();
+    synchronized (this) {
+      if (curTime &gt;= nextAllowedTime) {
+        nextAllowedTime = curTime + REQUEST_INTERVAL_MILLIS;
+        return true;
+      }
+      return false;
+    }
+  }
+}
+</code></pre>
+<p><strong>Token Bucket</strong></p>
+<p>Eager mode</p>
+<pre><code>public class TokenBucket extends RateLimiter {
+
+  private int tokens;
+
+  public TokenBucket(int maxRequestsPerSec) {
+    super(maxRequestsPerSec);
+    this.tokens = maxRequestsPerSec;
+    new Thread(() -&gt; {
+      while (true) {
+        try {
+          TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        refillTokens(maxRequestsPerSec);
+      }
+    }).start();
+  }
+
+  @Override
+  public boolean allow() {
+    synchronized (this) {
+      if (tokens == 0) {
+        return false;
+      }
+      tokens--;
+      return true;
+    }
+  }
+
+  private void refillTokens(int cnt) {
+    synchronized (this) {
+      tokens = Math.min(tokens + cnt, maxRequestPerSec);
+      notifyAll();
+    }
+  }
+}
+</code></pre>
+<p>Lazy mode</p>
+<pre><code>public class TokenBucketLazyRefill extends RateLimiter {
+
+  private int tokens;
+  private long lastRefillTime;
+
+  public TokenBucketLazyRefill(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+    this.tokens = maxRequestPerSec;
+    this.lastRefillTime = System.currentTimeMillis();
+  }
+
+  @Override
+  public boolean allow() {
+    synchronized (this) {
+      refillTokens();
+      if (tokens == 0) {
+        return false;
+      }
+      tokens--;
+      return true;
+    }
+  }
+
+  private void refillTokens() {
+    long curTime = System.currentTimeMillis();
+    double secSinceLastRefill = (curTime - lastRefillTime) / 1000.0;
+    int cnt = (int) (secSinceLastRefill * maxRequestPerSec);
+    if (cnt &gt; 0) {
+      tokens = Math.min(tokens + cnt, maxRequestPerSec);
+      lastRefillTime = curTime;
+    }
+  }
+}
+</code></pre>
+<p><strong>Fixed Window Counter</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1579461852072.png" alt="" loading="lazy"></p>
+<pre><code>public class FixedWindowCounter extends RateLimiter {
+
+  // TODO: Clean up stale entries
+  private final ConcurrentMap&lt;Long, AtomicInteger&gt; windows = new ConcurrentHashMap&lt;&gt;();
+
+  protected FixedWindowCounter(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+  }
+
+  @Override
+  boolean allow() {
+    long windowKey = System.currentTimeMillis() / 1000 * 1000;
+    windows.putIfAbsent(windowKey, new AtomicInteger(0));
+    return windows.get(windowKey).incrementAndGet() &lt;= maxRequestPerSec;
+  }
+}
+</code></pre>
+<p><strong>Sliding Window Log</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1579461845782.png" alt="" loading="lazy"></p>
+<pre><code>public class SlidingWindowLog extends RateLimiter {
+
+  private final Queue&lt;Long&gt; log = new LinkedList&lt;&gt;();
+
+  protected SlidingWindowLog(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+  }
+
+  @Override
+  boolean allow() {
+    long curTime = System.currentTimeMillis();
+    long boundary = curTime - 1000;
+    synchronized (log) {
+      while (!log.isEmpty() &amp;&amp; log.element() &lt;= boundary) {
+        log.poll();
+      }
+      log.add(curTime);
+      return log.size() &lt;= maxRequestPerSec;
+    }
+  }
+}
+</code></pre>
+<p><strong>Sliding Window</strong></p>
+<p>This is still not accurate becasue it assumes that the distribution of requests in previous window is even, which may not be true. But compares to fixed window counter, which only guarantees rate within each window, and sliding window log, which has huge memory footprint, sliding window is more practical.<br>
+<img src="https://blog.ferretninja.com/post-images/1579461835894.png" alt="" loading="lazy"></p>
+<pre><code>public class SlidingWindow extends RateLimiter {
+
+  // TODO: Clean up stale entries
+  private final ConcurrentMap&lt;Long, AtomicInteger&gt; windows = new ConcurrentHashMap&lt;&gt;();
+
+  protected SlidingWindow(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+  }
+
+  @Override
+  boolean allow() {
+    long curTime = System.currentTimeMillis();
+    long curWindowKey = curTime / 1000 * 1000;
+    windows.putIfAbsent(curWindowKey, new AtomicInteger(0));
+    long preWindowKey = curWindowKey - 1000;
+    AtomicInteger preCount = windows.get(preWindowKey);
+    if (preCount == null) {
+      return windows.get(curWindowKey).incrementAndGet() &lt;= maxRequestPerSec;
+    }
+
+    double preWeight = 1 - (curTime - curWindowKey) / 1000.0;
+    long count = (long) (preCount.get() * preWeight
+        + windows.get(curWindowKey).incrementAndGet());
+    return count &lt;= maxRequestPerSec;
+  }
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[NoSQL vs SQL]]></title>
+        <id>https://blog.ferretninja.com/post/nosql-vs-sql/</id>
+        <link href="https://blog.ferretninja.com/post/nosql-vs-sql/">
+        </link>
+        <updated>2021-03-29T09:38:15.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1576386520494.png" alt="" loading="lazy"></figure>
+<p><strong>RDMBS</strong></p>
+<p>Benefit</p>
+<ul>
+<li>SQL</li>
+<li>Joins</li>
+<li>Aggregation</li>
+<li>good for small data volume</li>
+<li>Secondary index</li>
+<li>model data independent of Queries</li>
+</ul>
+<p>Drawback</p>
+<ul>
+<li>only scale vertically</li>
+<li>schema not flexible</li>
+</ul>
+<p>Normalization  - reduce redundency and increase correctness<br>
+denormalization - increase performance for read heavy</p>
+<p><strong>Cassendra</strong></p>
+<ul>
+<li>table - group of partition</li>
+<li>Partition - collection of rows - unit of access</li>
+<li>PK - partition key (Sharding) + clustering columns (sorting within partition desc)</li>
+<li>Cassandra Collection: Set, List, Map</li>
+</ul>
+<p>Good for</p>
+<ul>
+<li>logging events</li>
+<li>IOT</li>
+<li>time series db</li>
+<li>heavy write<br>
+Bad for</li>
+<li>ad - hoc queries</li>
+<li>joins</li>
+</ul>
+<p>Denormalization is a must for cassendra / model queries no joins /  one query per table</p>
+<p><strong>MongoDB</strong></p>
+<p>Embedded and Referenced Relationships</p>
+<pre><code>Manual References
 {
-    required string name = 1 ;
-    optional int32 age = 2 ;
+   &quot;_id&quot;:ObjectId(&quot;52ffc33cd85242f436000001&quot;),
+   &quot;contact&quot;: &quot;987654321&quot;,
+   &quot;dob&quot;: &quot;01-01-1991&quot;,
+   &quot;name&quot;: &quot;Tom Benzamin&quot;,
+   &quot;address_ids&quot;: [
+      ObjectId(&quot;52ffc4a5d85242602e000000&quot;),
+      ObjectId(&quot;52ffc4a5d85242602e000001&quot;)
+   ]
+}
+&gt;var result = db.users.findOne({&quot;name&quot;:&quot;Tom Benzamin&quot;},{&quot;address_ids&quot;:1})
+&gt;var addresses = db.address.find({&quot;_id&quot;:{&quot;$in&quot;:result[&quot;address_ids&quot;]}})
+
+DBRefs
+{
+   &quot;_id&quot;:ObjectId(&quot;53402597d852426020000002&quot;),
+   &quot;address&quot;: {
+   &quot;$ref&quot;: &quot;address_home&quot;,
+   &quot;$id&quot;: ObjectId(&quot;534009e4d852427820000002&quot;),
+   &quot;$db&quot;: &quot;tutorialspoint&quot;},
+   &quot;contact&quot;: &quot;987654321&quot;,
+   &quot;dob&quot;: &quot;01-01-1991&quot;,
+   &quot;name&quot;: &quot;Tom Benzamin&quot;
 }
 </code></pre>
-<p><strong>cookie and session</strong></p>
-<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1576358563615.png" alt="" loading="lazy"></figure>
-<p>If cookie not allowed, put token in response.</p>
-<p>distributed session</p>
+<p>Covered Queries</p>
+<pre><code>&gt;db.users.ensureIndex({gender:1,user_name:1})
+Covered Query (fetch the required data from indexed data which is very fast. not go looking into database documents.)
+&gt;db.users.find({gender:&quot;M&quot;},{user_name:1,_id:0}
+Not Covered Query (index does not include _id field)
+&gt;db.users.find({gender:&quot;M&quot;},{user_name:1})
+</code></pre>
+<p>Atomic Operations</p>
+<pre><code>&gt;db.products.findAndModify({ 
+   query:{_id:2,product_available:{$gt:0}}, 
+   update:{ 
+      $inc:{product_available:-1}, 
+      $push:{product_bought_by:{customer:&quot;rob&quot;,date:&quot;9-Jan-2014&quot;}} 
+   }    
+})
+</code></pre>
+<p>Indexing Array Fields and Sub-Document Fields</p>
+<p>An ObjectId is a 12-byte BSON type having the following structure −<br>
+The first 4 bytes representing the seconds since the unix epoch<br>
+The next 3 bytes are the machine identifier<br>
+The next 2 bytes consists of process id<br>
+The last 3 bytes are a random counter value</p>
+<p>Text search</p>
+<pre><code>&gt;db.adminCommand({setParameter:true,textSearchEnabled:true})
+&gt;db.posts.ensureIndex({post_text:&quot;text&quot;})
+&gt;db.posts.find({$text:{$search:&quot;tutorialspoint&quot;}})
+</code></pre>
+<p>Auto-Increment Sequence</p>
+<pre><code>&gt;function getNextSequenceValue(sequenceName){
+
+   var sequenceDocument = db.counters.findAndModify({
+      query:{_id: sequenceName },
+      update: {$inc:{sequence_value:1}},
+      new:true
+   });
+	
+   return sequenceDocument.sequence_value;
+}
+</code></pre>
+<p><strong>Mongodb diagnosis and optimization</strong></p>
+<p>web service response time &lt; 200ms<br>
+mongodb response time &lt; 100ms<br>
+long response time</p>
 <ol>
-<li>nginx ip_hash   same ip goes to same server</li>
-<li>tomcat cluster  copy session among all servers</li>
-<li>redis cluster</li>
+<li>proper index use explain()</li>
+<li>cacheSizeGB ram size use mongostat()<br>
+connection fail</li>
+<li>maxIncomingConnections db.serverStatus().connections shows available connections</li>
+<li>ulimit -a -&gt; open files -&gt; max file descriptors</li>
 </ol>
-<p><strong>Redis distributed lock</strong></p>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1576380520490.png" alt="" loading="lazy"></figure>
-<p><strong>Deployment</strong><br>
-<img src="https://blog.ferretninja.com/post-images/1577220832834.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220853581.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220858149.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220862517.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220866697.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220870319.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220880028.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220884068.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577220887699.png" alt="" loading="lazy"></p>
-<p><img src="https://blog.ferretninja.com/post-images/1577225088623.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225094858.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225099881.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225103560.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225115561.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225125985.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225130929.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225138021.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225143326.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225146952.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225152040.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225160161.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225164613.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225169227.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225173565.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225182544.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225188533.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577225192300.png" alt="" loading="lazy"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Java IO stream]]></title>
-        <id>https://blog.ferretninja.com/post/java-io-stream/</id>
-        <link href="https://blog.ferretninja.com/post/java-io-stream/">
-        </link>
-        <updated>2021-03-29T09:16:47.000Z</updated>
-        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573445636324.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1569816542486.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1569816549973.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1569816555204.png" alt="" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[SQL 1 - Optimization and Best Practice]]></title>
-        <id>https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/</id>
-        <link href="https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/">
-        </link>
-        <updated>2021-03-29T09:08:23.000Z</updated>
-        <content type="html"><![CDATA[<p><strong>Best practice</strong></p>
-<ol>
-<li>use &quot;=&quot; not &quot;&lt;&gt;&quot; on index</li>
-<li>use Limit 1 if only return 1 record</li>
-<li>use TINYINT before SMALLINT and INT</li>
-<li>break big DELETE, UPDATE or INSERT into small ones</li>
-<li>use UNION ALL instead of UNION because ALL allows duplicate</li>
-<li>don't use select * which will not use index</li>
-<li>add index to where, join, order by</li>
-<li>use limit to return page</li>
-</ol>
-<p><strong>Locate slow SQL query</strong></p>
-<p>Use slow query log</p>
-<pre><code>mysql&gt; set global slow_query_log = on;
-
-Query OK, 0 rows affected (0.00 sec)
-
-mysql&gt; show global variables like &quot;datadir&quot;;
-
-+---------------+------------------------+
-| Variable_name | Value                  |
-+---------------+------------------------+
-| datadir       | /data/mysql/data/3306/ |
-+---------------+------------------------+
-
-1 row in set (0.00 sec)
-
-mysql&gt; show global variables like &quot;slow_query_log_file&quot;;
-
-+---------------------+----------------+
-| Variable_name       | Value          |
-+---------------------+----------------+
-| slow_query_log_file | mysql-slow.log |
-+---------------------+----------------+
-
-1 row in set (0.00 sec)
-</code></pre>
-<p>Query_time:<br>
-Lock_time: waiting for acquiring lock<br>
-Rows_sent: number of rows returned<br>
-Rows_examined:</p>
-<pre><code>[root@mysqltest ~]# tail -n5 /data/mysql/data/3306/mysql-slow.log
-
-Time: 2019-05-21T09:15:06.255554+08:00
-
-User@Host: root[root] @ localhost []  Id: 8591152
-
-Query_time: 10.000260  Lock_time: 0.000000 Rows_sent: 1  Rows_examined: 0
-
-SET timestamp=1558401306;
-select sleep(10);
-</code></pre>
-<p><strong>Use explain to analyze SQL query</strong></p>
-<p><code>mysql&gt; explain select * from t1 where b=100;</code></p>
-<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1570332651442.png" alt="" loading="lazy"></figure>
-<p><strong>Scenario where Index won't be used</strong></p>
-<p><code>mysql&gt; explain select * from t1 where date(c) ='2019-05-21';</code><br>
-<img src="https://blog.ferretninja.com/post-images/1570334471167.png" alt="" loading="lazy"></p>
-<p>Using native data format will use index condition.</p>
-<p><code>mysql&gt; explain select * from t1 where c&gt;='2019-05-21 00:00:00' and c&lt;='2019-05-21 23:59:59';</code></p>
-<p>Implicit conversion won't use index. tele_phone is Varchar(20)</p>
-<pre><code>select user_name,tele_phone from user_info where tele_phone =11111111111; /* SQL 1 */
-</code></pre>
-<p>Like clause using heading % won't. But if only trailing %, it can use index.<br>
-<code>mysql&gt; explain select * from t1 where a like '%1111%';</code></p>
-<p>Large range won't use index<br>
-<code>mysql&gt; explain select * from t1 where b&gt;=1 and b &lt;=2000;</code></p>
-<p>b -1 = 100 won't and b = 100 + 1 can.</p>
-<pre><code>mysql&gt; explain select * from t1 where b-1 =1000;
-</code></pre>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1570337862625.png" alt="" loading="lazy"></figure>
-<p><strong>Batch insert submission</strong></p>
-<p>Insert multiple rows at a time</p>
-<p>create the batch insert sql</p>
-<p><code>[root@mysqltest muke]# mysqldump -utest_user3 -p'userBcdQ19Ic' -h127.0.0.1 --set-gtid-purged=off --single-transaction --skip-add-locks muke t1 &gt;t1.sql</code></p>
-<p>t1.sql</p>
-<pre><code>......
-DROP TABLE IF EXISTS `t1`;		
-......
-CREATE TABLE `t1`......
-......
-INSERT INTO `t1` VALUES (1,'1',1,'2019-05-24 15:44:10'),(2,'2',2,'2019-05-24 15:44:10'),(3,'3',3,'2019-05-24 15:44:10')......
-......
-</code></pre>
-<p><code>[root@mysqltest muke]# mysqldump -utest_user3 -p'userBcdQ19Ic' -h127.0.0.1 --set-gtid-purged=off --single-transaction --skip-add-locks --skip-extended-insert muke t1 &gt;t1_row.sql</code></p>
-<p>-skip-extended-insert will insert one record at a time</p>
-<pre><code>......
-INSERT INTO `t1` VALUES (1,'1',1,'2019-05-24 15:44:10');
-INSERT INTO `t1` VALUES (2,'2',2,'2019-05-24 15:44:10');
-INSERT INTO `t1` VALUES (3,'3',3,'2019-05-24 15:44:10');
-......
-</code></pre>
-<p>Run sql script</p>
-<pre><code>[root@mysqltest ~]# time mysql -utest_user3 -p'userBcdQ19Ic' -h127.0.0.1 muke &lt;t1.sql
-</code></pre>
-<ol>
-<li>Set auto commit off</li>
-<li>Adjust innodb_flush_log_at_trx_commmit and sync_binlog = 0</li>
-</ol>
-<p><strong>Order by and Group by</strong></p>
-<p>mySql order by use two kinds of sorting.<br>
-1) using index<br>
-2) using filesort</p>
-<p>If data size &lt; sort_buffer_size, sort in memory (number of tmp files 0), else in disk (number of tmp files &gt; 0).</p>
-<p>Filesort has 3 modes.<br>
-&lt;sort_key, rowid&gt; only sort rowid and fetch records after<br>
-max_length_for_sort_data &lt; length of all fields<br>
-&lt;sort_key, additional_fields&gt; loads all fields and sort<br>
-max_length_for_sort_data &gt; length of all fields<br>
-&lt;sort_key, packed_additional_fields&gt;</p>
-<ol>
-<li>Add index to sort by field</li>
-<li>order by (a , b)  use  index (a, b) not (b, a)</li>
-<li>where a = 1000 order by b  use index (a, b)</li>
-<li>select * from t1 order by a,b;      won't use index<br>
-because scan index and fetch all records costs more than filesort.<br>
-select id,a,b from t1 order by a,b;</li>
-<li>explain select id,a,b from t1 where a&gt;9000 order by b;  won't use index<br>
-because in range a &gt; 9000, data is not sorted by b. it is sorted by (a, b)</li>
-<li>explain select id,a,b from t1 order by a asc,b desc; won't use index</li>
-</ol>
-<p>Group by can use &quot;order by null&quot; to disable sorting.</p>
-<p><strong>SQL Paging</strong></p>
-<p><code>select * from t1 limit 99000,2;</code></p>
-<ol>
-<li>use auto-increment continuous primary key<br>
-<code>select * from t1 where id &gt;99000 limit 2;</code></li>
-</ol>
-<p><code>select * from t1 order by a limit 99000,2;</code><br>
-won't use index because scan index and fetch all records costs more than filesort.<br>
-2. return id when sort<br>
-<code>select * from t1 f inner join (select id from t1 order by a limit 99000,2)g on f.id = g.id;</code></p>
-<p>Rewrite <code>select * from t1 limit 99000,2;</code><br>
-to <code>select * from t1 as a join (select id from t1 limit 99000, 2) as b on a.id = b.id;</code></p>
-<p><strong>SQL join</strong></p>
-<p>Index Nested-Loop Join<br>
-if join on index key. Small table will be the driving table. T ~ 2*N(small table).</p>
-<p>Block Nested-Loop join<br>
-if join on key without index. Load small table into join_buffer. Scan each row of big table and compare it to each row in join_buffer.<br>
-Total number of scanned row is M(big table) + N(small table). T ~ M(big table)*N(small table).</p>
-<ol>
-<li>join on index key</li>
-<li>use small table as driving table <code>select * from t2 straight_join t1 on t2.a = t1.a;</code></li>
-<li>temporary table<br>
-Add index to field b in temp table</li>
-</ol>
-<pre><code>CREATE TEMPORARY TABLE `t1_tmp` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `a` int(11) DEFAULT NULL,
-  `b` int(11) DEFAULT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录更新时间',
-  PRIMARY KEY (`id`),
-  KEY `idx_a` (`a`),
-  KEY `idx_b` (b)
-) ENGINE=InnoDB ;
-</code></pre>
-<pre><code>insert into t1_tmp select * from t1;
-select * from t1_tmp join t2 on t1_tmp.b= t2.b;
-</code></pre>
-<p><strong>Count (*)</strong></p>
-<p>Count(a) will not count null but Count(*) will.  Count(1) and Count(*) will be the same.<br>
-MyISAM has meta information about total number of rows. InnoDB doesn't have the meta information because it allows concurrent transactions to have different row count.</p>
-<p>MySql will use smallest non-clustered index to calculate count(*). If there is no non-clustered index, it will use clustered-index. Because non-clustered index (secondary) only store primary key while clustered-index (primary key) stores entire row.</p>
-<ol>
+<p><strong>AWS redshift RDS table design optimization</strong></p>
+<ul>
 <li>
-<p><code>show table status like 't1';</code> will give an estimate of rows.</p>
+<p>Distribution style<br>
+Even - The leader node distributes the rows across the slices in a round-robin fashion<br>
+Auto - Amazon Redshift assigns an optimal distribution style based on the size of the table data<br>
+Key - The leader node places matching values on the same node slice<br>
+ALL - replicate table on all nodes</p>
 </li>
 <li>
-<p>use redis</p>
+<p>Sorting Key<br>
+define a colum as sort key</p>
+</li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1573580426980.png" alt="" loading="lazy"></figure>
+<pre><code>CREATE TABLE part (
+  p_partkey     	integer     	not null	sortkey distkey,
+  p_name        	varchar(22) 	not null,
+  p_mfgr        	varchar(6)      not null,
+  p_category    	varchar(7)      not null,
+  p_brand1      	varchar(9)      not null,
+  p_color       	varchar(11) 	not null,
+  p_type        	varchar(25) 	not null,
+  p_size        	integer     	not null,
+  p_container   	varchar(10)     not null
+);
+</code></pre>
+<p>Distribution key and sort key significantly improve query time</p>
+<p><strong>Neo4J</strong></p>
+<pre><code>// Friend-of-a-friend 
+(user)-[:KNOWS]-(friend)-[:KNOWS]-(foaf)
+// Shortest path
+path = shortestPath( (user)-[:KNOWS*..5]-(other) )
+// Collaborative filtering
+(user)-[:PURCHASED]-&gt;(product)&lt;-[:PURCHASED]-()-[:PURCHASED]-&gt;(otherProduct)
+// Tree navigation 
+(root)&lt;-[:PARENT*]-(leaf:Category)-[:ITEM]-&gt;(data:Product)
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[AWS Redshift and Apache Airflow pipeline]]></title>
+        <id>https://blog.ferretninja.com/post/aws-redshift-and-apache-airflow-pipeline/</id>
+        <link href="https://blog.ferretninja.com/post/aws-redshift-and-apache-airflow-pipeline/">
+        </link>
+        <updated>2021-03-29T09:36:56.000Z</updated>
+        <content type="html"><![CDATA[<p>A reusable production-grade data pipeline that incorporates data quality checks and allows for easy backfills. The source data resides in S3 and needs to be processed in a data warehouse in Amazon Redshift. The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.</p>
+<ol>
+<li>
+<p>Create AWS redshift cluster and test queries.<br>
+<img src="https://blog.ferretninja.com/post-images/1573755046671.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Set up AWS S3 hook<br>
+<img src="https://blog.ferretninja.com/post-images/1573760821111.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Set up redshift connection hook<br>
+<img src="https://blog.ferretninja.com/post-images/1573760949674.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Set up Airflow job DAG<br>
+<img src="https://blog.ferretninja.com/post-images/1573778681268.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Run Airflow scheduler<br>
+<img src="https://blog.ferretninja.com/post-images/1573778839068.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>See past job statistics<br>
+<img src="https://blog.ferretninja.com/post-images/1573779317276.png" alt="" loading="lazy"></p>
 </li>
 </ol>
-<pre><code>select count(\*) from t1;
-set   t1_count  10002
-insert into t1(a,b,c,d) values (10003,10003,10003,10003);
-INCR t1_count
-delete from t1 where id=10003;
-DECR t1_count
-get t1_count
-</code></pre>
-<p>problem: different session can read inaccurate result.</p>
-<ol start="3">
-<li>Add inno db counting table<br>
-<img src="https://blog.ferretninja.com/post-images/1570402853197.png" alt="" loading="lazy"></li>
-</ol>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[JVM performance tuning]]></title>
-        <id>https://blog.ferretninja.com/post/jvm-performance-tuning/</id>
-        <link href="https://blog.ferretninja.com/post/jvm-performance-tuning/">
-        </link>
-        <updated>2021-03-28T20:19:56.000Z</updated>
-        <content type="html"><![CDATA[<p>Thread status - new, runnable, blocked, waiting, timed-waiting</p>
-<p>Thread dumps<br>
-When the CPU Usage is Abnormally High<br>
-Extract the thread that has the highest CPU usage. After acquiring the thread dump, check the thread's action. Extract thread dumps several times every hour, and check the status change of the threads to determine the problem.</p>
-<p>When the Processing Performance is Abnormally Slow<br>
-After acquiring thread dumps several times, find the list of threads with BLOCKED status. Acquire the list of threads with BLOCKED status after getting the thread dumps several times.</p>
-<p>Heap dumps<br>
-All Objects<br>
-All Classes<br>
-Garbage collection roots<br>
-Thread Stacks and Local Variables</p>
-<p>Collector Types</p>
-<ul>
-<li>Throughput Collectors</li>
-</ul>
-<ol>
-<li>Serial</li>
-<li>Parallel</li>
-</ol>
-<ul>
-<li>Low Pause Collectors</li>
-</ul>
-<ol>
-<li>Concurrent Mark Sweep</li>
-<li>G1</li>
-</ol>
-<p><img src="https://blog.ferretninja.com/post-images/1577147265246.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147281198.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147286161.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147289960.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147294313.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147298730.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147303088.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147308590.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147313988.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147318496.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577147322467.png" alt="" loading="lazy"></p>
-<p><img src="https://blog.ferretninja.com/post-images/1577157639836.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157646324.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157650696.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157655590.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157659980.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157663741.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157668840.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157673304.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157678832.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157683185.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157688078.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157691713.png" alt="" loading="lazy"><br>
-<img src="https://blog.ferretninja.com/post-images/1577157695298.png" alt="" loading="lazy"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Build your own image hosting website using React/Spring Boot/Vsftpd]]></title>
-        <id>https://blog.ferretninja.com/post/build-your-own-image-hosting-website-using-reactspring-bootvsftpd/</id>
-        <link href="https://blog.ferretninja.com/post/build-your-own-image-hosting-website-using-reactspring-bootvsftpd/">
-        </link>
-        <updated>2020-07-10T05:20:49.000Z</updated>
-        <content type="html"><![CDATA[<p>Over the weekend, I have built an image hosting website.<br>
-https://www.ferretninja.com/</p>
-<p>An image hosting service helps to store images online and save local storage space. It provides a reliable backup and easy image sharing by URL that can be used by other websites. Moreover, the images will be available anytime so that one can share the link more easily with clients or friends.</p>
-<p>The details are published at<br>
-https://medium.com/nerd-for-tech/build-your-own-image-hosting-website-using-react-spring-boot-vsftpd-on-aws-ec2-805fb971493d</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Write your own distributed job scheduling framework using ETCD and Spring Boot]]></title>
-        <id>https://blog.ferretninja.com/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/</id>
-        <link href="https://blog.ferretninja.com/post/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot/">
-        </link>
-        <updated>2020-06-27T01:20:51.000Z</updated>
-        <content type="html"><![CDATA[<p>I published a tutorial on writing distributed job scheduler in Spring Boot with the help of ETCD on medium.com. ETCD, a distributed key-value store, saves the job list and provides a distributed lock for worker nodes. Spring Boot manages the connections to Redis Cluster cache and ETCD. The code for master and worker nodes are integrated into one repository and separately deployed using spring @profile annotation.</p>
-<p>Here is a link to the story,<br>
-<strong>https://medium.com/@ywang412/write-your-own-distributed-job-scheduling-framework-using-etcd-and-spring-boot-83dbdb1a056b</strong></p>
-<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1593925320385.PNG" alt="" loading="lazy"></figure>
-<p>Today I found I earned two cents for this writing. I consider it is a significant step for me.<br>
-The source code is hosted at github, <strong>https://github.com/ywang412/ants-job</strong><br>
-<img src="https://blog.ferretninja.com/post-images/1594245174658.PNG" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
 </feed>

@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Java IO stream | Ferret Ninja</title>
+<title>SQL 5 - Advanced | Ferret Ninja</title>
 <meta name="description" content="Whiskers">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,25 +80,77 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Java IO stream</h2>
+          <h2 class="post-title">SQL 5 - Advanced</h2>
           <div class="post-info post-detail-info">
             <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
             
           </div>
           <div class="post-content">
-            <figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573445636324.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1569816542486.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1569816549973.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1569816555204.png" alt="" loading="lazy"></figure>
+            <p><strong>Auto increment primary key</strong></p>
+<p>Clustered index is (primary key -&gt; first unique not-nullable index -&gt; rowID)</p>
+<p>auto increment can maintain the B+ tree (only append new node at the end)<br>
+<img src="https://blog.ferretninja.com/post-images/1573358670278.png" alt="" loading="lazy"></p>
+<p><strong>Master-slave</strong></p>
+<p>Master-slave asynchronous copy<br>
+<img src="https://blog.ferretninja.com/post-images/1573361198939.png" alt="" loading="lazy"><br>
+Latency due to single thread in slave to consume relay log</p>
+<p>Master-slave semi-synchronous copy<br>
+<img src="https://blog.ferretninja.com/post-images/1573361277684.png" alt="" loading="lazy"></p>
+<p>read-write seperation</p>
+<ol>
+<li>through program (set slave read-only to prevent write to slave)</li>
+<li>through middle-ware (MyCAT)</li>
+</ol>
+<p>Latency happends for<br>
+big transaction<br>
+big table ddl<br>
+master concurrent dml<br>
+master no primary key</p>
+<p><strong>Sharding</strong></p>
+<p>When to shard<br>
+Big table backup from slave takes too long<br>
+Big table DDL takes too long</p>
+<p>how to shard<br>
+vertical sharding frequently update field<br>
+vertical sharding text/blob field<br>
+vertical sharding of fast growing fields</p>
+<ol>
+<li>through program</li>
+<li>through middle-ware (MyCAT)</li>
+</ol>
+<p><strong>Bulk delete</strong></p>
+<p>if innodb_file_per_table on, each table has seperate file and drop table will clean space</p>
+<p>To delete a table</p>
+<ol>
+<li>alter table t29 rename t29_bak_20191011;</li>
+<li>wait a month to find dependence on the table</li>
+<li>drop table t29_bak_20191011;</li>
+</ol>
+<p>To clean a table (don't use delete because each row binlog, truncate will drop and create)</p>
+<ol>
+<li>create table t29_bak_20191011 like t29;</li>
+<li>insert into t29_bak_20191011  select * from t29;</li>
+<li>truncate table t29;</li>
+<li>back up table and then drop table t29_bak_20191011;</li>
+</ol>
+<p>delete some record in a table without partition</p>
+<ol>
+<li>back up table</li>
+<li>make sure index exist</li>
+<li>delete from table_name where date&lt;'2017-01-01' limit 1000;</li>
+<li>alter table table_name engine=InnoDB; or optimize table student;  to release space (delete record will not free space, future insert can reuse)</li>
+</ol>
+<p>delete some record in a table with partition<br>
+alter table t29_log drop partition p2016;</p>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-4-transaction/">
               <h3 class="post-title">
-                下一篇：SQL 1 - Optimization and Best Practice
+                下一篇：SQL 4 - Transaction
               </h3>
             </a>
           </div>

@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Java IO stream | Ferret Ninja</title>
+<title>AWS Redshift and Apache Airflow pipeline | Ferret Ninja</title>
 <meta name="description" content="Whiskers">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,25 +80,48 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Java IO stream</h2>
+          <h2 class="post-title">AWS Redshift and Apache Airflow pipeline</h2>
           <div class="post-info post-detail-info">
             <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
             
           </div>
           <div class="post-content">
-            <figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573445636324.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1569816542486.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1569816549973.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1569816555204.png" alt="" loading="lazy"></figure>
+            <p>A reusable production-grade data pipeline that incorporates data quality checks and allows for easy backfills. The source data resides in S3 and needs to be processed in a data warehouse in Amazon Redshift. The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.</p>
+<ol>
+<li>
+<p>Create AWS redshift cluster and test queries.<br>
+<img src="https://blog.ferretninja.com/post-images/1573755046671.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Set up AWS S3 hook<br>
+<img src="https://blog.ferretninja.com/post-images/1573760821111.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Set up redshift connection hook<br>
+<img src="https://blog.ferretninja.com/post-images/1573760949674.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Set up Airflow job DAG<br>
+<img src="https://blog.ferretninja.com/post-images/1573778681268.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>Run Airflow scheduler<br>
+<img src="https://blog.ferretninja.com/post-images/1573778839068.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>See past job statistics<br>
+<img src="https://blog.ferretninja.com/post-images/1573779317276.png" alt="" loading="lazy"></p>
+</li>
+</ol>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/aws-emr-spark-and-data-lake/">
               <h3 class="post-title">
-                下一篇：SQL 1 - Optimization and Best Practice
+                下一篇：AWS EMR Spark and Data Lake
               </h3>
             </a>
           </div>

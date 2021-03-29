@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Java JUC (java.util.concurrent) 7 - Semaphore vs Lock Example | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Java JUC (java.util.concurrent) 7 - Semaphore vs Lock Example</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p><strong>1114. Print in Order</strong></p>
+<pre><code>class Foo {
+    
+    private volatile boolean onePrinted;
+    private volatile boolean twoPrinted;
+
+    public Foo() {
+        onePrinted = false;
+        twoPrinted = false;        
+    }
+
+    public synchronized void first(Runnable printFirst) throws InterruptedException {
+        
+        // printFirst.run() outputs &quot;first&quot;. Do not change or remove this line.
+        printFirst.run();
+        onePrinted = true;
+        notifyAll();
+    }
+
+    public synchronized void second(Runnable printSecond) throws InterruptedException {
+        while(!onePrinted) {
+            wait();
+        }
+        // printSecond.run() outputs &quot;second&quot;. Do not change or remove this line.
+        printSecond.run();
+        twoPrinted = true;
+        notifyAll();
+    }
+
+    public synchronized void third(Runnable printThird) throws InterruptedException {
+        while(!twoPrinted) {
+            wait();
+        }
+        // printThird.run() outputs &quot;third&quot;. Do not change or remove this line.
+        printThird.run();
+    }
+}
+</code></pre>
+<pre><code>import java.util.concurrent.*;
+class Foo {
+    Semaphore run2, run3;
+
+    public Foo() {
+        run2 = new Semaphore(0);
+        run3 = new Semaphore(0);
+    }
+
+    public void first(Runnable printFirst) throws InterruptedException {
+        printFirst.run();
+        run2.release();
+    }
+
+    public void second(Runnable printSecond) throws InterruptedException {
+        run2.acquire();
+        printSecond.run();
+        run3.release();
+    }
+
+    public void third(Runnable printThird) throws InterruptedException {
+        run3.acquire(); 
+        printThird.run();
+    }
+}
+</code></pre>
+<p><strong>1188. Design Bounded Blocking Queue</strong></p>
+<p>When await() is called, the lock associated with this Condition is atomically released and the current thread becomes disabled for thread scheduling purposes. The current thread is assumed to hold the lock associated with this Condition when this method is called.</p>
+<p>newCondition()<br>
+await/signal/signalAll</p>
+<p>synchonized<br>
+wait/notify/notifyAll</p>
+<p>The ReentrantLock is an exclusive lock so only one thread can acquire the lock.<br>
+See #1. When a thread call signal or signalAll, it releases respectively one thread or all threads awaiting for the corresponding Condition such that the thread or those threads will be eligible to acquire the lock again. But for now the lock is still owned by the thread that called signal or signalAll until it releases explicitly the lock by calling lock.unlock(). Then the thread(s) that has/have been released will be able to try to acquire the lock again, the thread that could acquire the lock will be able to check the condition again (by condition this time I mean count == items.length or count == 0 in this example), if it is ok it will proceed otherwise it will await again and release the lock to make it available to another thread.</p>
+<pre><code>class BoundedBlockingQueue {
+    
+    private Queue&lt;Integer&gt; queue;
+    private Semaphore consumerSemaphore;
+    private Semaphore producerSemaphore;
+    private Semaphore mutex;
+
+    public BoundedBlockingQueue(int capacity) {
+        this.queue = new LinkedList&lt;&gt;();
+        this.producerSemaphore = new Semaphore(capacity);
+        this.consumerSemaphore = new Semaphore(0);
+        this.mutex = new Semaphore(1);
+    }
+
+    public void enqueue(int element) throws InterruptedException {
+        this.producerSemaphore.acquire();
+        //use mutex with Linkedlist or use ConcurrentLinkedDeque&lt;Integer&gt; q without mutex
+        this.mutex.acquire();                  
+        this.queue.offer(element);
+        this.mutex.release();
+        this.consumerSemaphore.release();
+    }
+
+    public int dequeue() throws InterruptedException {
+        this.consumerSemaphore.acquire();
+        this.mutex.acquire();
+        Integer res = this.queue.poll();
+        this.mutex.release();
+        this.producerSemaphore.release();
+        return res == null ? -1 : res;
+    }
+
+    public int size() {
+        return this.queue.size();
+    }
+}
+
+
+class BoundedBlockingQueue {
+    
+    private Queue&lt;Integer&gt; queue;
+    
+    private int capacity;
+
+    public BoundedBlockingQueue(int capacity) {
+        this.capacity = capacity;
+        this.queue = new LinkedList&lt;&gt;();
+    }
+    
+    public void enqueue(int element) throws InterruptedException {
+        //object level synchronized so either enqueu or dequeue can run
+        synchronized(this) {
+            while (this.queue.size() == this.capacity) {
+                wait();
+            }
+            this.queue.offer(element);
+            notifyAll();
+        }
+    }
+    
+    public int dequeue() throws InterruptedException {
+        synchronized(this) {
+            while (this.queue.isEmpty()) {
+                wait();
+            }
+            int res = this.queue.poll();
+            notifyAll();
+            return res;
+        }
+    }
+    
+    public int size() {
+        return this.queue.size();
+    }
+}
+
+
+class BoundedBlockingQueue {
+
+    private int[] data;
+    private int capacity = 0, head = 0, tail = 0;
+    private volatile int size = 0;
+    private Lock lock = new ReentrantLock();
+    private Condition isFull = lock.newCondition(), isEmpty = lock.newCondition();
+    
+    public BoundedBlockingQueue(int capacity) {
+        this.data = new int[capacity];
+        this.capacity = capacity;
+    }
+    
+    public void enqueue(int element) throws InterruptedException {
+        try {
+            lock.lock();  
+            while (size == capacity) {
+                isFull.await();     // only one thread will get lock after all threads wake up by signalAll().
+            }
+            data[tail++ % capacity] = element;
+            size++;
+            isEmpty.signalAll();
+        } catch(InterruptedException e) {
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    public int dequeue() throws InterruptedException {
+        int res = 0;
+        try {
+            lock.lock();
+            while (size == 0) {
+                isEmpty.await();
+            }
+            isFull.signalAll();
+            res = data[head++ % capacity];
+            size--;
+        } catch(InterruptedException e) {
+        } finally {
+            lock.unlock();
+        }
+        return res;
+    }
+    
+    public int size() {
+        return size;
+    }
+}
+</code></pre>
+<p>In order for the two methods to run concurrently they would have to use different locks</p>
+<pre><code>class A {
+    private final Object lockA = new Object();
+    private final Object lockB = new Object();
+
+    public void methodA() {
+        synchronized(lockA) {
+            //method A
+        }
+    }
+
+    public void methodB() {
+        synchronized(lockB) {
+            //method B
+        }
+    }
+}
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-6-exception/">
+              <h3 class="post-title">
+                下一篇：Java JUC (java.util.concurrent) 6 - Exception
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Java JUC (java.util.concurrent) 2 - Atomic Variables and Concurrent Collection | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Java JUC (java.util.concurrent) 2 - Atomic Variables and Concurrent Collection</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p>Atomic varaibles are important parts of java concurrency API. It allows multiple threads safely access the same variables. The java.util.concurrent.atomic classes heavily used compare-and-swap (CAS) technique. CAS happens at CPU instruction level and is much more light weighted than synchronizing through locks or <code>synchronized</code> key word.</p>
+<p>AtomicInteger, AtomicLong, LongAdder, AtomicBoolean, and AtomicReference<Integer> are some of the most used Atomic classes.</p>
+<p><strong>AtomicInteger</strong></p>
+<pre><code>// 请求总数
+public static int clientTotal = 5000;
+// 同时并发执行的线程数
+public static int threadTotal = 200;
+public static AtomicInteger count = new AtomicInteger(0);
+
+public static void main(String[] args) throws Exception {
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		final Semaphore semaphore = new Semaphore(threadTotal);
+		final CountDownLatch countDownLatch = new CountDownLatch(clientTotal);
+		for (int i = 0; i &lt; clientTotal ; i++) {
+				executorService.execute(() -&gt; {
+						try {
+								semaphore.acquire();
+								add();
+								semaphore.release();
+						} catch (Exception e) {
+								log.error(&quot;exception&quot;, e);
+						}
+						countDownLatch.countDown();
+				});
+		}
+		countDownLatch.await();
+		executorService.shutdown();
+		log.info(&quot;count:{}&quot;, count.get());
+}
+
+private static void add() {
+		count.incrementAndGet();
+		// count.getAndIncrement();
+}
+</code></pre>
+<p>Another way to acheive correct counting result like above is <code>synchronized</code> keyword.</p>
+<pre><code>// 请求总数
+public static int clientTotal = 5000;
+// 同时并发执行的线程数
+public static int threadTotal = 200;
+public static int count = 0;
+
+public static void main(String[] args) throws Exception {
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		final Semaphore semaphore = new Semaphore(threadTotal);
+		final CountDownLatch countDownLatch = new CountDownLatch(clientTotal);
+		for (int i = 0; i &lt; clientTotal ; i++) {
+				executorService.execute(() -&gt; {
+						try {
+								semaphore.acquire();
+								add();
+								semaphore.release();
+						} catch (Exception e) {
+								log.error(&quot;exception&quot;, e);
+						}
+						countDownLatch.countDown();
+				});
+		}
+		countDownLatch.await();
+		executorService.shutdown();
+		log.info(&quot;count:{}&quot;, count);
+}
+
+private synchronized static void add() {
+		count++;
+}
+</code></pre>
+<p>However, volatile keyword as in <code>public static volatile int count = 0;</code> will not be able to ensure threadsafety to due CPU instruction reorder.</p>
+<p>ConcurrentHashMap, ConcurrentSkipListMap, ConcurrentSkipListSet, CopyOnWriteArrayList, CopyOnWriteArraySet are some typical concurrency collection classes in Java 8.</p>
+<p><strong>CopyOnWriteArrayList</strong></p>
+<pre><code>// 请求总数
+public static int clientTotal = 5000;
+// 同时并发执行的线程数
+public static int threadTotal = 200;
+private static List&lt;Integer&gt; list = new CopyOnWriteArrayList&lt;&gt;();
+
+public static void main(String[] args) throws Exception {
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		final Semaphore semaphore = new Semaphore(threadTotal);
+		final CountDownLatch countDownLatch = new CountDownLatch(clientTotal);
+		for (int i = 0; i &lt; clientTotal; i++) {
+				final int count = i;
+				executorService.execute(() -&gt; {
+						try {
+								semaphore.acquire();
+								update(count);
+								semaphore.release();
+						} catch (Exception e) {
+								log.error(&quot;exception&quot;, e);
+						}
+						countDownLatch.countDown();
+				});
+		}
+		countDownLatch.await();
+		executorService.shutdown();
+		log.info(&quot;size:{}&quot;, list.size());
+}
+
+private static void update(int i) {
+		list.add(i);
+}
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-1-aqsabstractqueuedsynchronizer/">
+              <h3 class="post-title">
+                下一篇：Java JUC (java.util.concurrent) 1 - AQS：AbstractQueuedSynchronizer
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

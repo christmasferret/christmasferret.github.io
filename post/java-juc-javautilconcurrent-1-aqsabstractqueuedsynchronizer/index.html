@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Java JUC (java.util.concurrent) 1 - AQS：AbstractQueuedSynchronizer | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Java JUC (java.util.concurrent) 1 - AQS：AbstractQueuedSynchronizer</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p>AbstractQueuedSynchronizer lays the foundation of java JUC programming. Concurrency classes are extensively using Sync class which extends from AQS as shown below.</p>
+<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1562476011734.png" alt="" loading="lazy"></figure>
+<p>Some example code snippets of CountDownLatch, CyclicBarrier, Semaphore, ForkJoinTask, and FutureTask are explained here.</p>
+<p><strong>CountDownLatch</strong></p>
+<pre><code>public static void main(String[] args) throws Exception {
+		ExecutorService exec = Executors.newCachedThreadPool();
+		final CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+		for (int i = 0; i &lt; threadCount; i++) {
+				final int threadNum = i;
+				exec.execute(() -&gt; {
+						try {
+								test(threadNum);
+						} catch (Exception e) {
+								log.error(&quot;exception&quot;, e);
+						} finally {
+								countDownLatch.countDown();
+						}
+				});
+		}
+		countDownLatch.await(10, TimeUnit.MILLISECONDS);
+		log.info(&quot;finish&quot;);
+		exec.shutdown();
+}
+
+private static void test(int threadNum) throws Exception {
+		Thread.sleep(100);
+		log.info(&quot;{}&quot;, threadNum);
+}
+</code></pre>
+<p><strong>CyclicBarrier</strong></p>
+<pre><code>private static CyclicBarrier barrier = new CyclicBarrier(5);
+
+public static void main(String[] args) throws Exception {
+		ExecutorService executor = Executors.newCachedThreadPool();
+		for (int i = 0; i &lt; 10; i++) {
+				final int threadNum = i;
+				Thread.sleep(1000);
+				executor.execute(() -&gt; {
+						try {
+								race(threadNum);
+						} catch (Exception e) {
+								log.error(&quot;exception&quot;, e);
+						}
+				});
+		}
+		executor.shutdown();
+}
+
+private static void race(int threadNum) throws Exception {
+		Thread.sleep(1000);
+		log.info(&quot;{} is ready&quot;, threadNum);
+		barrier.await();
+		log.info(&quot;{} continue&quot;, threadNum);
+}
+</code></pre>
+<p><strong>Semaphore</strong></p>
+<pre><code>ExecutorService exec = Executors.newCachedThreadPool();
+final Semaphore semaphore = new Semaphore(3);
+
+for (int i = 0; i &lt; threadCount; i++) {
+		final int threadNum = i;
+		exec.execute(() -&gt; {
+				try {
+						if (semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS)) { // 尝试获取一个许可
+								test(threadNum);
+								semaphore.release(); // 释放一个许可
+						}
+				} catch (Exception e) {
+						log.error(&quot;exception&quot;, e);
+				}
+		});
+}
+exec.shutdown();
+}
+
+private static void test(int threadNum) throws Exception {
+log.info(&quot;{}&quot;, threadNum);
+Thread.sleep(1000);
+}
+</code></pre>
+<p><strong>ForkJoinTask</strong></p>
+<pre><code>public class ForkJoinTaskExample extends RecursiveTask&lt;Integer&gt; {
+
+    public static final int threshold = 2;
+    private int start;
+    private int end;
+
+    public ForkJoinTaskExample(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Integer compute() {
+        int sum = 0;
+
+        //如果任务足够小就计算任务
+        boolean canCompute = (end - start) &lt;= threshold;
+        if (canCompute) {
+            for (int i = start; i &lt;= end; i++) {
+                sum += i;
+            }
+        } else {
+            // 如果任务大于阈值，就分裂成两个子任务计算
+            int middle = (start + end) / 2;
+            ForkJoinTaskExample leftTask = new ForkJoinTaskExample(start, middle);
+            ForkJoinTaskExample rightTask = new ForkJoinTaskExample(middle + 1, end);
+
+            // 执行子任务
+            leftTask.fork();
+            rightTask.fork();
+
+            // 等待任务执行结束合并其结果
+            int leftResult = leftTask.join();
+            int rightResult = rightTask.join();
+
+            // 合并子任务
+            sum = leftResult + rightResult;
+        }
+        return sum;
+    }
+
+    public static void main(String[] args) {
+        ForkJoinPool forkjoinPool = new ForkJoinPool();
+
+        //生成一个计算任务，计算1+2+3+4
+        ForkJoinTaskExample task = new ForkJoinTaskExample(1, 100);
+
+        //执行一个任务
+        Future&lt;Integer&gt; result = forkjoinPool.submit(task);
+
+        try {
+            log.info(&quot;result:{}&quot;, result.get());
+        } catch (Exception e) {
+            log.error(&quot;exception&quot;, e);
+        }
+    }
+}
+</code></pre>
+<p><strong>Future</strong></p>
+<pre><code>static class MyCallable implements Callable&lt;String&gt; {
+
+        @Override
+        public String call() throws Exception {
+            log.info(&quot;do something in callable&quot;);
+            Thread.sleep(5000);
+            return &quot;Done&quot;;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Future&lt;String&gt; future = executorService.submit(new MyCallable());
+        log.info(&quot;do something in main&quot;);
+        Thread.sleep(1000);
+        String result = future.get();
+        log.info(&quot;result：{}&quot;, result);
+    }
+</code></pre>
+<p><strong>FutureTask</strong></p>
+<pre><code>public static void main(String[] args) throws Exception {
+		FutureTask&lt;String&gt; futureTask = new FutureTask&lt;String&gt;(new Callable&lt;String&gt;() {
+				@Override
+				public String call() throws Exception {
+						log.info(&quot;do something in callable&quot;);
+						Thread.sleep(5000);
+						return &quot;Done&quot;;
+				}
+		});
+
+		new Thread(futureTask).start();
+		log.info(&quot;do something in main&quot;);
+		Thread.sleep(1000);
+		String result = futureTask.get();
+		log.info(&quot;result：{}&quot;, result);
+}
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/perfect-singleton/">
+              <h3 class="post-title">
+                下一篇：Perfect Singleton
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

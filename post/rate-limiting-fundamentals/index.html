@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Rate limiting fundamentals | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Rate limiting fundamentals</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p><strong>Leaky bucket</strong></p>
+<pre><code>public abstract class RateLimiter {
+
+  protected final int maxRequestPerSec;
+  protected RateLimiter(int maxRequestPerSec) {
+    this.maxRequestPerSec = maxRequestPerSec;
+  }
+
+  abstract boolean allow();
+}
+
+public class LeakyBucket extends RateLimiter {
+
+  private long nextAllowedTime;
+  private final long REQUEST_INTERVAL_MILLIS;
+
+  protected LeakyBucket(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+    REQUEST_INTERVAL_MILLIS = 1000 / maxRequestPerSec;
+    nextAllowedTime = System.currentTimeMillis();
+  }
+
+  @Override
+  boolean allow() {
+    long curTime = System.currentTimeMillis();
+    synchronized (this) {
+      if (curTime &gt;= nextAllowedTime) {
+        nextAllowedTime = curTime + REQUEST_INTERVAL_MILLIS;
+        return true;
+      }
+      return false;
+    }
+  }
+}
+</code></pre>
+<p><strong>Token Bucket</strong></p>
+<p>Eager mode</p>
+<pre><code>public class TokenBucket extends RateLimiter {
+
+  private int tokens;
+
+  public TokenBucket(int maxRequestsPerSec) {
+    super(maxRequestsPerSec);
+    this.tokens = maxRequestsPerSec;
+    new Thread(() -&gt; {
+      while (true) {
+        try {
+          TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        refillTokens(maxRequestsPerSec);
+      }
+    }).start();
+  }
+
+  @Override
+  public boolean allow() {
+    synchronized (this) {
+      if (tokens == 0) {
+        return false;
+      }
+      tokens--;
+      return true;
+    }
+  }
+
+  private void refillTokens(int cnt) {
+    synchronized (this) {
+      tokens = Math.min(tokens + cnt, maxRequestPerSec);
+      notifyAll();
+    }
+  }
+}
+</code></pre>
+<p>Lazy mode</p>
+<pre><code>public class TokenBucketLazyRefill extends RateLimiter {
+
+  private int tokens;
+  private long lastRefillTime;
+
+  public TokenBucketLazyRefill(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+    this.tokens = maxRequestPerSec;
+    this.lastRefillTime = System.currentTimeMillis();
+  }
+
+  @Override
+  public boolean allow() {
+    synchronized (this) {
+      refillTokens();
+      if (tokens == 0) {
+        return false;
+      }
+      tokens--;
+      return true;
+    }
+  }
+
+  private void refillTokens() {
+    long curTime = System.currentTimeMillis();
+    double secSinceLastRefill = (curTime - lastRefillTime) / 1000.0;
+    int cnt = (int) (secSinceLastRefill * maxRequestPerSec);
+    if (cnt &gt; 0) {
+      tokens = Math.min(tokens + cnt, maxRequestPerSec);
+      lastRefillTime = curTime;
+    }
+  }
+}
+</code></pre>
+<p><strong>Fixed Window Counter</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1579461852072.png" alt="" loading="lazy"></p>
+<pre><code>public class FixedWindowCounter extends RateLimiter {
+
+  // TODO: Clean up stale entries
+  private final ConcurrentMap&lt;Long, AtomicInteger&gt; windows = new ConcurrentHashMap&lt;&gt;();
+
+  protected FixedWindowCounter(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+  }
+
+  @Override
+  boolean allow() {
+    long windowKey = System.currentTimeMillis() / 1000 * 1000;
+    windows.putIfAbsent(windowKey, new AtomicInteger(0));
+    return windows.get(windowKey).incrementAndGet() &lt;= maxRequestPerSec;
+  }
+}
+</code></pre>
+<p><strong>Sliding Window Log</strong><br>
+<img src="https://blog.ferretninja.com/post-images/1579461845782.png" alt="" loading="lazy"></p>
+<pre><code>public class SlidingWindowLog extends RateLimiter {
+
+  private final Queue&lt;Long&gt; log = new LinkedList&lt;&gt;();
+
+  protected SlidingWindowLog(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+  }
+
+  @Override
+  boolean allow() {
+    long curTime = System.currentTimeMillis();
+    long boundary = curTime - 1000;
+    synchronized (log) {
+      while (!log.isEmpty() &amp;&amp; log.element() &lt;= boundary) {
+        log.poll();
+      }
+      log.add(curTime);
+      return log.size() &lt;= maxRequestPerSec;
+    }
+  }
+}
+</code></pre>
+<p><strong>Sliding Window</strong></p>
+<p>This is still not accurate becasue it assumes that the distribution of requests in previous window is even, which may not be true. But compares to fixed window counter, which only guarantees rate within each window, and sliding window log, which has huge memory footprint, sliding window is more practical.<br>
+<img src="https://blog.ferretninja.com/post-images/1579461835894.png" alt="" loading="lazy"></p>
+<pre><code>public class SlidingWindow extends RateLimiter {
+
+  // TODO: Clean up stale entries
+  private final ConcurrentMap&lt;Long, AtomicInteger&gt; windows = new ConcurrentHashMap&lt;&gt;();
+
+  protected SlidingWindow(int maxRequestPerSec) {
+    super(maxRequestPerSec);
+  }
+
+  @Override
+  boolean allow() {
+    long curTime = System.currentTimeMillis();
+    long curWindowKey = curTime / 1000 * 1000;
+    windows.putIfAbsent(curWindowKey, new AtomicInteger(0));
+    long preWindowKey = curWindowKey - 1000;
+    AtomicInteger preCount = windows.get(preWindowKey);
+    if (preCount == null) {
+      return windows.get(curWindowKey).incrementAndGet() &lt;= maxRequestPerSec;
+    }
+
+    double preWeight = 1 - (curTime - curWindowKey) / 1000.0;
+    long count = (long) (preCount.get() * preWeight
+        + windows.get(curWindowKey).incrementAndGet());
+    return count &lt;= maxRequestPerSec;
+  }
+}
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/nosql-vs-sql/">
+              <h3 class="post-title">
+                下一篇：NoSQL vs SQL
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>DAU and retention analysis | Ferret Ninja</title>
+<meta name="description" content="Whiskers">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1617057715711">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://blog.ferretninja.com">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1617057715711" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://blog.ferretninja.com">
+        <h1 class="site-title">Ferret Ninja</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">DAU and retention analysis</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p><strong>Comparing test and control groups</strong></p>
+<pre><code>SELECT date_trunc('day', e.occurred_at),
+    CASE WHEN flag = 'true' 
+      THEN 'treatment' ELSE 'control' END as flag,
+    COUNT(e.event_name)
+FROM tutorial.yammer_events e
+WHERE e.event_name = 'login'
+GROUP BY 1,2
+ORDER BY 1 DESC, 2 DESC
+</code></pre>
+<p><strong>Click through rates</strong></p>
+<pre><code>SELECT date_trunc('day', occurred_at) as day,
+  1.00 * COUNT (CASE WHEN action = 'email_clickthrough' THEN user_id ELSE NULL END) 
+        / COUNT (CASE WHEN action = 'email_open' THEN user_id ELSE NULL END) as CTR,
+  COUNT (CASE WHEN action = 'email_clickthrough' THEN user_id ELSE NULL END) as clickthroughs,
+  COUNT (CASE WHEN action = 'email_open' THEN user_id ELSE NULL END) as opens
+FROM tutorial.yammer_emails
+GROUP BY 1
+---
+
+WITH open as (
+  SELECT date_trunc('day', occurred_at) as day,
+         COUNT(action) as opens
+  FROM tutorial.yammer_emails
+  WHERE action = 'email_open'
+  GROUP BY 1
+),
+  clickthrough as (
+  SELECT date_trunc('day', occurred_at) as day,
+         COUNT(action) as clickthroughs
+  FROM tutorial.yammer_emails
+  WHERE action = 'email_clickthrough'
+  GROUP BY 1
+)
+
+SELECT clickthrough.day,
+       1.00*clickthroughs/opens as CTR, 
+       clickthroughs, 
+       opens
+FROM clickthrough
+JOIN open ON clickthrough.day = open.day
+ORDER BY 1 DESC
+</code></pre>
+<p><strong>DAU, WAU, MAU, and ratios between them</strong></p>
+<pre><code>WITH dailies AS (
+  SELECT DATE_TRUNC('day', e.occurred_at) as date,
+       COUNT(DISTINCT e.user_id) as dau
+  FROM tutorial.yammer_events e
+  WHERE e.event_name = 'login'
+  GROUP BY 1 
+)
+SELECT d, 
+    dau, 
+    (SELECT COUNT(DISTINCT e.user_id) as wau
+          FROM tutorial.yammer_events e
+          WHERE e.occurred_at::DATE BETWEEN 
+            dailies.date - 7 * Interval '1 day' AND dailies.date
+          AND e.event_name = 'login'
+          ) as wau_count,
+    (SELECT COUNT(DISTINCT e.user_id) as mau
+          FROM tutorial.yammer_events e
+          WHERE e.occurred_at::DATE BETWEEN 
+            dailies.date - 30 * Interval '1 day' AND dailies.date
+          AND e.event_name = 'login'
+          ) as mau_count,
+    100.00 * dau/(SELECT COUNT(DISTINCT e.user_id) as mau
+          FROM tutorial.yammer_events e
+          WHERE e.occurred_at::DATE BETWEEN 
+            dailies.date - 30 * Interval '1 day' AND dailies.date
+          AND e.event_name = 'login'
+          ) as dau_mau
+FROM dailies
+</code></pre>
+<p>UID,  first_active_date, last_active_date, previous_active_date</p>
+<p><strong>Retention</strong></p>
+<pre><code>with monthly_activity as (
+  select distinct
+    date_trunc('month', created_at) as month,
+    user_id
+  from events
+)
+select
+  this_month.month,
+  count(distinct user_id)
+from monthly_activity this_month
+join monthly_activity last_month
+  on this_month.user_id = last_month.user_id
+  and this_month.month = add_months(last_month.month,1)
+group by month
+</code></pre>
+<p><strong>Churn</strong></p>
+<pre><code>with monthly_activity as (
+  select distinct
+    date_trunc('month', created_at) as month,
+    user_id
+  from events
+)
+select
+  last_month.month + add_months(last_month.month,1),
+  count(distinct last_month.user_id)
+from monthly_activity last_month
+left join monthly_activity this_month
+  on this_month.user_id = last_month.user_id
+  and this_month.month = add_months(last_month.month,1)
+where this_month.user_id is null
+group by 1
+</code></pre>
+<p><strong>Reactivated Users</strong></p>
+<pre><code>with
+monthly_activity as (
+  select distinct
+    date_trunc('month', created_at) as month,
+    user_id
+  from events
+),
+first_activity as (
+  select user_id, date(min(created_at)) as month
+  from events
+  group by 1
+)
+select
+  this_month.month,
+  count(distinct user_id)
+from monthly_activity this_month
+left join monthly_activity last_month
+  on this_month.user_id = last_month.user_id
+  and this_month.month = add_months(last_month.month,1)
+join first_activity
+  on this_month.user_id = first_activity.user_id
+  and first_activity.month != this_month.month
+where last_month.user_id is null
+group by 1
+</code></pre>
+<p><strong>Percent Change</strong></p>
+<pre><code>with monthly_active_users as (
+ select
+   date_trunc('month', created_at) as month,
+   count (distinct user_id) as mau
+ from events
+ group by 1
+)
+select
+ this_month.month,
+ [(this_month.mau - last_month.mau)*1.0/last_month.mau:%] as pct_change
+from monthly_active_users this_month
+join monthly_active_users last_month
+ on this_month.month = add_months(last_month.month,1)
+</code></pre>
+<p><strong>Sessionization</strong></p>
+<pre><code>SELECT *
+      ,  extract(epoch from mytimestamp)
+         - lag(extract(epoch from mytimestamp))
+         over (PARTITION BY user_id order by mytimestamp) as time_interval
+FROM toy_data_psql;
+
+SELECT *
+  , CASE
+      WHEN EXTRACT(EPOCH FROM mytimestamp)
+           - LAG(EXTRACT(EPOCH FROM mytimestamp))
+           OVER (PARTITION BY user_id ORDER BY mytimestamp) &gt;= 30 * 60
+      THEN 1
+      ELSE 0
+    END as new_session
+FROM
+  toy_data_psql;
+
+SELECT *
+  , user_id || '_' || SUM(new_session)
+  OVER (PARTITION BY user_id ORDER BY mytimestamp) AS session_id
+FROM (
+  SELECT *
+    , CASE
+       WHEN EXTRACT(EPOCH FROM mytimestamp)
+          - LAG(EXTRACT(EPOCH FROM mytimestamp))
+            OVER (PARTITION BY user_id ORDER BY mytimestamp) &gt;= 30 * 60
+       THEN 1
+       ELSE 0
+      END as new_session
+    FROM
+      toy_data_psql
+) s1
+</code></pre>
+<pre><code>import dataiku
+import pandas as pd
+from datetime import timedelta
+
+# define treshold value
+T = timedelta(seconds=30*60)
+
+# load dataset
+toy_data = dataiku.Dataset(&quot;toy_data&quot;).get_dataframe()
+
+# add a column containing previous timestamp
+toy_data =  pd.concat([toy_data,
+                       toy_data.groupby('user_id').transform(lambda x:x.shift(1))]
+                      ,axis=1)
+toy_data.columns = ['user_id','mytimestamp','prev_mytimestamp']
+
+# create the new session column
+toy_data['new_session'] = ((toy_data['mytimestamp']
+                            - toy_data['prev_mytimestamp'])&gt;=T).astype(int)
+
+# create the session_id
+toy_data['increment'] = toy_data.groupby(&quot;user_id&quot;)['new_session'].cumsum()
+toy_data['session_id'] = toy_data['user_id'].astype(str) + '_'
+                                + toy_data['increment'].astype(str)
+
+# to get the same result as with hive/postgresql
+toy_data = toy_data.sort(['user_id','mytimestamp'])
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/rate-limiting-fundamentals/">
+              <h3 class="post-title">
+                下一篇：Rate limiting fundamentals
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Whiskers</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://blog.ferretninja.com/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

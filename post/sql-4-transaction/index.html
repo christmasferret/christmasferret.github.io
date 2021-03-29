@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Java IO stream | Ferret Ninja</title>
+<title>SQL 4 - Transaction | Ferret Ninja</title>
 <meta name="description" content="Whiskers">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,25 +80,45 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Java IO stream</h2>
+          <h2 class="post-title">SQL 4 - Transaction</h2>
           <div class="post-info post-detail-info">
             <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
             
           </div>
           <div class="post-content">
-            <figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573445636324.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1569816542486.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1569816549973.png" alt="" loading="lazy"></figure>
-<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1569816555204.png" alt="" loading="lazy"></figure>
+            <p><strong>MVCC</strong></p>
+<p>Multi version concurrency control<br>
+<img src="https://blog.ferretninja.com/post-images/1571011326523.png" alt="" loading="lazy"></p>
+<p>In RC and RR, the session can see the record before other session's updating because of MVCC and undo-log.</p>
+<p><img src="https://blog.ferretninja.com/post-images/1571012348765.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1571012375116.png" alt="" loading="lazy"></p>
+<p><strong>Good transaction practice</strong></p>
+<p>submit outside loop<br>
+do query that uses large lock range later in transaction<br>
+two transactions get resources in same order<br>
+choose RC is phantom read is fine<br>
+don't mix innodb and mysiam table (mysiam doesn't support transaction and rollback)</p>
+<p><strong>Distributed transaction</strong></p>
+<ol>
+<li>
+<p>mysql<br>
+phase 1 prepare<br>
+phase 2 commit/rollback</p>
+</li>
+<li>
+<p>message queue<br>
+<img src="https://blog.ferretninja.com/post-images/1571012229524.png" alt="" loading="lazy"></p>
+</li>
+</ol>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-1-optimization-and-best-practice/">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/sql-3-lock/">
               <h3 class="post-title">
-                下一篇：SQL 1 - Optimization and Best Practice
+                下一篇：SQL 3 - Lock
               </h3>
             </a>
           </div>

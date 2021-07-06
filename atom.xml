@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.ferretninja.com</id>
-    <title>Ferret Ninja</title>
-    <updated>2021-07-06T19:27:22.913Z</updated>
+    <title>Ferret Ninja - Yu Wang</title>
+    <updated>2021-07-06T20:20:34.467Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.ferretninja.com"/>
     <link rel="self" href="https://blog.ferretninja.com/atom.xml"/>
     <subtitle>Whiskers</subtitle>
     <logo>https://blog.ferretninja.com/images/avatar.png</logo>
     <icon>https://blog.ferretninja.com/favicon.ico</icon>
-    <rights>All rights reserved 2021, Ferret Ninja</rights>
+    <rights>All rights reserved 2021, Ferret Ninja - Yu Wang</rights>
     <entry>
         <title type="html"><![CDATA[Javascript 5 - DOM]]></title>
         <id>https://blog.ferretninja.com/post/javascript-5-dom/</id>

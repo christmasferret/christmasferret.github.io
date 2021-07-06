@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.ferretninja.com</id>
     <title>Ferret Ninja</title>
-    <updated>2021-03-29T22:42:09.850Z</updated>
+    <updated>2021-07-06T19:13:19.828Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.ferretninja.com"/>
     <link rel="self" href="https://blog.ferretninja.com/atom.xml"/>
@@ -15,7 +15,7 @@
         <id>https://blog.ferretninja.com/post/javascript-5-dom/</id>
         <link href="https://blog.ferretninja.com/post/javascript-5-dom/">
         </link>
-        <updated>2021-03-29T09:41:41.000Z</updated>
+        <updated>2021-06-28T20:41:41.000Z</updated>
         <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1590533131285.png" alt="" loading="lazy"></figure>
 <figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1590533375585.png" alt="" loading="lazy"></figure>
 <figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1590533753402.png" alt="" loading="lazy"></figure>
@@ -110,7 +110,7 @@ An element with position: relative; is positioned relative to its normal positio
         <id>https://blog.ferretninja.com/post/javascript-4-es6/</id>
         <link href="https://blog.ferretninja.com/post/javascript-4-es6/">
         </link>
-        <updated>2021-03-29T09:41:18.000Z</updated>
+        <updated>2021-05-25T20:41:18.000Z</updated>
         <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1588020833158.png" alt="" loading="lazy"></figure>
 <p><strong>let/const block scope</strong></p>
 <pre><code>let arr = [1,2,3,4]
@@ -195,7 +195,7 @@ let obj = {
         <id>https://blog.ferretninja.com/post/javascript-3-http-request/</id>
         <link href="https://blog.ferretninja.com/post/javascript-3-http-request/">
         </link>
-        <updated>2021-03-29T09:40:59.000Z</updated>
+        <updated>2021-04-20T20:40:59.000Z</updated>
         <content type="html"><![CDATA[<p><strong>url parsing</strong><br>
 <img src="https://blog.ferretninja.com/post-images/1588015088492.png" alt="" loading="lazy"></p>
 <p><strong>dns</strong><br>
@@ -215,805 +215,6 @@ let obj = {
         <content type="html"><![CDATA[<p>ctrl + shift + i open dev tools<br>
 ctrl + shift + C select element</p>
 <p>network: request status</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Javascript 1 - function, object, prototype]]></title>
-        <id>https://blog.ferretninja.com/post/javascript-1-function-object-prototype/</id>
-        <link href="https://blog.ferretninja.com/post/javascript-1-function-object-prototype/">
-        </link>
-        <updated>2021-03-29T09:40:20.000Z</updated>
-        <content type="html"><![CDATA[<p><strong>Function definition</strong></p>
-<pre><code>//函数声明式定义
-function foo(num1,num2){
-    return num1 + num2;
-}
-//函数表达式定义
-var foo = function(num1,num2){
-    return num1 + num2;
-};
-//使用Function构造函数定义
-var foo = new Function(&quot;num1&quot;,&quot;num2&quot;,&quot;return num1 + num2&quot;);
-//实际上创建一个Function实例并不一定要赋值给具体的指针，可以直接执行
-(function(x,y){return x+y})(1,2);
-//之所以用圆括号把function(){}括起来是因为js解释器会将function解释为函数声明，而函数声明不能直接跟着(x,y)，我们需要将其转换为函数表达式。
-//(1,2)表示要传递跟函数的参数。
-
-</code></pre>
-<p><strong>IIFE</strong><br>
-<img src="https://blog.ferretninja.com/post-images/1590531678788.png" alt="" loading="lazy"></p>
-<p>An IIFE (Immediately Invoked Function Expression) is a JavaScript function that runs as soon as it is defined. (function () { statements })();.</p>
-<p>In jQuery, the fn property is just an alias to the prototype property. jQuery identifier (or $) is just a constructor function.</p>
-<pre><code>function Test() {
-  this.a = 'a';
-}
-Test.prototype.b = 'b';
-
-var test = new Test(); 
-test.a; // &quot;a&quot;, own property
-test.b; // &quot;b&quot;, inherited property
-
-(function() {
-  var foo = function(arg) { // core constructor
-    // ensure to use the `new` operator
-    if (!(this instanceof foo))
-      return new foo(arg);
-    // store an argument for this example
-    this.myArg = arg;
-    //..
-  };
-
-  // create `fn` alias to `prototype` property
-  foo.fn = foo.prototype = {
-    init: function () {/*...*/}
-    //...
-  };
-
-  // expose the library
-  window.foo = foo;
-})();
-
-// Extension:
-
-foo.fn.myPlugin = function () {
-  alert(this.myArg);
-  return this; // return `this` for chainability
-};
-
-foo(&quot;bar&quot;).myPlugin(); // alerts &quot;bar&quot;
-</code></pre>
-<p>Before ES6, to avoid global method name conflicts, add method to a object. After ES6, use commonJS.</p>
-<pre><code>// bad
-let find = () =&gt; {};
-let remove = () =&gt; {};
-
-// good
-$.fn.find = () =&gt; {};
-$.fn.remove = () =&gt; {};
-
-// good
-(function($) {
-    let find = () =&gt; {};
-    let remove = () =&gt; {};
-    $.fn.find = find;
-    $.fn.remove = remove;
-}(jQuery))
-</code></pre>
-<p><strong>函数作为构造函数进行调用，this指向new出的那个对象</strong></p>
-<pre><code>color = 'red';
-var o = {color: 'blue'};
-function sayColor() {
-    console.log(this.color);
-}
-sayColor(); //red
-sayColor.call(this); //red
-sayColor.call(o); //blue
-
-&lt;script&gt; 
-var x = 0;
-function test(){
-    this.x = 1;
-}
-var obj = new test();
-console.log(obj.x);    //1（说明this指向obj）
-&lt;/script&gt;
-
-</code></pre>
-<p><strong>JavaScript has no overload</strong></p>
-<pre><code>var sum(){
-    return arguments[0] + arguments[1];    //通过arguments对象执行内部操作
-}
-console.log(sum(1, 2));    //3
-
-function add(num1, num2){
-    return num1 + num2;
-}
-function add(value){
-    return value + 100;
-}
-console.log(add(1, 2));    //101
-</code></pre>
-<p><strong>instance.<strong>proto</strong> === constructor.prototype</strong></p>
-<pre><code>var 对象 = new 函数()
-对象.__proto__ === 对象的构造函数.prototype
-
-</code></pre>
-<p>constructor1.prototype = instance2<br>
-鉴于上述游戏规则生效,如果试图引用constructor1构造的实例instance1的某个属性p1:<br>
-1).首先会在instance1内部属性中找一遍;<br>
-2).接着会在instance1.<strong>proto</strong>(constructor1.prototype)中找一遍,而constructor1.prototype 实际上是instance2, 也就是说在instance2中寻找该属性p1;<br>
-3).如果instance2中还是没有,此时程序不会灰心,它会继续在instance2.<strong>proto</strong>(constructor2.prototype)中寻找...直至Object的原型对象</p>
-<p>搜索轨迹: instance1--&gt; instance2 --&gt; constructor2.prototype…--&gt;Object.prototype</p>
-<pre><code>
-function Father(){
-	this.property = true;
-}
-Father.prototype.getFatherValue = function(){
-	return this.property;
-}
-function Son(){
-	this.sonProperty = false;
-}
-//继承 Father
-Son.prototype = new Father();//Son.prototype被重写,导致Son.prototype.constructor也一同被重写
-Son.prototype.getSonVaule = function(){
-	return this.sonProperty;
-}
-var instance = new Son();
-alert(instance.getFatherValue());//true
- 
-alert(instance instanceof Object);//true
-alert(instance instanceof Father);//true
-alert(instance instanceof Son);//true
-alert(Object.prototype.isPrototypeOf(instance));//true
-alert(Father.prototype.isPrototypeOf(instance));//true
-alert(Son.prototype.isPrototypeOf(instance));//true
-</code></pre>
-<p><strong>New</strong><br>
-第一行，我们创建了一个空对象obj;<br>
-第二行，我们将这个空对象的__proto__成员指向了F函数对象prototype成员对象;<br>
-第三行，我们将F函数对象的this指针替换成obj，然后再调用F函数.</p>
-<pre><code>var obj  = {};
-obj.__proto__ = F.prototype;
-F.call(obj);
-</code></pre>
-<p>Another way:<br>
-subClass.prototype = superClass.prototype;//直接指向超类型prototype</p>
-<pre><code>function Person() {
-
-}
-
-var person = new Person();
-
-console.log(person.__proto__ == Person.prototype) // true
-console.log(Person.prototype.constructor == Person) // true
-// 顺便学习一个ES5的方法,可以获得对象的原型
-console.log(Object.getPrototypeOf(person) === Person.prototype) // true
-
-console.log(person.constructor === Person); // true
-</code></pre>
-<p>当获取 person.constructor 时，其实 person 中并没有 constructor 属性,当不能读取到constructor 属性时，会从 person 的原型也就是 Person.prototype 中读取，正好原型中有该属性，所以：person.constructor === Person.prototype.constructor<br>
-<img src="https://blog.ferretninja.com/post-images/1586643507831.png" alt="" loading="lazy"></p>
-<p><strong>function vs object</strong></p>
-<p>function is a object with prototype</p>
-<pre><code>var o1 = {}; 
-var o2 =new Object();
-var o3 = new f1();
-
-function f1(){}; 
-var f2 = function(){};
-var f3 = new Function('str','console.log(str)');
-
-console.log(typeof Object); //function 
-console.log(typeof Function); //function  
-
-console.log(typeof f1); //function 
-console.log(typeof f2); //function 
-console.log(typeof f3); //function   
-
-console.log(typeof o1); //object 
-console.log(typeof o2); //object 
-console.log(typeof o3); //object
-</code></pre>
-<p><strong>prototype</strong></p>
-<pre><code>function Person() {}
-Person.prototype = {
-    name:  'Zaxlct',
-    age: 28,
-    job: 'Software Engineer',
-    sayName: function() {
-        console.log(this.name);
-    }
-}
-
-var person1 = new Person();
-person1.sayName(); // 'Zaxlct'
-var person2 = new Person();
-person2.sayName(); // 'Zaxlct'
-console.log(person1.sayName == person2.sayName); //true
-</code></pre>
-<p>问：为什么 [1, 2, 3].map(parseInt) 返回 [1,NaN,NaN]?<br>
-答：parseInt 函数的第二个参数表示要解析的数字的基数。该值介于 2 ~ 36 之间。map will pass both value and index.</p>
-<p>... for shallow copy<br>
-var a = { name: 'ygy', age: 20 };<br>
-var b = { ...a };</p>
-<p>use &amp;&amp; to replace if<br>
-// old<br>
-if (callback) callback();<br>
-// new<br>
-callback &amp;&amp; callback();</p>
-<p>// use &amp;&amp; to get value<br>
-var obj = {<br>
-info: {<br>
-name: 'ygy'<br>
-}<br>
-}<br>
-obj.info &amp;&amp; obj.info.name; // 'ygy'</p>
-<p>|| to get default value<br>
-var b = a || 10; // 如果a是空值，那么b就是10</p>
-<p><strong>This</strong></p>
-<pre><code>var a = 1;
-var obj1 = {
-    a:2,
-    fn:function(){
-        console.log(this.a);
-    }
-}
-var fn1 = obj1.fn;
-var fn1bind = fn1.bind(obj1);
-fn1();//1    //window
-obj1.fn();//2   //object 
-fn1bind();//2
-fn1.call(obj1);//2
-fn1.apply(obj1);//2
-
-document.addEventListener('click', function(e){
-    console.log(this);  //document
-    setTimeout(function(){
-        console.log(this); //window
-    }, 200);
-}, false); 
-
-//constructor的this都指向实例
-function Person(name,age){
-    this.name = name;
-    this.age = age;
-    this.sayAge = function(){
-        console.log(this.age);
-    }
-}
- 
-var dot = new Person('Dot',2);
-dot.sayAge();//2  
-
-</code></pre>
-<p>Use closure to make variable private</p>
-<pre><code>// 闭包版
-const Student = function(age, sex) {
-    let _age = age, _sex = sex;
-    const setAge = (newAge) =&gt; {
-        _age = 20;
-    }
-    const getAge = () =&gt; {
-        return _age;
-    }
-    return {
-        setAge,
-        getAge
-    }
-}
-const student = new Student(20, 'female');
-console.log(student._age); // undefined
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Data Metrics]]></title>
-        <id>https://blog.ferretninja.com/post/data-metrics/</id>
-        <link href="https://blog.ferretninja.com/post/data-metrics/">
-        </link>
-        <updated>2021-03-29T09:39:48.000Z</updated>
-        <content type="html"><![CDATA[<p>meaningful metrics -&gt; daily sessions per user<br>
-time spent/session (the user is idle on the page)<br>
-reactions, comments and shares in newfeed content. Reactions would include: likes, hearts, sad face, angry face etc.<br>
-average number of interactions a user has per visit to the Newsfeed.<br>
-click through rate for ads; this would help us understand whether ads are relevant</p>
-<p>Grow business -&gt; user retention or user acquisition<br>
-user retention -&gt; increasing user engagement -&gt; metrics with time threshold ( Average likes per user per day)</p>
-<p>Improve product -&gt; feature demand that users already doing something despite a complicated user flow. Simplifying the flow will most likely improve your target metrics</p>
-<p>optimize a long term metric like retention rate or lifetime value -&gt; find a short term metric that can predict the long term one</p>
-<p>pick variables -&gt; pick a combination of user characteristics (age, sex, country, etc.) and behavioral ones (device, they came from ads/SEO/direct link, session time, etc.)</p>
-<p>Engagement on FB -&gt; proportion of users who take at least one action per day<br>
-response rate on Quora -&gt; percentage of questions that get at least one response with at least 3 up-votes within a day<br>
-Airbnb -&gt; if you want to go to a given place, you can do it<br>
-uber new UI -&gt; AB test in two comparable markets (To identify required sample size, choose power, significance level, minimum difference between test and control, and std deviation)</p>
-<p>novelty effect -&gt; control for this by subsetting by drivers for which it is the first experience. Look at test results between new users in the control group vs new users in test group</p>
-<p>A/B test win but cost of change -&gt; Human labor costs (engineering time to make the change), opportunity-cost (not working on something else with a possibly higher expected value), Risk of bugs</p>
-<p>missing value in a varibale (Uber trips without rider review) -&gt; missing value is important information. predict missing value or use -1 as missing value</p>
-<p>e-commerce demand -&gt; going to a site and searching for &quot;jeans&quot;,  ads click-through-rate (CTR)</p>
-<p>e-commerce supply -&gt; # conversions/# searches only considering people who used filters in their search. Or people whose session time is above a given value.</p>
-<p>site funnel -&gt; home page, search results, click on item, buy it</p>
-<p>predict Y (Instagram usage), how to find out whether X (here mobile Operative System - OS ) is a discriminant variable or not -&gt; 1. build a decision tree using user-related variables + OS to predict Instagram usage. 2.  building two models: one including OS and one without. 3. generate simulated datasets where you adjust the distributions of all other variables. So that now you have the same age, country, etc, distribution for both iOS and Android</p>
-<p>subscription retention -&gt;  percentage of users who don't unsubscribe within the first 12 months too long -&gt; proportion of people who unsubscribed or never used my product within the first week / three weeks</p>
-<p>user demographic vs behavioral characteristics -&gt; 1. Looking at a user browsing history gives information about what a user is interested in buying regardless of whether it is a gift or for herself. 2. Timing Browsing data tells the moment in which a certain user is thinking about buying a product.</p>
-<p>acquiring new users -&gt; new sign ups per day from users who send at least 1 message within the first 2 days<br>
-retain current users -&gt; engagement -&gt; average messages per day per user</p>
-<p>new feature -&gt; find something that people are already doing, but in a complicated way requiring multiple steps. An example of this could be identifying that the last message of a conversation is about calling Uber, ordering food, or using any kind of other app. And a possible next step could be to integrate that functionality from within WhatsApp, kind of like Google Map can be called from inside WhatsApp.</p>
-<p>user lifetime value -&gt; pay for a click -&gt; revenue coming from that user within the first year -&gt; using short term data to predict -&gt; find features user location, user device, operative system, type of browser, source</p>
-<p>recommendation -&gt; shared connection, shared cluster (work friends, high school friends, university friends)</p>
-<p>predict fraud -&gt; Device ID, IP address, Ratings, Price, pictures, description, Browsing behavior that led to the seller creating the account.</p>
-<p>A/B test drawbacks -&gt; never be as similar markets, no full independence. Check one metric that's not supposed to be affected by your test. Make sure that during the test keeps behaving similarly for both markets</p>
-<p>customer service performance measurement -&gt; average user lifetime value (1 year) -&gt; user bought within 1 year after the ticket -&gt; Build a model to predict -&gt; response time and user feedback feature</p>
-<p>whether to add new feature -&gt; 1. good for site? engagement 2. demand. already doing it. 3. simply current flow.</p>
-<p>Two step authentication -&gt; ROC threshold -&gt; cost of false negatives (actual frauds happening) and value of true negatives (value of a legitimate user) -&gt; A/B testing, is the number of bad actors that two-step is blocking worth the number of good actors that the site is losing since it is harder to log-in.</p>
-<p>why a metric is down? -&gt; year over year metrics -&gt; numerator and denominator -&gt; if numberator down -&gt; new user are not liking as much as the usual ones or number of users is normal and number of likes suddenly down. -&gt; if new users are less engaged, find feature to predict &quot;up week&quot; new user and previous week old user -&gt; way more users from China this week. This might depend on a marketing campaign there that got a huge number of users, but these users are less engaged, as often when users come from sudden marketing campaigns. Or that all these new users come from very few different IP addresses. That would mean that all these users are probably fake accounts.</p>
-<p>30 tests and 1 test (20 data segment countries and 1 segment country win) wins with p-value 0.04 -&gt; Bonferroni correction, simply dividing 0.05 by the number of tests and this becomes the new threshold for significance. -&gt; make the change only if test is better and p-value were less than 0.05/30.</p>
-<p>Test wins by 5%, Will that metric actually go up by ~5%, more, or less? -&gt;  Control group numbers are likely inflated and it is likely that, if applied to all users, this change will lead to a larger gain than 5% vs old UI.</p>
-<p>cost of a false positive is way higher than false negative -&gt; recruiting process</p>
-<p>cost of a false positive is way lower than false negative -&gt; cancer detection</p>
-<p>how long I should run an A/B test? -&gt; 1. Significance level, usually 0.05. 2. Power, usually 0.8. 3. Expected standard deviation of the change in the metric. 4. Minimum effect size you are interested in detecting via your test. If the final number is less than 14 days, you still want to run the test for 14 days in order to reliably capture weekly patterns.</p>
-<p>We found a drop in pictures uploads. How to find out the reason?  segment users by various features, such as browser, device, country, etc. Then you assume that you discovered that one segment dropped to zero. So you say it is likely a bug and, finally, explain where the bug could be.</p>
-<p>Isolate the impact of the algorithm and the UI change -&gt; Version 1 is the old version. Version 2 is the site with new Feature and machine learning model. Version 3 is the site with the People You May Know Feature, but suggestions are random or history-based model.</p>
-<p>detect fake information school -&gt; 1. email validation negatively affect legitimate users 2. user info from their profile + how they interacted with LinkedIn. (how many connection requests they sent, how they were distributed over time, acceptance rate, whether they visited other people profiles before sending the connection request.) build clusters.</p>
-<p>small dataset -&gt; 1. cross-validate 2. bootstrapping your original dataset. bagging</p>
-<p>predict job change -&gt; monthly -&gt; user profile data, data about when you took the snapshot, user behavior on the site, and some external data about job demand.</p>
-<p>response time of an inquiry at Airbnb -&gt; percentage of responses within 16 hrs is better than average response time considering only responses within 16 hrs because percentage consider all the population including people who never response.</p>
-<p>re-run the same A/B test -&gt; the underlying distribution of users has changed. early adopter vs new users</p>
-<p>identify clickbait -&gt; high than usual CTR + medium term (say 2 weeks) change in CTR</p>
-<p>revenue -&gt; 1. Increase CTR by better targeting. 2. Increase number of page views. 3. maximizing probability of conversion or working with the advertisers to improve the user flow after people click on an ad.</p>
-<p>H0 mu = 20<br>
-Ha mu &gt;= 20</p>
-<p>A/B test power-&gt; p(reject H0 | H0 false) = 1 - p(not reject H0 | H0 false) = 1 - Type II error</p>
-<p>A/B test alpha 0.05 -&gt; Significance level. p-value lower than significance level reject null hypothesis</p>
-<p>A/B test p-value -&gt; take sample mean = 25, P(mu &gt;= sample mean| H0 true) &lt; 0.05 reject null hypothesis</p>
-<p>Uber:<br>
-Monthly active platform consumer<br>
-number of unique consumers who completed a ride or received an eats on platform in a given month<br>
-Trips:<br>
-number of completed ride or uber meal deliveries in a period<br>
-Gross bookings:<br>
-total dollar value</p>
-<p>Lyft:<br>
-Active Rider<br>
-Revenue per active rider</p>
-<p>Netflix:<br>
-Paid membership subscription<br>
-average avenue per user</p>
-<p>Pinterest:<br>
-Mau<br>
-authenticated user who visit at least once during 30 days<br>
-ARPU<br>
-total revenue divided by average number of mau in a period</p>
-<p>Facebook:<br>
-DAU:<br>
-A logged in user who visit at least one of the family product once on a given day<br>
-MauL<br>
-A logged in user who visit at least one of the family product once in the last 30 days<br>
-ARPU</p>
-<p>Expedia:<br>
-Room night growth<br>
-gross booking: total retail value of transaction booked<br>
-revenue per room night</p>
-<p>Spotify:<br>
-Total monthly active user<br>
-premium subscribers<br>
-ad-supported MAUs<br>
-ARPU</p>
-<p>Twitter:<br>
-Monetizable DAU<br>
-Logged in user that are able to show ads</p>
-<p>Snapchat:<br>
-ARPU<br>
-DAU registered user who opens application at least once during 24 hours</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[DAU and retention analysis]]></title>
-        <id>https://blog.ferretninja.com/post/dau-and-retention-analysis/</id>
-        <link href="https://blog.ferretninja.com/post/dau-and-retention-analysis/">
-        </link>
-        <updated>2021-03-29T09:39:15.000Z</updated>
-        <content type="html"><![CDATA[<p><strong>Comparing test and control groups</strong></p>
-<pre><code>SELECT date_trunc('day', e.occurred_at),
-    CASE WHEN flag = 'true' 
-      THEN 'treatment' ELSE 'control' END as flag,
-    COUNT(e.event_name)
-FROM tutorial.yammer_events e
-WHERE e.event_name = 'login'
-GROUP BY 1,2
-ORDER BY 1 DESC, 2 DESC
-</code></pre>
-<p><strong>Click through rates</strong></p>
-<pre><code>SELECT date_trunc('day', occurred_at) as day,
-  1.00 * COUNT (CASE WHEN action = 'email_clickthrough' THEN user_id ELSE NULL END) 
-        / COUNT (CASE WHEN action = 'email_open' THEN user_id ELSE NULL END) as CTR,
-  COUNT (CASE WHEN action = 'email_clickthrough' THEN user_id ELSE NULL END) as clickthroughs,
-  COUNT (CASE WHEN action = 'email_open' THEN user_id ELSE NULL END) as opens
-FROM tutorial.yammer_emails
-GROUP BY 1
----
-
-WITH open as (
-  SELECT date_trunc('day', occurred_at) as day,
-         COUNT(action) as opens
-  FROM tutorial.yammer_emails
-  WHERE action = 'email_open'
-  GROUP BY 1
-),
-  clickthrough as (
-  SELECT date_trunc('day', occurred_at) as day,
-         COUNT(action) as clickthroughs
-  FROM tutorial.yammer_emails
-  WHERE action = 'email_clickthrough'
-  GROUP BY 1
-)
-
-SELECT clickthrough.day,
-       1.00*clickthroughs/opens as CTR, 
-       clickthroughs, 
-       opens
-FROM clickthrough
-JOIN open ON clickthrough.day = open.day
-ORDER BY 1 DESC
-</code></pre>
-<p><strong>DAU, WAU, MAU, and ratios between them</strong></p>
-<pre><code>WITH dailies AS (
-  SELECT DATE_TRUNC('day', e.occurred_at) as date,
-       COUNT(DISTINCT e.user_id) as dau
-  FROM tutorial.yammer_events e
-  WHERE e.event_name = 'login'
-  GROUP BY 1 
-)
-SELECT d, 
-    dau, 
-    (SELECT COUNT(DISTINCT e.user_id) as wau
-          FROM tutorial.yammer_events e
-          WHERE e.occurred_at::DATE BETWEEN 
-            dailies.date - 7 * Interval '1 day' AND dailies.date
-          AND e.event_name = 'login'
-          ) as wau_count,
-    (SELECT COUNT(DISTINCT e.user_id) as mau
-          FROM tutorial.yammer_events e
-          WHERE e.occurred_at::DATE BETWEEN 
-            dailies.date - 30 * Interval '1 day' AND dailies.date
-          AND e.event_name = 'login'
-          ) as mau_count,
-    100.00 * dau/(SELECT COUNT(DISTINCT e.user_id) as mau
-          FROM tutorial.yammer_events e
-          WHERE e.occurred_at::DATE BETWEEN 
-            dailies.date - 30 * Interval '1 day' AND dailies.date
-          AND e.event_name = 'login'
-          ) as dau_mau
-FROM dailies
-</code></pre>
-<p>UID,  first_active_date, last_active_date, previous_active_date</p>
-<p><strong>Retention</strong></p>
-<pre><code>with monthly_activity as (
-  select distinct
-    date_trunc('month', created_at) as month,
-    user_id
-  from events
-)
-select
-  this_month.month,
-  count(distinct user_id)
-from monthly_activity this_month
-join monthly_activity last_month
-  on this_month.user_id = last_month.user_id
-  and this_month.month = add_months(last_month.month,1)
-group by month
-</code></pre>
-<p><strong>Churn</strong></p>
-<pre><code>with monthly_activity as (
-  select distinct
-    date_trunc('month', created_at) as month,
-    user_id
-  from events
-)
-select
-  last_month.month + add_months(last_month.month,1),
-  count(distinct last_month.user_id)
-from monthly_activity last_month
-left join monthly_activity this_month
-  on this_month.user_id = last_month.user_id
-  and this_month.month = add_months(last_month.month,1)
-where this_month.user_id is null
-group by 1
-</code></pre>
-<p><strong>Reactivated Users</strong></p>
-<pre><code>with
-monthly_activity as (
-  select distinct
-    date_trunc('month', created_at) as month,
-    user_id
-  from events
-),
-first_activity as (
-  select user_id, date(min(created_at)) as month
-  from events
-  group by 1
-)
-select
-  this_month.month,
-  count(distinct user_id)
-from monthly_activity this_month
-left join monthly_activity last_month
-  on this_month.user_id = last_month.user_id
-  and this_month.month = add_months(last_month.month,1)
-join first_activity
-  on this_month.user_id = first_activity.user_id
-  and first_activity.month != this_month.month
-where last_month.user_id is null
-group by 1
-</code></pre>
-<p><strong>Percent Change</strong></p>
-<pre><code>with monthly_active_users as (
- select
-   date_trunc('month', created_at) as month,
-   count (distinct user_id) as mau
- from events
- group by 1
-)
-select
- this_month.month,
- [(this_month.mau - last_month.mau)*1.0/last_month.mau:%] as pct_change
-from monthly_active_users this_month
-join monthly_active_users last_month
- on this_month.month = add_months(last_month.month,1)
-</code></pre>
-<p><strong>Sessionization</strong></p>
-<pre><code>SELECT *
-      ,  extract(epoch from mytimestamp)
-         - lag(extract(epoch from mytimestamp))
-         over (PARTITION BY user_id order by mytimestamp) as time_interval
-FROM toy_data_psql;
-
-SELECT *
-  , CASE
-      WHEN EXTRACT(EPOCH FROM mytimestamp)
-           - LAG(EXTRACT(EPOCH FROM mytimestamp))
-           OVER (PARTITION BY user_id ORDER BY mytimestamp) &gt;= 30 * 60
-      THEN 1
-      ELSE 0
-    END as new_session
-FROM
-  toy_data_psql;
-
-SELECT *
-  , user_id || '_' || SUM(new_session)
-  OVER (PARTITION BY user_id ORDER BY mytimestamp) AS session_id
-FROM (
-  SELECT *
-    , CASE
-       WHEN EXTRACT(EPOCH FROM mytimestamp)
-          - LAG(EXTRACT(EPOCH FROM mytimestamp))
-            OVER (PARTITION BY user_id ORDER BY mytimestamp) &gt;= 30 * 60
-       THEN 1
-       ELSE 0
-      END as new_session
-    FROM
-      toy_data_psql
-) s1
-</code></pre>
-<pre><code>import dataiku
-import pandas as pd
-from datetime import timedelta
-
-# define treshold value
-T = timedelta(seconds=30*60)
-
-# load dataset
-toy_data = dataiku.Dataset(&quot;toy_data&quot;).get_dataframe()
-
-# add a column containing previous timestamp
-toy_data =  pd.concat([toy_data,
-                       toy_data.groupby('user_id').transform(lambda x:x.shift(1))]
-                      ,axis=1)
-toy_data.columns = ['user_id','mytimestamp','prev_mytimestamp']
-
-# create the new session column
-toy_data['new_session'] = ((toy_data['mytimestamp']
-                            - toy_data['prev_mytimestamp'])&gt;=T).astype(int)
-
-# create the session_id
-toy_data['increment'] = toy_data.groupby(&quot;user_id&quot;)['new_session'].cumsum()
-toy_data['session_id'] = toy_data['user_id'].astype(str) + '_'
-                                + toy_data['increment'].astype(str)
-
-# to get the same result as with hive/postgresql
-toy_data = toy_data.sort(['user_id','mytimestamp'])
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Rate limiting fundamentals]]></title>
-        <id>https://blog.ferretninja.com/post/rate-limiting-fundamentals/</id>
-        <link href="https://blog.ferretninja.com/post/rate-limiting-fundamentals/">
-        </link>
-        <updated>2021-03-29T09:38:48.000Z</updated>
-        <content type="html"><![CDATA[<p><strong>Leaky bucket</strong></p>
-<pre><code>public abstract class RateLimiter {
-
-  protected final int maxRequestPerSec;
-  protected RateLimiter(int maxRequestPerSec) {
-    this.maxRequestPerSec = maxRequestPerSec;
-  }
-
-  abstract boolean allow();
-}
-
-public class LeakyBucket extends RateLimiter {
-
-  private long nextAllowedTime;
-  private final long REQUEST_INTERVAL_MILLIS;
-
-  protected LeakyBucket(int maxRequestPerSec) {
-    super(maxRequestPerSec);
-    REQUEST_INTERVAL_MILLIS = 1000 / maxRequestPerSec;
-    nextAllowedTime = System.currentTimeMillis();
-  }
-
-  @Override
-  boolean allow() {
-    long curTime = System.currentTimeMillis();
-    synchronized (this) {
-      if (curTime &gt;= nextAllowedTime) {
-        nextAllowedTime = curTime + REQUEST_INTERVAL_MILLIS;
-        return true;
-      }
-      return false;
-    }
-  }
-}
-</code></pre>
-<p><strong>Token Bucket</strong></p>
-<p>Eager mode</p>
-<pre><code>public class TokenBucket extends RateLimiter {
-
-  private int tokens;
-
-  public TokenBucket(int maxRequestsPerSec) {
-    super(maxRequestsPerSec);
-    this.tokens = maxRequestsPerSec;
-    new Thread(() -&gt; {
-      while (true) {
-        try {
-          TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        refillTokens(maxRequestsPerSec);
-      }
-    }).start();
-  }
-
-  @Override
-  public boolean allow() {
-    synchronized (this) {
-      if (tokens == 0) {
-        return false;
-      }
-      tokens--;
-      return true;
-    }
-  }
-
-  private void refillTokens(int cnt) {
-    synchronized (this) {
-      tokens = Math.min(tokens + cnt, maxRequestPerSec);
-      notifyAll();
-    }
-  }
-}
-</code></pre>
-<p>Lazy mode</p>
-<pre><code>public class TokenBucketLazyRefill extends RateLimiter {
-
-  private int tokens;
-  private long lastRefillTime;
-
-  public TokenBucketLazyRefill(int maxRequestPerSec) {
-    super(maxRequestPerSec);
-    this.tokens = maxRequestPerSec;
-    this.lastRefillTime = System.currentTimeMillis();
-  }
-
-  @Override
-  public boolean allow() {
-    synchronized (this) {
-      refillTokens();
-      if (tokens == 0) {
-        return false;
-      }
-      tokens--;
-      return true;
-    }
-  }
-
-  private void refillTokens() {
-    long curTime = System.currentTimeMillis();
-    double secSinceLastRefill = (curTime - lastRefillTime) / 1000.0;
-    int cnt = (int) (secSinceLastRefill * maxRequestPerSec);
-    if (cnt &gt; 0) {
-      tokens = Math.min(tokens + cnt, maxRequestPerSec);
-      lastRefillTime = curTime;
-    }
-  }
-}
-</code></pre>
-<p><strong>Fixed Window Counter</strong><br>
-<img src="https://blog.ferretninja.com/post-images/1579461852072.png" alt="" loading="lazy"></p>
-<pre><code>public class FixedWindowCounter extends RateLimiter {
-
-  // TODO: Clean up stale entries
-  private final ConcurrentMap&lt;Long, AtomicInteger&gt; windows = new ConcurrentHashMap&lt;&gt;();
-
-  protected FixedWindowCounter(int maxRequestPerSec) {
-    super(maxRequestPerSec);
-  }
-
-  @Override
-  boolean allow() {
-    long windowKey = System.currentTimeMillis() / 1000 * 1000;
-    windows.putIfAbsent(windowKey, new AtomicInteger(0));
-    return windows.get(windowKey).incrementAndGet() &lt;= maxRequestPerSec;
-  }
-}
-</code></pre>
-<p><strong>Sliding Window Log</strong><br>
-<img src="https://blog.ferretninja.com/post-images/1579461845782.png" alt="" loading="lazy"></p>
-<pre><code>public class SlidingWindowLog extends RateLimiter {
-
-  private final Queue&lt;Long&gt; log = new LinkedList&lt;&gt;();
-
-  protected SlidingWindowLog(int maxRequestPerSec) {
-    super(maxRequestPerSec);
-  }
-
-  @Override
-  boolean allow() {
-    long curTime = System.currentTimeMillis();
-    long boundary = curTime - 1000;
-    synchronized (log) {
-      while (!log.isEmpty() &amp;&amp; log.element() &lt;= boundary) {
-        log.poll();
-      }
-      log.add(curTime);
-      return log.size() &lt;= maxRequestPerSec;
-    }
-  }
-}
-</code></pre>
-<p><strong>Sliding Window</strong></p>
-<p>This is still not accurate becasue it assumes that the distribution of requests in previous window is even, which may not be true. But compares to fixed window counter, which only guarantees rate within each window, and sliding window log, which has huge memory footprint, sliding window is more practical.<br>
-<img src="https://blog.ferretninja.com/post-images/1579461835894.png" alt="" loading="lazy"></p>
-<pre><code>public class SlidingWindow extends RateLimiter {
-
-  // TODO: Clean up stale entries
-  private final ConcurrentMap&lt;Long, AtomicInteger&gt; windows = new ConcurrentHashMap&lt;&gt;();
-
-  protected SlidingWindow(int maxRequestPerSec) {
-    super(maxRequestPerSec);
-  }
-
-  @Override
-  boolean allow() {
-    long curTime = System.currentTimeMillis();
-    long curWindowKey = curTime / 1000 * 1000;
-    windows.putIfAbsent(curWindowKey, new AtomicInteger(0));
-    long preWindowKey = curWindowKey - 1000;
-    AtomicInteger preCount = windows.get(preWindowKey);
-    if (preCount == null) {
-      return windows.get(curWindowKey).incrementAndGet() &lt;= maxRequestPerSec;
-    }
-
-    double preWeight = 1 - (curTime - curWindowKey) / 1000.0;
-    long count = (long) (preCount.get() * preWeight
-        + windows.get(curWindowKey).incrementAndGet());
-    return count &lt;= maxRequestPerSec;
-  }
-}
-</code></pre>
 ]]></content>
     </entry>
     <entry>
@@ -1209,6 +410,2662 @@ path = shortestPath( (user)-[:KNOWS*..5]-(other) )
 <img src="https://blog.ferretninja.com/post-images/1573779317276.png" alt="" loading="lazy"></p>
 </li>
 </ol>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[AWS EMR Spark and Data Lake]]></title>
+        <id>https://blog.ferretninja.com/post/aws-emr-spark-and-data-lake/</id>
+        <link href="https://blog.ferretninja.com/post/aws-emr-spark-and-data-lake/">
+        </link>
+        <updated>2021-03-29T09:36:28.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1573690987278.png" alt="" loading="lazy"></figure>
+<p>An ETL pipeline that extracts data from S3, processes them using Spark, and loads the data back into S3 as a set of dimensional tables.</p>
+<p>Create a Data Lake with Spark and AWS EMR</p>
+<ol>
+<li>create a ssh key-pair to securely connect to the EMR cluster</li>
+<li>create an EMR cluster<br>
+<img src="https://blog.ferretninja.com/post-images/1573691132968.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1573691150215.png" alt="" loading="lazy"></li>
+<li>ssh into the master node<br>
+<img src="https://blog.ferretninja.com/post-images/1573691211629.png" alt="" loading="lazy"></li>
+<li>access master node jupyter notebook<br>
+<img src="https://blog.ferretninja.com/post-images/1573691449872.png" alt="" loading="lazy"></li>
+</ol>
+<pre><code class="language-python">print(&quot;Welcome to my EMR Notebook!&quot;)
+</code></pre>
+<pre><code>VBox()
+
+
+Starting Spark application
+</code></pre>
+<table>
+<tr><th>ID</th><th>YARN Application ID</th><th>Kind</th><th>State</th><th>Spark UI</th><th>Driver log</th><th>Current session?</th></tr><tr><td>1</td><td>application_1573680517609_0004</td><td>pyspark</td><td>idle</td><td><a target="_blank" href="http://ip-172-31-90-61.ec2.internal:20888/proxy/application_1573680517609_0004/">Link</a></td><td><a target="_blank" href="http://ip-172-31-94-174.ec2.internal:8042/node/containerlogs/container_1573680517609_0004_01_000001/livy">Link</a></td><td>✔</td></tr></table>
+<pre><code>FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+
+
+SparkSession available as 'spark'.
+
+
+
+FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+
+
+Welcome to my EMR Notebook!
+</code></pre>
+<pre><code class="language-python">%%info
+</code></pre>
+<p>Current session configs: <tt>{'conf': {'spark.pyspark.python': 'python3', 'spark.pyspark.virtualenv.enabled': 'true', 'spark.pyspark.virtualenv.type': 'native', 'spark.pyspark.virtualenv.bin.path': '/usr/bin/virtualenv'}, 'kind': 'pyspark'}</tt><br></p>
+<table>
+<tr><th>ID</th><th>YARN Application ID</th><th>Kind</th><th>State</th><th>Spark UI</th><th>Driver log</th><th>Current session?</th></tr><tr><td>1</td><td>application_1573680517609_0004</td><td>pyspark</td><td>idle</td><td><a target="_blank" href="http://ip-172-31-90-61.ec2.internal:20888/proxy/application_1573680517609_0004/">Link</a></td><td><a target="_blank" href="http://ip-172-31-94-174.ec2.internal:8042/node/containerlogs/container_1573680517609_0004_01_000001/livy">Link</a></td><td>✔</td></tr></table>
+<pre><code class="language-python">sc.list_packages()
+</code></pre>
+<pre><code>VBox()
+
+
+
+FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+
+
+Package                    Version
+-------------------------- -------
+beautifulsoup4             4.8.1  
+boto                       2.49.0 
+jmespath                   0.9.4  
+lxml                       4.4.1  
+mysqlclient                1.4.4  
+nltk                       3.4.5  
+nose                       1.3.4  
+numpy                      1.14.5 
+pip                        19.3.1 
+py-dateutil                2.2    
+python36-sagemaker-pyspark 1.2.6  
+pytz                       2019.3 
+PyYAML                     3.11   
+setuptools                 41.6.0 
+six                        1.12.0 
+soupsieve                  1.9.4  
+wheel                      0.33.6 
+windmill                   1.6
+</code></pre>
+<pre><code class="language-python">sc.install_pypi_package(&quot;pandas==0.25.1&quot;)
+</code></pre>
+<pre><code>VBox()
+
+
+
+FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+
+
+Collecting pandas==0.25.1
+  Downloading https://files.pythonhosted.org/packages/73/9b/52e228545d14f14bb2a1622e225f38463c8726645165e1cb7dde95bfe6d4/pandas-0.25.1-cp36-cp36m-manylinux1_x86_64.whl (10.5MB)
+Requirement already satisfied: numpy&gt;=1.13.3 in /usr/local/lib64/python3.6/site-packages (from pandas==0.25.1) (1.14.5)
+Collecting python-dateutil&gt;=2.6.1
+  Downloading https://files.pythonhosted.org/packages/d4/70/d60450c3dd48ef87586924207ae8907090de0b306af2bce5d134d78615cb/python_dateutil-2.8.1-py2.py3-none-any.whl (227kB)
+Requirement already satisfied: pytz&gt;=2017.2 in /usr/local/lib/python3.6/site-packages (from pandas==0.25.1) (2019.3)
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.6/site-packages (from python-dateutil&gt;=2.6.1-&gt;pandas==0.25.1) (1.12.0)
+Installing collected packages: python-dateutil, pandas
+Successfully installed pandas-0.25.1 python-dateutil-2.8.1
+</code></pre>
+<pre><code class="language-python">sc.install_pypi_package(&quot;matplotlib&quot;, &quot;https://pypi.org/simple&quot;) #Install matplotlib from given PyPI repository
+</code></pre>
+<pre><code>VBox()
+
+
+
+FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+
+
+Collecting matplotlib
+  Downloading https://files.pythonhosted.org/packages/57/4f/dd381ecf6c6ab9bcdaa8ea912e866dedc6e696756156d8ecc087e20817e2/matplotlib-3.1.1-cp36-cp36m-manylinux1_x86_64.whl (13.1MB)
+Requirement already satisfied: numpy&gt;=1.11 in /usr/local/lib64/python3.6/site-packages (from matplotlib) (1.14.5)
+Collecting kiwisolver&gt;=1.0.1
+  Downloading https://files.pythonhosted.org/packages/f8/a1/5742b56282449b1c0968197f63eae486eca2c35dcd334bab75ad524e0de1/kiwisolver-1.1.0-cp36-cp36m-manylinux1_x86_64.whl (90kB)
+Requirement already satisfied: python-dateutil&gt;=2.1 in /mnt/tmp/1573683191129-0/lib/python3.6/site-packages (from matplotlib) (2.8.1)
+Collecting pyparsing!=2.0.4,!=2.1.2,!=2.1.6,&gt;=2.0.1
+  Downloading https://files.pythonhosted.org/packages/c0/0c/fc2e007d9a992d997f04a80125b0f183da7fb554f1de701bbb70a8e7d479/pyparsing-2.4.5-py2.py3-none-any.whl (67kB)
+Collecting cycler&gt;=0.10
+  Downloading https://files.pythonhosted.org/packages/f7/d2/e07d3ebb2bd7af696440ce7e754c59dd546ffe1bbe732c8ab68b9c834e61/cycler-0.10.0-py2.py3-none-any.whl
+Requirement already satisfied: setuptools in /mnt/tmp/1573683191129-0/lib/python3.6/site-packages (from kiwisolver&gt;=1.0.1-&gt;matplotlib) (41.6.0)
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.6/site-packages (from python-dateutil&gt;=2.1-&gt;matplotlib) (1.12.0)
+Installing collected packages: kiwisolver, pyparsing, cycler, matplotlib
+Successfully installed cycler-0.10.0 kiwisolver-1.1.0 matplotlib-3.1.1 pyparsing-2.4.5
+</code></pre>
+<pre><code class="language-python">sc.list_packages()
+</code></pre>
+<pre><code>VBox()
+
+
+
+FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+
+
+Package                    Version
+-------------------------- -------
+beautifulsoup4             4.8.1  
+boto                       2.49.0 
+cycler                     0.10.0 
+jmespath                   0.9.4  
+kiwisolver                 1.1.0  
+lxml                       4.4.1  
+matplotlib                 3.1.1  
+mysqlclient                1.4.4  
+nltk                       3.4.5  
+nose                       1.3.4  
+numpy                      1.14.5 
+pandas                     0.25.1 
+pip                        19.3.1 
+py-dateutil                2.2    
+pyparsing                  2.4.5  
+python-dateutil            2.8.1  
+python36-sagemaker-pyspark 1.2.6  
+pytz                       2019.3 
+PyYAML                     3.11   
+setuptools                 41.6.0 
+six                        1.12.0 
+soupsieve                  1.9.4  
+wheel                      0.33.6 
+windmill                   1.6
+</code></pre>
+<pre><code class="language-python">df = spark.read.parquet('s3://amazon-reviews-pds/parquet/product_category=Books/*.parquet')
+</code></pre>
+<pre><code>VBox()
+
+
+
+FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+</code></pre>
+<pre><code class="language-python">df.printSchema()
+num_of_books = df.select('product_id').distinct().count()
+print(f'Number of Books: {num_of_books:,}')
+</code></pre>
+<pre><code>VBox()
+
+
+
+FloatProgress(value=0.0, bar_style='info', description='Progress:', layout=Layout(height='25px', width='50%'),…
+
+
+root
+ |-- marketplace: string (nullable = true)
+ |-- customer_id: string (nullable = true)
+ |-- review_id: string (nullable = true)
+ |-- product_id: string (nullable = true)
+ |-- product_parent: string (nullable = true)
+ |-- product_title: string (nullable = true)
+ |-- star_rating: integer (nullable = true)
+ |-- helpful_votes: integer (nullable = true)
+ |-- total_votes: integer (nullable = true)
+ |-- vine: string (nullable = true)
+ |-- verified_purchase: string (nullable = true)
+ |-- review_headline: string (nullable = true)
+ |-- review_body: string (nullable = true)
+ |-- review_date: date (nullable = true)
+ |-- year: integer (nullable = true)
+
+Number of Books: 3,423,743
+</code></pre>
+<ol start="5">
+<li>install python libraries</li>
+</ol>
+<pre><code>sudo easy_install-3.6 pip 
+sudo /usr/local/bin/pip3 install paramiko nltk scipy scikit-learn pandas
+</code></pre>
+<ol start="6">
+<li>
+<p>upload file to EMR<br>
+<img src="https://blog.ferretninja.com/post-images/1573691565612.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>spark-submit job</p>
+</li>
+</ol>
+<pre><code class="language-python">import configparser
+from datetime import datetime
+import os
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import udf, col
+from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
+from pyspark.sql import functions as F
+from pyspark.sql import types as T
+
+import pandas as pd
+pd.set_option('display.max_columns', 500)
+</code></pre>
+<pre><code class="language-python">config = configparser.ConfigParser()
+
+#Normally this file should be in ~/.aws/credentials
+config.read_file(open('dl.cfg'))
+
+os.environ[&quot;AWS_ACCESS_KEY_ID&quot;]= config['AWS']['AWS_ACCESS_KEY_ID']
+os.environ[&quot;AWS_SECRET_ACCESS_KEY&quot;]= config['AWS']['AWS_SECRET_ACCESS_KEY']
+</code></pre>
+<pre><code class="language-python">def create_spark_session():
+    spark = SparkSession \
+        .builder \
+        .config(&quot;spark.jars.packages&quot;, &quot;org.apache.hadoop:hadoop-aws:2.7.0&quot;) \
+        .getOrCreate()
+    return spark
+</code></pre>
+<pre><code class="language-python"># create the spark session
+spark = create_spark_session()
+</code></pre>
+<pre><code class="language-python"># read data from my S3 bucket. This is the same data in workspace
+songPath = 's3a://testemrs3/song_data/*/*/*/*.json'
+logPath = 's3a://testemrs3/log_data/*.json'
+</code></pre>
+<pre><code class="language-python"># define output paths
+output = 's3a://testemrs3/schema/'
+</code></pre>
+<h2 id="process-song-data">process song data</h2>
+<h3 id="create-song_table">create song_table</h3>
+<pre><code class="language-python"># Step 1: Read in the song data
+df_song = spark.read.json(songPath)
+</code></pre>
+<pre><code class="language-python"># check the schema
+df_song.printSchema()
+</code></pre>
+<pre><code>root
+ |-- artist_id: string (nullable = true)
+ |-- artist_latitude: double (nullable = true)
+ |-- artist_location: string (nullable = true)
+ |-- artist_longitude: double (nullable = true)
+ |-- artist_name: string (nullable = true)
+ |-- duration: double (nullable = true)
+ |-- num_songs: long (nullable = true)
+ |-- song_id: string (nullable = true)
+ |-- title: string (nullable = true)
+ |-- year: long (nullable = true)
+</code></pre>
+<pre><code class="language-python"># Step 2: extract columns to create songs table
+song_cols = ['song_id', 'title', 'artist_id', 'year', 'duration']
+</code></pre>
+<pre><code class="language-python"># groupby song_id and select the first record's title in the group.
+t1 = df_song.select(F.col('song_id'), 'title') \
+    .groupBy('song_id') \
+    .agg({'title': 'first'}) \
+    .withColumnRenamed('first(title)', 'title1')
+
+t2 = df_song.select(song_cols)
+</code></pre>
+<pre><code class="language-python">t1.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>song_id</th>
+      <th>title1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>SOGOSOV12AF72A285E</td>
+      <td>¿Dónde va Chichi?</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>SOMZWCG12A8C13C480</td>
+      <td>I Didn't Mean To</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SOUPIRU12A6D4FA1E1</td>
+      <td>Der Kleine Dompfaff</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>SOXVLOJ12AB0189215</td>
+      <td>Amor De Cabaret</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SOWTBJW12AC468AC6E</td>
+      <td>Broken-Down Merry-Go-Round</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">t2.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>song_id</th>
+      <th>title</th>
+      <th>artist_id</th>
+      <th>year</th>
+      <th>duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>SOBAYLL12A8C138AF9</td>
+      <td>Sono andati? Fingevo di dormire</td>
+      <td>ARDR4AC1187FB371A1</td>
+      <td>0</td>
+      <td>511.16363</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>SOOLYAZ12A6701F4A6</td>
+      <td>Laws Patrolling (Album Version)</td>
+      <td>AREBBGV1187FB523D2</td>
+      <td>0</td>
+      <td>173.66159</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SOBBUGU12A8C13E95D</td>
+      <td>Setting Fire to Sleeping Giants</td>
+      <td>ARMAC4T1187FB3FA4C</td>
+      <td>2004</td>
+      <td>207.77751</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>SOAOIBZ12AB01815BE</td>
+      <td>I Hold Your Hand In Mine [Live At Royal Albert...</td>
+      <td>ARPBNLO1187FB3D52F</td>
+      <td>2000</td>
+      <td>43.36281</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SONYPOM12A8C13B2D7</td>
+      <td>I Think My Wife Is Running Around On Me (Taco ...</td>
+      <td>ARDNS031187B9924F0</td>
+      <td>2005</td>
+      <td>186.48771</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">song_table_df = t1.join(t2, 'song_id') \
+                .where(F.col(&quot;title1&quot;) == F.col(&quot;title&quot;)) \
+                .select(song_cols)
+</code></pre>
+<pre><code class="language-python">song_table_df.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>song_id</th>
+      <th>title</th>
+      <th>artist_id</th>
+      <th>year</th>
+      <th>duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>SOBAYLL12A8C138AF9</td>
+      <td>Sono andati? Fingevo di dormire</td>
+      <td>ARDR4AC1187FB371A1</td>
+      <td>0</td>
+      <td>511.16363</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>SOOLYAZ12A6701F4A6</td>
+      <td>Laws Patrolling (Album Version)</td>
+      <td>AREBBGV1187FB523D2</td>
+      <td>0</td>
+      <td>173.66159</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SOBBUGU12A8C13E95D</td>
+      <td>Setting Fire to Sleeping Giants</td>
+      <td>ARMAC4T1187FB3FA4C</td>
+      <td>2004</td>
+      <td>207.77751</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>SOAOIBZ12AB01815BE</td>
+      <td>I Hold Your Hand In Mine [Live At Royal Albert...</td>
+      <td>ARPBNLO1187FB3D52F</td>
+      <td>2000</td>
+      <td>43.36281</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SONYPOM12A8C13B2D7</td>
+      <td>I Think My Wife Is Running Around On Me (Taco ...</td>
+      <td>ARDNS031187B9924F0</td>
+      <td>2005</td>
+      <td>186.48771</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">song_table_df.toPandas().shape
+</code></pre>
+<pre><code>(71, 5)
+</code></pre>
+<pre><code class="language-python">df_song.toPandas().shape
+</code></pre>
+<pre><code>(71, 10)
+</code></pre>
+<pre><code class="language-python"># Step 3: Write this to a parquet file
+song_table_df.write.parquet('data/songs_table', partitionBy=['year', 'artist_id'], mode='Overwrite')
+</code></pre>
+<pre><code class="language-python"># write this to s3 bucket
+song_table_df.write.parquet(output + 'songs_table', partitionBy=['year', 'artist_id'], mode='Overwrite')
+</code></pre>
+<h3 id="create-artists_table">create artists_table</h3>
+<pre><code class="language-python"># define the cols
+artists_cols = [&quot;artist_id&quot;, &quot;artist_name&quot;, &quot;artist_location&quot;, &quot;artist_latitude&quot;, &quot;artist_longitude&quot;]
+</code></pre>
+<pre><code class="language-python">df_song.printSchema()
+</code></pre>
+<pre><code>root
+ |-- artist_id: string (nullable = true)
+ |-- artist_latitude: double (nullable = true)
+ |-- artist_location: string (nullable = true)
+ |-- artist_longitude: double (nullable = true)
+ |-- artist_name: string (nullable = true)
+ |-- duration: double (nullable = true)
+ |-- num_songs: long (nullable = true)
+ |-- song_id: string (nullable = true)
+ |-- title: string (nullable = true)
+ |-- year: long (nullable = true)
+</code></pre>
+<pre><code class="language-python"># groupby song_id and select the first record's title in the group.
+t1 = df_song.select(F.col('artist_id'), 'artist_name') \
+    .groupBy('artist_id') \
+    .agg({'artist_name': 'first'}) \
+    .withColumnRenamed('first(artist_name)', 'artist_name1')
+
+t2 = df_song.select(artists_cols)
+</code></pre>
+<pre><code class="language-python">t1.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist_id</th>
+      <th>artist_name1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AR9AWNF1187B9AB0B4</td>
+      <td>Kenny G featuring Daryl Hall</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>AR0IAWL1187B9A96D0</td>
+      <td>Danilo Perez</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>AR0RCMP1187FB3F427</td>
+      <td>Billie Jo Spears</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>AREDL271187FB40F44</td>
+      <td>Soul Mekanik</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>ARI3BMM1187FB4255E</td>
+      <td>Alice Stuart</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">t2.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist_id</th>
+      <th>artist_name</th>
+      <th>artist_location</th>
+      <th>artist_latitude</th>
+      <th>artist_longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>ARDR4AC1187FB371A1</td>
+      <td>Montserrat Caballé;Placido Domingo;Vicente Sar...</td>
+      <td></td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>AREBBGV1187FB523D2</td>
+      <td>Mike Jones (Featuring CJ_ Mello &amp; Lil' Bran)</td>
+      <td>Houston, TX</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ARMAC4T1187FB3FA4C</td>
+      <td>The Dillinger Escape Plan</td>
+      <td>Morris Plains, NJ</td>
+      <td>40.82624</td>
+      <td>-74.47995</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ARPBNLO1187FB3D52F</td>
+      <td>Tiny Tim</td>
+      <td>New York, NY</td>
+      <td>40.71455</td>
+      <td>-74.00712</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>ARDNS031187B9924F0</td>
+      <td>Tim Wilson</td>
+      <td>Georgia</td>
+      <td>32.67828</td>
+      <td>-83.22295</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">artists_table_df = t1.join(t2, 'artist_id') \
+                .where(F.col(&quot;artist_name1&quot;) == F.col(&quot;artist_name&quot;)) \
+                .select(artists_cols)
+</code></pre>
+<pre><code class="language-python">artists_table_df.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist_id</th>
+      <th>artist_name</th>
+      <th>artist_location</th>
+      <th>artist_latitude</th>
+      <th>artist_longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>ARDR4AC1187FB371A1</td>
+      <td>Montserrat Caballé;Placido Domingo;Vicente Sar...</td>
+      <td></td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>AREBBGV1187FB523D2</td>
+      <td>Mike Jones (Featuring CJ_ Mello &amp; Lil' Bran)</td>
+      <td>Houston, TX</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ARMAC4T1187FB3FA4C</td>
+      <td>The Dillinger Escape Plan</td>
+      <td>Morris Plains, NJ</td>
+      <td>40.82624</td>
+      <td>-74.47995</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ARPBNLO1187FB3D52F</td>
+      <td>Tiny Tim</td>
+      <td>New York, NY</td>
+      <td>40.71455</td>
+      <td>-74.00712</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>ARDNS031187B9924F0</td>
+      <td>Tim Wilson</td>
+      <td>Georgia</td>
+      <td>32.67828</td>
+      <td>-83.22295</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># write this to s3 bucket
+artists_table_df.write.parquet(output + 'artists_table', mode='Overwrite')
+</code></pre>
+<pre><code class="language-python">artists_table_df.write.parquet('data/artists_table', mode='Overwrite')
+</code></pre>
+<pre><code class="language-python"># read the partitioned data
+df_artists_read = spark.read.option(&quot;mergeSchema&quot;, &quot;true&quot;).parquet(&quot;data/artists_table&quot;)
+</code></pre>
+<h2 id="process-log-data">Process log data</h2>
+<pre><code class="language-python"># Step 1: Read in the log data
+df_log = spark.read.json(logPath)
+</code></pre>
+<pre><code class="language-python">df_log.printSchema()
+</code></pre>
+<pre><code>root
+ |-- artist: string (nullable = true)
+ |-- auth: string (nullable = true)
+ |-- firstName: string (nullable = true)
+ |-- gender: string (nullable = true)
+ |-- itemInSession: long (nullable = true)
+ |-- lastName: string (nullable = true)
+ |-- length: double (nullable = true)
+ |-- level: string (nullable = true)
+ |-- location: string (nullable = true)
+ |-- method: string (nullable = true)
+ |-- page: string (nullable = true)
+ |-- registration: double (nullable = true)
+ |-- sessionId: long (nullable = true)
+ |-- song: string (nullable = true)
+ |-- status: long (nullable = true)
+ |-- ts: long (nullable = true)
+ |-- userAgent: string (nullable = true)
+ |-- userId: string (nullable = true)
+</code></pre>
+<pre><code class="language-python">df_log.filter(F.col(&quot;page&quot;) == &quot;NextSong&quot;).toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist</th>
+      <th>auth</th>
+      <th>firstName</th>
+      <th>gender</th>
+      <th>itemInSession</th>
+      <th>lastName</th>
+      <th>length</th>
+      <th>level</th>
+      <th>location</th>
+      <th>method</th>
+      <th>page</th>
+      <th>registration</th>
+      <th>sessionId</th>
+      <th>song</th>
+      <th>status</th>
+      <th>ts</th>
+      <th>userAgent</th>
+      <th>userId</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Harmonia</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>0</td>
+      <td>Smith</td>
+      <td>655.77751</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.541017e+12</td>
+      <td>583</td>
+      <td>Sehr kosmisch</td>
+      <td>200</td>
+      <td>1542241826796</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>The Prodigy</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>1</td>
+      <td>Smith</td>
+      <td>260.07465</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.541017e+12</td>
+      <td>583</td>
+      <td>The Big Gundown</td>
+      <td>200</td>
+      <td>1542242481796</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Train</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>2</td>
+      <td>Smith</td>
+      <td>205.45261</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.541017e+12</td>
+      <td>583</td>
+      <td>Marry Me</td>
+      <td>200</td>
+      <td>1542242741796</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Sony Wonder</td>
+      <td>Logged In</td>
+      <td>Samuel</td>
+      <td>M</td>
+      <td>0</td>
+      <td>Gonzalez</td>
+      <td>218.06975</td>
+      <td>free</td>
+      <td>Houston-The Woodlands-Sugar Land, TX</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.540493e+12</td>
+      <td>597</td>
+      <td>Blackbird</td>
+      <td>200</td>
+      <td>1542253449796</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>61</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Van Halen</td>
+      <td>Logged In</td>
+      <td>Tegan</td>
+      <td>F</td>
+      <td>2</td>
+      <td>Levine</td>
+      <td>289.38404</td>
+      <td>paid</td>
+      <td>Portland-South Portland, ME</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.540794e+12</td>
+      <td>602</td>
+      <td>Best Of Both Worlds (Remastered Album Version)</td>
+      <td>200</td>
+      <td>1542260935796</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>80</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># Step 2: filter by actions for song plays
+df_log = df_log.filter(F.col(&quot;page&quot;) == &quot;NextSong&quot;)
+</code></pre>
+<pre><code class="language-python">df_log.toPandas().shape
+</code></pre>
+<pre><code>(6820, 18)
+</code></pre>
+<pre><code class="language-python"># Step 3: extract columns for users table
+users_cols = [&quot;userId&quot;, &quot;firstName&quot;, &quot;lastName&quot;, &quot;gender&quot;, &quot;level&quot;]
+</code></pre>
+<pre><code class="language-python">df_log.select(users_cols).toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>userId</th>
+      <th>firstName</th>
+      <th>lastName</th>
+      <th>gender</th>
+      <th>level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>26</td>
+      <td>Ryan</td>
+      <td>Smith</td>
+      <td>M</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>26</td>
+      <td>Ryan</td>
+      <td>Smith</td>
+      <td>M</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>26</td>
+      <td>Ryan</td>
+      <td>Smith</td>
+      <td>M</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>61</td>
+      <td>Samuel</td>
+      <td>Gonzalez</td>
+      <td>M</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>80</td>
+      <td>Tegan</td>
+      <td>Levine</td>
+      <td>F</td>
+      <td>paid</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df_log.select(users_cols).toPandas().shape
+</code></pre>
+<pre><code>(6820, 5)
+</code></pre>
+<pre><code class="language-python">df_log.select(users_cols).dropDuplicates().toPandas().shape
+</code></pre>
+<pre><code>(104, 5)
+</code></pre>
+<pre><code class="language-python">df_log.select(users_cols).dropDuplicates().toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>userId</th>
+      <th>firstName</th>
+      <th>lastName</th>
+      <th>gender</th>
+      <th>level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>57</td>
+      <td>Katherine</td>
+      <td>Gay</td>
+      <td>F</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>84</td>
+      <td>Shakira</td>
+      <td>Hunt</td>
+      <td>F</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>22</td>
+      <td>Sean</td>
+      <td>Wilson</td>
+      <td>F</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>52</td>
+      <td>Theodore</td>
+      <td>Smith</td>
+      <td>M</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>80</td>
+      <td>Tegan</td>
+      <td>Levine</td>
+      <td>F</td>
+      <td>paid</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">users_table_df = df_log.select(users_cols).dropDuplicates()
+</code></pre>
+<pre><code class="language-python"># write this to s3 bucket
+users_table_df.write.parquet(output + 'users_table', mode='Overwrite')
+</code></pre>
+<pre><code class="language-python">users_table_df.write.parquet('data/users_table', mode='Overwrite')
+</code></pre>
+<h2 id="time-table">Time table</h2>
+<pre><code class="language-python"># # create timestamp column from original timestamp column
+get_timestamp = udf()
+</code></pre>
+<pre><code class="language-python">df_log.select('ts').toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ts</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1542241826796</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1542242481796</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1542242741796</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1542253449796</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1542260935796</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df.withColumn('epoch', f.date_format(df.epoch.cast(dataType=t.TimestampType()), &quot;yyyy-MM-dd&quot;))
+</code></pre>
+<pre><code class="language-python">
+</code></pre>
+<pre><code class="language-python">df_log.withColumn('ts', F.date_format(df_log.ts.cast(dataType=T.TimestampType()), &quot;yyyy-MM-dd&quot;)).toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist</th>
+      <th>auth</th>
+      <th>firstName</th>
+      <th>gender</th>
+      <th>itemInSession</th>
+      <th>lastName</th>
+      <th>length</th>
+      <th>level</th>
+      <th>location</th>
+      <th>method</th>
+      <th>page</th>
+      <th>registration</th>
+      <th>sessionId</th>
+      <th>song</th>
+      <th>status</th>
+      <th>ts</th>
+      <th>userAgent</th>
+      <th>userId</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Harmonia</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>0</td>
+      <td>Smith</td>
+      <td>655.77751</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.541017e+12</td>
+      <td>583</td>
+      <td>Sehr kosmisch</td>
+      <td>200</td>
+      <td>50841-09-12</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>The Prodigy</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>1</td>
+      <td>Smith</td>
+      <td>260.07465</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.541017e+12</td>
+      <td>583</td>
+      <td>The Big Gundown</td>
+      <td>200</td>
+      <td>50841-09-19</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Train</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>2</td>
+      <td>Smith</td>
+      <td>205.45261</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.541017e+12</td>
+      <td>583</td>
+      <td>Marry Me</td>
+      <td>200</td>
+      <td>50841-09-22</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Sony Wonder</td>
+      <td>Logged In</td>
+      <td>Samuel</td>
+      <td>M</td>
+      <td>0</td>
+      <td>Gonzalez</td>
+      <td>218.06975</td>
+      <td>free</td>
+      <td>Houston-The Woodlands-Sugar Land, TX</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.540493e+12</td>
+      <td>597</td>
+      <td>Blackbird</td>
+      <td>200</td>
+      <td>50842-01-24</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>61</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Van Halen</td>
+      <td>Logged In</td>
+      <td>Tegan</td>
+      <td>F</td>
+      <td>2</td>
+      <td>Levine</td>
+      <td>289.38404</td>
+      <td>paid</td>
+      <td>Portland-South Portland, ME</td>
+      <td>PUT</td>
+      <td>NextSong</td>
+      <td>1.540794e+12</td>
+      <td>602</td>
+      <td>Best Of Both Worlds (Remastered Album Version)</td>
+      <td>200</td>
+      <td>50842-04-21</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>80</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df_time = df_log.select('ts')
+</code></pre>
+<pre><code class="language-python">df_time.take(5)
+</code></pre>
+<pre><code>[Row(ts=1542241826796),
+ Row(ts=1542242481796),
+ Row(ts=1542242741796),
+ Row(ts=1542253449796),
+ Row(ts=1542260935796)]
+</code></pre>
+<pre><code class="language-python">@udf
+def gettimestamp(time):
+    import datetime
+    time = time/1000
+    return datetime.datetime.fromtimestamp(time).strftime(&quot;%m-%d-%Y %H:%M:%S&quot;)
+</code></pre>
+<pre><code class="language-python">df_time.withColumn(&quot;timestamp&quot;, gettimestamp(&quot;ts&quot;)).show()
+</code></pre>
+<pre><code>+-------------+-------------------+
+|           ts|          timestamp|
++-------------+-------------------+
+|1542241826796|11-15-2018 00:30:26|
+|1542242481796|11-15-2018 00:41:21|
+|1542242741796|11-15-2018 00:45:41|
+|1542253449796|11-15-2018 03:44:09|
+|1542260935796|11-15-2018 05:48:55|
+|1542261224796|11-15-2018 05:53:44|
+|1542261356796|11-15-2018 05:55:56|
+|1542261662796|11-15-2018 06:01:02|
+|1542262057796|11-15-2018 06:07:37|
+|1542262233796|11-15-2018 06:10:33|
+|1542262434796|11-15-2018 06:13:54|
+|1542262456796|11-15-2018 06:14:16|
+|1542262679796|11-15-2018 06:17:59|
+|1542262728796|11-15-2018 06:18:48|
+|1542262893796|11-15-2018 06:21:33|
+|1542263158796|11-15-2018 06:25:58|
+|1542263378796|11-15-2018 06:29:38|
+|1542265716796|11-15-2018 07:08:36|
+|1542265929796|11-15-2018 07:12:09|
+|1542266927796|11-15-2018 07:28:47|
++-------------+-------------------+
+only showing top 20 rows
+</code></pre>
+<pre><code class="language-python">df_time.printSchema()
+</code></pre>
+<pre><code>root
+ |-- ts: long (nullable = true)
+</code></pre>
+<pre><code class="language-python">
+</code></pre>
+<pre><code class="language-python">get_timestamp = F.udf(lambda x: datetime.fromtimestamp( (x/1000.0) ), T.TimestampType()) 
+get_hour = F.udf(lambda x: x.hour, T.IntegerType()) 
+get_day = F.udf(lambda x: x.day, T.IntegerType()) 
+get_week = F.udf(lambda x: x.isocalendar()[1], T.IntegerType()) 
+get_month = F.udf(lambda x: x.month, T.IntegerType()) 
+get_year = F.udf(lambda x: x.year, T.IntegerType()) 
+get_weekday = F.udf(lambda x: x.weekday(), T.IntegerType()) 
+</code></pre>
+<pre><code class="language-python">df_log = df_log.withColumn(&quot;timestamp&quot;, get_timestamp(df_log.ts))
+df_log = df_log.withColumn(&quot;hour&quot;, get_hour(df_log.timestamp))
+df_log = df_log.withColumn(&quot;day&quot;, get_day(df_log.timestamp))
+df_log = df_log.withColumn(&quot;week&quot;, get_week(df_log.timestamp))
+df_log = df_log.withColumn(&quot;month&quot;, get_month(df_log.timestamp))
+df_log = df_log.withColumn(&quot;year&quot;, get_year(df_log.timestamp))
+df_log = df_log.withColumn(&quot;weekday&quot;, get_weekday(df_log.timestamp))
+df_log.limit(5).toPandas()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist</th>
+      <th>auth</th>
+      <th>firstName</th>
+      <th>gender</th>
+      <th>itemInSession</th>
+      <th>lastName</th>
+      <th>length</th>
+      <th>level</th>
+      <th>location</th>
+      <th>method</th>
+      <th>...</th>
+      <th>ts</th>
+      <th>userAgent</th>
+      <th>userId</th>
+      <th>timestamp</th>
+      <th>hour</th>
+      <th>day</th>
+      <th>week</th>
+      <th>month</th>
+      <th>year</th>
+      <th>weekday</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Harmonia</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>0</td>
+      <td>Smith</td>
+      <td>655.77751</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>...</td>
+      <td>1542241826796</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+      <td>2018-11-15 00:30:26.796</td>
+      <td>0</td>
+      <td>15</td>
+      <td>46</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>The Prodigy</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>1</td>
+      <td>Smith</td>
+      <td>260.07465</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>...</td>
+      <td>1542242481796</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+      <td>2018-11-15 00:41:21.796</td>
+      <td>0</td>
+      <td>15</td>
+      <td>46</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Train</td>
+      <td>Logged In</td>
+      <td>Ryan</td>
+      <td>M</td>
+      <td>2</td>
+      <td>Smith</td>
+      <td>205.45261</td>
+      <td>free</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>PUT</td>
+      <td>...</td>
+      <td>1542242741796</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>26</td>
+      <td>2018-11-15 00:45:41.796</td>
+      <td>0</td>
+      <td>15</td>
+      <td>46</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Sony Wonder</td>
+      <td>Logged In</td>
+      <td>Samuel</td>
+      <td>M</td>
+      <td>0</td>
+      <td>Gonzalez</td>
+      <td>218.06975</td>
+      <td>free</td>
+      <td>Houston-The Woodlands-Sugar Land, TX</td>
+      <td>PUT</td>
+      <td>...</td>
+      <td>1542253449796</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>61</td>
+      <td>2018-11-15 03:44:09.796</td>
+      <td>3</td>
+      <td>15</td>
+      <td>46</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Van Halen</td>
+      <td>Logged In</td>
+      <td>Tegan</td>
+      <td>F</td>
+      <td>2</td>
+      <td>Levine</td>
+      <td>289.38404</td>
+      <td>paid</td>
+      <td>Portland-South Portland, ME</td>
+      <td>PUT</td>
+      <td>...</td>
+      <td>1542260935796</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>80</td>
+      <td>2018-11-15 05:48:55.796</td>
+      <td>5</td>
+      <td>15</td>
+      <td>46</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 25 columns</p>
+</div>
+<pre><code class="language-python">time_cols = [&quot;timestamp&quot;, &quot;hour&quot;, &quot;day&quot;, &quot;week&quot;, &quot;month&quot;, &quot;year&quot;, &quot;weekday&quot;]
+</code></pre>
+<pre><code class="language-python">time_table_df = df_log.select(time_cols)
+</code></pre>
+<pre><code class="language-python"># write to parquet file partition by 
+time_table_df.write.parquet('data/time_table', partitionBy=['year', 'month'], mode='Overwrite')
+</code></pre>
+<pre><code class="language-python"># write this to s3 bucket
+time_table_df.write.parquet(output + 'time_table', partitionBy=['year', 'month'], mode='Overwrite')
+</code></pre>
+<h2 id="songplay-table">SongPlay table</h2>
+<pre><code class="language-python">df_log.printSchema()
+</code></pre>
+<pre><code>root
+ |-- artist: string (nullable = true)
+ |-- auth: string (nullable = true)
+ |-- firstName: string (nullable = true)
+ |-- gender: string (nullable = true)
+ |-- itemInSession: long (nullable = true)
+ |-- lastName: string (nullable = true)
+ |-- length: double (nullable = true)
+ |-- level: string (nullable = true)
+ |-- location: string (nullable = true)
+ |-- method: string (nullable = true)
+ |-- page: string (nullable = true)
+ |-- registration: double (nullable = true)
+ |-- sessionId: long (nullable = true)
+ |-- song: string (nullable = true)
+ |-- status: long (nullable = true)
+ |-- ts: long (nullable = true)
+ |-- userAgent: string (nullable = true)
+ |-- userId: string (nullable = true)
+ |-- timestamp: timestamp (nullable = true)
+ |-- hour: integer (nullable = true)
+ |-- day: integer (nullable = true)
+ |-- week: integer (nullable = true)
+ |-- month: integer (nullable = true)
+ |-- year: integer (nullable = true)
+ |-- weekday: integer (nullable = true)
+</code></pre>
+<pre><code class="language-python">songplay_cols_temp = [&quot;timestamp&quot;, &quot;userId&quot;, &quot;sessionId&quot;, &quot;location&quot;, &quot;userAgent&quot;, &quot;level&quot;]
+</code></pre>
+<pre><code class="language-python">df_log.select(songplay_cols).toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>timestamp</th>
+      <th>userId</th>
+      <th>sessionId</th>
+      <th>location</th>
+      <th>userAgent</th>
+      <th>level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-11-15 00:30:26.796</td>
+      <td>26</td>
+      <td>583</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-11-15 00:41:21.796</td>
+      <td>26</td>
+      <td>583</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-11-15 00:45:41.796</td>
+      <td>26</td>
+      <td>583</td>
+      <td>San Jose-Sunnyvale-Santa Clara, CA</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-11-15 03:44:09.796</td>
+      <td>61</td>
+      <td>597</td>
+      <td>Houston-The Woodlands-Sugar Land, TX</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-11-15 05:48:55.796</td>
+      <td>80</td>
+      <td>602</td>
+      <td>Portland-South Portland, ME</td>
+      <td>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4...</td>
+      <td>paid</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># read the partitioned data
+df_artists_read = spark.read.option(&quot;mergeSchema&quot;, &quot;true&quot;).parquet(&quot;data/artists_table&quot;)
+df_songs_read = spark.read.option(&quot;mergeSchema&quot;, &quot;true&quot;).parquet(&quot;data/songs_table&quot;)
+</code></pre>
+<pre><code class="language-python">df_artists_read.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist_id</th>
+      <th>artist_name</th>
+      <th>artist_location</th>
+      <th>artist_latitude</th>
+      <th>artist_longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>ARDR4AC1187FB371A1</td>
+      <td>Montserrat Caballé;Placido Domingo;Vicente Sar...</td>
+      <td></td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>AREBBGV1187FB523D2</td>
+      <td>Mike Jones (Featuring CJ_ Mello &amp; Lil' Bran)</td>
+      <td>Houston, TX</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ARMAC4T1187FB3FA4C</td>
+      <td>The Dillinger Escape Plan</td>
+      <td>Morris Plains, NJ</td>
+      <td>40.82624</td>
+      <td>-74.47995</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ARPBNLO1187FB3D52F</td>
+      <td>Tiny Tim</td>
+      <td>New York, NY</td>
+      <td>40.71455</td>
+      <td>-74.00712</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>ARDNS031187B9924F0</td>
+      <td>Tim Wilson</td>
+      <td>Georgia</td>
+      <td>32.67828</td>
+      <td>-83.22295</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df_songs_read.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>song_id</th>
+      <th>title</th>
+      <th>duration</th>
+      <th>year</th>
+      <th>artist_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>SOAOIBZ12AB01815BE</td>
+      <td>I Hold Your Hand In Mine [Live At Royal Albert...</td>
+      <td>43.36281</td>
+      <td>2000</td>
+      <td>ARPBNLO1187FB3D52F</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>SONYPOM12A8C13B2D7</td>
+      <td>I Think My Wife Is Running Around On Me (Taco ...</td>
+      <td>186.48771</td>
+      <td>2005</td>
+      <td>ARDNS031187B9924F0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SODREIN12A58A7F2E5</td>
+      <td>A Whiter Shade Of Pale (Live @ Fillmore West)</td>
+      <td>326.00771</td>
+      <td>0</td>
+      <td>ARLTWXK1187FB5A3F8</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>SOYMRWW12A6D4FAB14</td>
+      <td>The Moon And I (Ordinary Day Album Version)</td>
+      <td>267.70240</td>
+      <td>0</td>
+      <td>ARKFYS91187B98E58F</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>Streets On Fire (Explicit Album Version)</td>
+      <td>279.97995</td>
+      <td>0</td>
+      <td>ARPFHN61187FB575F6</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># merge song and artists
+df_songs_read.join(df_artists_read, 'artist_id').toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>artist_id</th>
+      <th>song_id</th>
+      <th>title</th>
+      <th>duration</th>
+      <th>year</th>
+      <th>artist_name</th>
+      <th>artist_location</th>
+      <th>artist_latitude</th>
+      <th>artist_longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>ARPBNLO1187FB3D52F</td>
+      <td>SOAOIBZ12AB01815BE</td>
+      <td>I Hold Your Hand In Mine [Live At Royal Albert...</td>
+      <td>43.36281</td>
+      <td>2000</td>
+      <td>Tiny Tim</td>
+      <td>New York, NY</td>
+      <td>40.71455</td>
+      <td>-74.00712</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>ARDNS031187B9924F0</td>
+      <td>SONYPOM12A8C13B2D7</td>
+      <td>I Think My Wife Is Running Around On Me (Taco ...</td>
+      <td>186.48771</td>
+      <td>2005</td>
+      <td>Tim Wilson</td>
+      <td>Georgia</td>
+      <td>32.67828</td>
+      <td>-83.22295</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ARLTWXK1187FB5A3F8</td>
+      <td>SODREIN12A58A7F2E5</td>
+      <td>A Whiter Shade Of Pale (Live @ Fillmore West)</td>
+      <td>326.00771</td>
+      <td>0</td>
+      <td>King Curtis</td>
+      <td>Fort Worth, TX</td>
+      <td>32.74863</td>
+      <td>-97.32925</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ARKFYS91187B98E58F</td>
+      <td>SOYMRWW12A6D4FAB14</td>
+      <td>The Moon And I (Ordinary Day Album Version)</td>
+      <td>267.70240</td>
+      <td>0</td>
+      <td>Jeff And Sheri Easter</td>
+      <td></td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>ARPFHN61187FB575F6</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>Streets On Fire (Explicit Album Version)</td>
+      <td>279.97995</td>
+      <td>0</td>
+      <td>Lupe Fiasco</td>
+      <td>Chicago, IL</td>
+      <td>41.88415</td>
+      <td>-87.63241</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df_joined_songs_artists = df_songs_read.join(df_artists_read, 'artist_id').select(&quot;artist_id&quot;, &quot;song_id&quot;, &quot;title&quot;, &quot;artist_name&quot;)
+</code></pre>
+<pre><code class="language-python">songplay_cols = [&quot;timestamp&quot;, &quot;userId&quot;, &quot;song_id&quot;, &quot;artist_id&quot;, &quot;sessionId&quot;, &quot;location&quot;, &quot;userAgent&quot;, &quot;level&quot;, &quot;month&quot;, &quot;year&quot;]
+</code></pre>
+<pre><code class="language-python"># join df_logs with df_joined_songs_artists
+df_log.join(df_joined_songs_artists, df_log.artist == df_joined_songs_artists.artist_name).select(songplay_cols).toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>timestamp</th>
+      <th>userId</th>
+      <th>song_id</th>
+      <th>artist_id</th>
+      <th>sessionId</th>
+      <th>location</th>
+      <th>userAgent</th>
+      <th>level</th>
+      <th>month</th>
+      <th>year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-11-10 07:47:51.796</td>
+      <td>44</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>350</td>
+      <td>Waterloo-Cedar Falls, IA</td>
+      <td>Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; r...</td>
+      <td>paid</td>
+      <td>11</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-11-06 18:34:31.796</td>
+      <td>97</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>293</td>
+      <td>Lansing-East Lansing, MI</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>paid</td>
+      <td>11</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-11-06 16:04:44.796</td>
+      <td>2</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>126</td>
+      <td>Plymouth, IN</td>
+      <td>"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebK...</td>
+      <td>free</td>
+      <td>11</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-11-28 23:22:57.796</td>
+      <td>24</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>984</td>
+      <td>Lake Havasu City-Kingman, AZ</td>
+      <td>"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebK...</td>
+      <td>paid</td>
+      <td>11</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-11-14 13:11:26.796</td>
+      <td>34</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>495</td>
+      <td>Milwaukee-Waukesha-West Allis, WI</td>
+      <td>Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; r...</td>
+      <td>free</td>
+      <td>11</td>
+      <td>2018</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">songplay_table_df = df_log.join(df_joined_songs_artists, df_log.artist == df_joined_songs_artists.artist_name).select(songplay_cols)
+songplay_table_df = songplay_table_df.withColumn(&quot;songplay_id&quot;, F.monotonically_increasing_id())
+</code></pre>
+<pre><code class="language-python">songplay_table_df.toPandas().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>timestamp</th>
+      <th>userId</th>
+      <th>song_id</th>
+      <th>artist_id</th>
+      <th>sessionId</th>
+      <th>location</th>
+      <th>userAgent</th>
+      <th>level</th>
+      <th>month</th>
+      <th>year</th>
+      <th>songplay_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-11-10 07:47:51.796</td>
+      <td>44</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>350</td>
+      <td>Waterloo-Cedar Falls, IA</td>
+      <td>Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; r...</td>
+      <td>paid</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-11-06 18:34:31.796</td>
+      <td>97</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>293</td>
+      <td>Lansing-East Lansing, MI</td>
+      <td>"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5...</td>
+      <td>paid</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-11-06 16:04:44.796</td>
+      <td>2</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>126</td>
+      <td>Plymouth, IN</td>
+      <td>"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebK...</td>
+      <td>free</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-11-28 23:22:57.796</td>
+      <td>24</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>984</td>
+      <td>Lake Havasu City-Kingman, AZ</td>
+      <td>"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebK...</td>
+      <td>paid</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-11-14 13:11:26.796</td>
+      <td>34</td>
+      <td>SOWQTQZ12A58A7B63E</td>
+      <td>ARPFHN61187FB575F6</td>
+      <td>495</td>
+      <td>Milwaukee-Waukesha-West Allis, WI</td>
+      <td>Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; r...</td>
+      <td>free</td>
+      <td>11</td>
+      <td>2018</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># write this to parquet file
+# write to parquet file partition by 
+songplay_table_df.write.parquet('data/songplays_table', partitionBy=['year', 'month'], mode='Overwrite')
+</code></pre>
+<pre><code class="language-python">
+</code></pre>
+<pre><code class="language-python">
+</code></pre>
+<pre><code class="language-python">
+</code></pre>
+<pre><code class="language-python">from pyspark.sql import functions as F
+</code></pre>
+<pre><code class="language-python">from glob import glob
+</code></pre>
+<pre><code class="language-python">test_df = spark.read.json(glob(&quot;test/*.json&quot;))
+</code></pre>
+<pre><code class="language-python">test_df.select(['song_id', 'title', 'artist_id', 'year', 'duration']).toPandas()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>song_id</th>
+      <th>title</th>
+      <th>artist_id</th>
+      <th>year</th>
+      <th>duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>SOYMRWW12A6D4FAB14</td>
+      <td>The Moon And I (Ordinary Day Album Version)</td>
+      <td>ARKFYS91187B98E58F</td>
+      <td>0</td>
+      <td>267.70240</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>SOHKNRJ12A6701D1F8</td>
+      <td>Drop of Rain</td>
+      <td>AR10USD1187B99F3F1</td>
+      <td>0</td>
+      <td>189.57016</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SOYMRWW12A6D4FAB14</td>
+      <td>The Moon And SUN</td>
+      <td>ASKFYS91187B98E58F</td>
+      <td>0</td>
+      <td>269.70240</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>SOUDSGM12AC9618304</td>
+      <td>Insatiable (Instrumental Version)</td>
+      <td>ARNTLGG11E2835DDB9</td>
+      <td>0</td>
+      <td>266.39628</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">test_df.select(['song_id', 'title', 'artist_id', 'year', 'duration']).groupBy('song_id').count().show()
+</code></pre>
+<pre><code>+------------------+-----+
+|           song_id|count|
++------------------+-----+
+|SOUDSGM12AC9618304|    1|
+|SOYMRWW12A6D4FAB14|    2|
+|SOHKNRJ12A6701D1F8|    1|
++------------------+-----+
+</code></pre>
+<pre><code class="language-python">test_df.select(F.col('song_id'), 'title') \
+    .groupBy('song_id') \
+    .agg({'title': 'first'}) \
+    .withColumnRenamed('first(title)', 'title1') \
+    .show()
+</code></pre>
+<pre><code>+------------------+--------------------+
+|           song_id|               title|
++------------------+--------------------+
+|SOUDSGM12AC9618304|Insatiable (Instr...|
+|SOYMRWW12A6D4FAB14|The Moon And I (O...|
+|SOHKNRJ12A6701D1F8|        Drop of Rain|
++------------------+--------------------+
+</code></pre>
+<pre><code class="language-python">t1 = test_df.select(F.col('song_id'), 'title') \
+    .groupBy('song_id') \
+    .agg({'title': 'first'}) \
+    .withColumnRenamed('first(title)', 'title1')
+</code></pre>
+<pre><code class="language-python">t2 = test_df.select(['song_id', 'title', 'artist_id', 'year', 'duration'])
+</code></pre>
+<pre><code class="language-python">t1.join(t2, 'song_id').where(F.col(&quot;title1&quot;) == F.col(&quot;title&quot;)).select([&quot;song_id&quot;, &quot;title&quot;, &quot;artist_id&quot;, &quot;year&quot;, &quot;duration&quot;]).show()
+</code></pre>
+<pre><code>+------------------+--------------------+------------------+----+---------+
+|           song_id|               title|         artist_id|year| duration|
++------------------+--------------------+------------------+----+---------+
+|SOYMRWW12A6D4FAB14|The Moon And I (O...|ARKFYS91187B98E58F|   0| 267.7024|
+|SOHKNRJ12A6701D1F8|        Drop of Rain|AR10USD1187B99F3F1|   0|189.57016|
+|SOUDSGM12AC9618304|Insatiable (Instr...|ARNTLGG11E2835DDB9|   0|266.39628|
++------------------+--------------------+------------------+----+---------+
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Examples of System Design]]></title>
+        <id>https://blog.ferretninja.com/post/examples-of-system-design/</id>
+        <link href="https://blog.ferretninja.com/post/examples-of-system-design/">
+        </link>
+        <updated>2021-03-29T09:36:12.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1576380638596.png" alt="" loading="lazy"></figure>
+<p><img src="https://blog.ferretninja.com/post-images/1576385934910.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1576385942324.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1576385947273.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1576385965838.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1576386036018.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1576385974530.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1576385981729.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1576385988738.png" alt="" loading="lazy"></p>
+<p>byte 1 byte -128 to 127.<br>
+short 2 bytes -32,768 to 32,767.<br>
+int 4 bytes -2,147,483,648 to 2,147,483,647.<br>
+long 8 bytes -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807.</p>
+<p>Requirement clarification (use cases, post, follow, search, push notification)<br>
+API<br>
+Estimation (scaling, partitioning, load balancing, caching, storage, network bandwidth)<br>
+Data model (SQL schema)</p>
+<p><strong>Designing TinyURL</strong></p>
+<p>Encoding actual URL<br>
+We can compute a unique hash (e.g., MD5 or SHA256, etc.) of the given URL. The hash can then be encoded for displaying. This encoding could be base36 ([a-z ,0-9]) or base62 ([A-Z, a-z, 0-9]) and if we add ‘-’ and ‘.’ we can use base64 encoding. A reasonable question would be, what should be the length of the short key? 6, 8 or 10 characters.</p>
+<p>Using base64 encoding, a 6 letter long key would result in 64^6 = ~68.7 billion possible strings<br>
+Using base64 encoding, an 8 letter long key would result in 64^8 = ~281 trillion possible strings</p>
+<p>With 68.7B unique strings, let’s assume six letter keys would suffice for our system.</p>
+<p>If we use the MD5 algorithm as our hash function, it’ll produce a 128-bit hash value. After base64 encoding, we’ll get a string having more than 21 characters (since each base64 character encodes 6 bits of the hash value). Since we only have space for 8 characters per short key, how will we choose our key then? We can take the first 6 (or 8) letters for the key. This could result in key duplication though, upon which we can choose some other characters out of the encoding string or swap some characters.</p>
+<p>What are different issues with our solution? We have the following couple of problems with our encoding scheme:</p>
+<p>If multiple users enter the same URL, they can get the same shortened URL, which is not acceptable.<br>
+What if parts of the URL are URL-encoded? e.g., http://www.educative.io/distributed.php?id=design, and http://www.educative.io/distributed.php%3Fid%3Ddesign are identical except for the URL encoding.<br>
+Workaround for the issues: We can append an increasing sequence number to each input URL to make it unique, and then generate a hash of it. We don’t need to store this sequence number in the databases, though. Possible problems with this approach could be an ever-increasing sequence number. Can it overflow? Appending an increasing sequence number will also impact the performance of the service.</p>
+<p>Another solution could be to append user id (which should be unique) to the input URL. However, if the user has not signed in, we would have to ask the user to choose a uniqueness key. Even after this, if we have a conflict, we have to keep generating a key until we get a unique one.</p>
+<p><img src="https://blog.ferretninja.com/post-images/1565756686530.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1565754688299.png" alt="" loading="lazy"></p>
+<p><strong>Designing Pastebin</strong></p>
+<p><img src="https://blog.ferretninja.com/post-images/1565757376688.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1565756747081.png" alt="" loading="lazy"></p>
+<p><strong>Design Instagram</strong></p>
+<p><img src="https://blog.ferretninja.com/post-images/1565757489241.png" alt="" loading="lazy"><br>
+a. Partitioning based on UserID Let’s assume we shard based on the ‘UserID’ so that we can keep all photos of a user on the same shard. If one DB shard is 1TB, we will need four shards to store 3.7TB of data. Let’s assume for better performance and scalability we keep 10 shards.</p>
+<p>So we’ll find the shard number by UserID % 10 and then store the data there. To uniquely identify any photo in our system, we can append shard number with each PhotoID.</p>
+<p>How can we generate PhotoIDs? Each DB shard can have its own auto-increment sequence for PhotoIDs and since we will append ShardID with each PhotoID, it will make it unique throughout our system.</p>
+<p>What are the different issues with this partitioning scheme?</p>
+<p>How would we handle hot users? Several people follow such hot users and a lot of other people see any photo they upload.<br>
+Some users will have a lot of photos compared to others, thus making a non-uniform distribution of storage.<br>
+What if we cannot store all pictures of a user on one shard? If we distribute photos of a user onto multiple shards will it cause higher latencies?<br>
+Storing all photos of a user on one shard can cause issues like unavailability of all of the user’s data if that shard is down or higher latency if it is serving high load etc.<br>
+b. Partitioning based on PhotoID If we can generate unique PhotoIDs first and then find a shard number through “PhotoID % 10”, the above problems will have been solved. We would not need to append ShardID with PhotoID in this case as PhotoID will itself be unique throughout the system.</p>
+<p>How can we generate PhotoIDs? Here we cannot have an auto-incrementing sequence in each shard to define PhotoID because we need to know PhotoID first to find the shard where it will be stored. One solution could be that we dedicate a separate database instance to generate auto-incrementing IDs. If our PhotoID can fit into 64 bits, we can define a table containing only a 64 bit ID field. So whenever we would like to add a photo in our system, we can insert a new row in this table and take that ID to be our PhotoID of the new photo.</p>
+<p>Wouldn’t this key generating DB be a single point of failure? Yes, it would be. A workaround for that could be defining two such databases with one generating even numbered IDs and the other odd numbered. For the MySQL, the following script can define such sequences:</p>
+<pre><code>KeyGeneratingServer1:
+auto-increment-increment = 2
+auto-increment-offset = 1 
+KeyGeneratingServer2:
+auto-increment-increment = 2
+auto-increment-offset = 2
+</code></pre>
+<p>We can put a load balancer in front of both of these databases to round robin between them and to deal with downtime. Both these servers could be out of sync with one generating more keys than the other, but this will not cause any issue in our system. We can extend this design by defining separate ID tables for Users, Photo-Comments, or other objects present in our system.</p>
+<p>Alternately, we can implement a ‘key’ generation scheme similar to what we have discussed in Designing a URL Shortening service like TinyURL.</p>
+<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1565757623378.png" alt="" loading="lazy"></figure>
+<p><strong>Design Dropbox</strong></p>
+<p>The metadata Database should be storing information about following objects:</p>
+<p>Chunks<br>
+Files<br>
+User<br>
+Devices<br>
+Workspace (sync folders)</p>
+<p><img src="https://blog.ferretninja.com/post-images/1565757709181.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1565757739488.png" alt="" loading="lazy"></p>
+<p><strong>Designing Messenger</strong></p>
+<p><img src="https://blog.ferretninja.com/post-images/1566064813925.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1566064820748.png" alt="" loading="lazy"></p>
+<p><strong>Designing Twitter</strong></p>
+<p><img src="https://blog.ferretninja.com/post-images/1566067729831.png" alt="" loading="lazy"><br>
+<img src="https://blog.ferretninja.com/post-images/1566067734387.png" alt="" loading="lazy"></p>
+<p><strong>Designing Youtube</strong></p>
+<p>At a high-level we would need the following components:</p>
+<p>Processing Queue: Each uploaded video will be pushed to a processing queue to be de-queued later for encoding, thumbnail generation, and storage.<br>
+Encoder: To encode each uploaded video into multiple formats.<br>
+Thumbnails generator: To generate a few thumbnails for each video.<br>
+Video and Thumbnail storage: To store video and thumbnail files in some distributed file storage.<br>
+User Database: To store user’s information, e.g., name, email, address, etc.<br>
+Video metadata storage: A metadata database to store all the information about videos like title, file path in the system, uploading user, total views, likes, dislikes, etc. It will also be used to store all the video comments.</p>
+<figure data-type="image" tabindex="3"><img src="https://blog.ferretninja.com/post-images/1566070090262.png" alt="" loading="lazy"></figure>
+<p><strong>Design Rate Limiter</strong></p>
+<figure data-type="image" tabindex="4"><img src="https://blog.ferretninja.com/post-images/1566091665748.png" alt="" loading="lazy"></figure>
+<p>fixed window<br>
+<img src="https://blog.ferretninja.com/post-images/1566091776264.png" alt="" loading="lazy"><br>
+sliding wondow<br>
+<img src="https://blog.ferretninja.com/post-images/1566091784751.png" alt="" loading="lazy"><br>
+bucket counter<br>
+if we have an hourly rate limit we can keep a count for each minute and calculate the sum of all counters in the past hour when we receive a new request to calculate the throttling limit</p>
+<p><strong>Design Typeahead Suggestion</strong></p>
+<p>Should we have case insensitive trie? For simplicity and search use-case, let’s assume our data is case insensitive.</p>
+<p>How to find top suggestion? Now that we can find all the terms for a given prefix, how can we find the top 10 terms for the given prefix? One simple solution could be to store the count of searches that terminated at each node, e.g., if users have searched about ‘CAPTAIN’ 100 times and ‘CAPTION’ 500 times, we can store this number with the last character of the phrase. Now if the user types ‘CAP’ we know the top most searched word under the prefix ‘CAP’ is ‘CAPTION’. So, to find the top suggestions for a given prefix, we can traverse the sub-tree under it.</p>
+<p>Given a prefix, how much time will it take to traverse its sub-tree? Given the amount of data we need to index, we should expect a huge tree. Even traversing a sub-tree would take really long, e.g., the phrase ‘system design interview questions’ is 30 levels deep. Since we have very strict latency requirements we do need to improve the efficiency of our solution.</p>
+<p>Can we store top suggestions with each node? This can surely speed up our searches but will require a lot of extra storage. We can store top 10 suggestions at each node that we can return to the user. We have to bear the big increase in our storage capacity to achieve the required efficiency.</p>
+<p>We can optimize our storage by storing only references of the terminal nodes rather than storing the entire phrase. To find the suggested terms we need to traverse back using the parent reference from the terminal node. We will also need to store the frequency with each reference to keep track of top suggestions.</p>
+<p>How would we build this trie? We can efficiently build our trie bottom up. Each parent node will recursively call all the child nodes to calculate their top suggestions and their counts. Parent nodes will combine top suggestions from all of their children to determine their top suggestions.</p>
+<p>How to update the trie? Assuming five billion searches every day, which would give us approximately 60K queries per second. If we try to update our trie for every query it’ll be extremely resource intensive and this can hamper our read requests, too. One solution to handle this could be to update our trie offline after a certain interval.</p>
+<p>As the new queries come in we can log them and also track their frequencies. Either we can log every query or do sampling and log every 1000th query. For example, if we don’t want to show a term which is searched for less than 1000 times, it’s safe to log every 1000th searched term.</p>
+<p>We can have a Map-Reduce (MR) set-up to process all the logging data periodically say every hour. These MR jobs will calculate frequencies of all searched terms in the past hour. We can then update our trie with this new data. We can take the current snapshot of the trie and update it with all the new terms and their frequencies. We should do this offline as we don’t want our read queries to be blocked by update trie requests. We can have two options:</p>
+<p>We can make a copy of the trie on each server to update it offline. Once done we can switch to start using it and discard the old one.<br>
+Another option is we can have a master-slave configuration for each trie server. We can update slave while the master is serving traffic. Once the update is complete, we can make the slave our new master. We can later update our old master, which can then start serving traffic, too.<br>
+How can we update the frequencies of typeahead suggestions? Since we are storing frequencies of our typeahead suggestions with each node, we need to update them too! We can update only differences in frequencies rather than recounting all search terms from scratch. If we’re keeping count of all the terms searched in last 10 days, we’ll need to subtract the counts from the time period no longer included and add the counts for the new time period being included. We can add and subtract frequencies based on Exponential Moving Average (EMA) of each term. In EMA, we give more weight to the latest data. It’s also known as the exponentially weighted moving average.</p>
+<p>After inserting a new term in the trie, we’ll go to the terminal node of the phrase and increase its frequency. Since we’re storing the top 10 queries in each node, it is possible that this particular search term jumped into the top 10 queries of a few other nodes. So, we need to update the top 10 queries of those nodes then. We have to traverse back from the node to all the way up to the root. For every parent, we check if the current query is part of the top 10. If so, we update the corresponding frequency. If not, we check if the current query’s frequency is high enough to be a part of the top 10. If so, we insert this new term and remove the term with the lowest frequency.</p>
+<p>How can we remove a term from the trie? Let's say we have to remove a term from the trie because of some legal issue or hate or piracy etc. We can completely remove such terms from the trie when the regular update happens, meanwhile, we can add a filtering layer on each server which will remove any such term before sending them to users.</p>
+<p>What could be different ranking criteria for suggestions? In addition to a simple count, for terms ranking, we have to consider other factors too, e.g., freshness, user location, language, demographics, personal history etc.</p>
+<p>Typeahead Client<br>
+We can perform the following optimizations on the client side to improve user’s experience:</p>
+<p>The client should only try hitting the server if the user has not pressed any key for 50ms.<br>
+If the user is constantly typing, the client can cancel the in-progress requests.<br>
+Initially, the client can wait until the user enters a couple of characters.<br>
+Clients can pre-fetch some data from the server to save future requests.<br>
+Clients can store the recent history of suggestions locally. Recent history has a very high rate of being reused.<br>
+Establishing an early connection with the server turns out to be one of the most important factors. As soon as the user opens the search engine website, the client can open a connection with the server. So when a user types in the first character, the client doesn’t waste time in establishing the connection.<br>
+The server can push some part of their cache to CDNs and Internet Service Providers (ISPs) for efficiency.</p>
+<p><strong>Designing Twitter Search</strong></p>
+<figure data-type="image" tabindex="5"><img src="https://blog.ferretninja.com/post-images/1566094473812.png" alt="" loading="lazy"></figure>
+<p><strong>Designing a Web Crawler</strong></p>
+<figure data-type="image" tabindex="6"><img src="https://blog.ferretninja.com/post-images/1585078847097.png" alt="" loading="lazy"></figure>
+<p><strong>Design news feed</strong></p>
+<figure data-type="image" tabindex="7"><img src="https://blog.ferretninja.com/post-images/1585088536475.png" alt="" loading="lazy"></figure>
+<p>“Pull” model or Fan-out-on-load: This method involves keeping all the recent feed data in memory so that users can pull it from the server whenever they need it. Clients can pull the feed data on a regular basis or manually whenever they need it. Possible problems with this approach are a) New data might not be shown to the users until they issue a pull request, b) It’s hard to find the right pull cadence, as most of the time pull requests will result in an empty response if there is no new data, causing waste of resources.</p>
+<p>“Push” model or Fan-out-on-write: For a push system, once a user has published a post, we can immediately push this post to all the followers. The advantage is that when fetching feed you don’t need to go through your friend’s list and get feeds for each of them. It significantly reduces read operations. To efficiently handle this, users have to maintain a Long Poll request with the server for receiving the updates. A possible problem with this approach is that when a user has millions of followers (a celebrity-user) the server has to push updates to a lot of people.</p>
+<p>Hybrid: An alternate method to handle feed data could be to use a hybrid approach, i.e., to do a combination of fan-out-on-write and fan-out-on-load. Specifically, we can stop pushing posts from users with a high number of followers (a celebrity user) and only push data for those users who have a few hundred (or thousand) followers. For celebrity users, we can let the followers pull the updates. Since the push operation can be extremely costly for users who have a lot of friends or followers, by disabling fanout for them, we can save a huge number of resources. Another alternate approach could be that, once a user publishes a post, we can limit the fanout to only her online friends. Also, to get benefits from both the approaches, a combination of ‘push to notify’ and ‘pull for serving’ end users is a great way to go. Purely a push or pull model is less versatile.</p>
+<p>Should we always notify users if there are new posts available for their newsfeed? It could be useful for users to get notified whenever new data is available. However, on mobile devices, where data usage is relatively expensive, it can consume unnecessary bandwidth. Hence, at least for mobile devices, we can choose not to push data, instead, let users “Pull to Refresh” to get new posts.</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java JUC (java.util.concurrent) 7 - Semaphore vs Lock Example]]></title>
+        <id>https://blog.ferretninja.com/post/java-juc-javautilconcurrent-7-semaphore-vs-lock-example/</id>
+        <link href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-7-semaphore-vs-lock-example/">
+        </link>
+        <updated>2021-03-29T09:34:58.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>1114. Print in Order</strong></p>
+<pre><code>class Foo {
+    
+    private volatile boolean onePrinted;
+    private volatile boolean twoPrinted;
+
+    public Foo() {
+        onePrinted = false;
+        twoPrinted = false;        
+    }
+
+    public synchronized void first(Runnable printFirst) throws InterruptedException {
+        
+        // printFirst.run() outputs &quot;first&quot;. Do not change or remove this line.
+        printFirst.run();
+        onePrinted = true;
+        notifyAll();
+    }
+
+    public synchronized void second(Runnable printSecond) throws InterruptedException {
+        while(!onePrinted) {
+            wait();
+        }
+        // printSecond.run() outputs &quot;second&quot;. Do not change or remove this line.
+        printSecond.run();
+        twoPrinted = true;
+        notifyAll();
+    }
+
+    public synchronized void third(Runnable printThird) throws InterruptedException {
+        while(!twoPrinted) {
+            wait();
+        }
+        // printThird.run() outputs &quot;third&quot;. Do not change or remove this line.
+        printThird.run();
+    }
+}
+</code></pre>
+<pre><code>import java.util.concurrent.*;
+class Foo {
+    Semaphore run2, run3;
+
+    public Foo() {
+        run2 = new Semaphore(0);
+        run3 = new Semaphore(0);
+    }
+
+    public void first(Runnable printFirst) throws InterruptedException {
+        printFirst.run();
+        run2.release();
+    }
+
+    public void second(Runnable printSecond) throws InterruptedException {
+        run2.acquire();
+        printSecond.run();
+        run3.release();
+    }
+
+    public void third(Runnable printThird) throws InterruptedException {
+        run3.acquire(); 
+        printThird.run();
+    }
+}
+</code></pre>
+<p><strong>1188. Design Bounded Blocking Queue</strong></p>
+<p>When await() is called, the lock associated with this Condition is atomically released and the current thread becomes disabled for thread scheduling purposes. The current thread is assumed to hold the lock associated with this Condition when this method is called.</p>
+<p>newCondition()<br>
+await/signal/signalAll</p>
+<p>synchonized<br>
+wait/notify/notifyAll</p>
+<p>The ReentrantLock is an exclusive lock so only one thread can acquire the lock.<br>
+See #1. When a thread call signal or signalAll, it releases respectively one thread or all threads awaiting for the corresponding Condition such that the thread or those threads will be eligible to acquire the lock again. But for now the lock is still owned by the thread that called signal or signalAll until it releases explicitly the lock by calling lock.unlock(). Then the thread(s) that has/have been released will be able to try to acquire the lock again, the thread that could acquire the lock will be able to check the condition again (by condition this time I mean count == items.length or count == 0 in this example), if it is ok it will proceed otherwise it will await again and release the lock to make it available to another thread.</p>
+<pre><code>class BoundedBlockingQueue {
+    
+    private Queue&lt;Integer&gt; queue;
+    private Semaphore consumerSemaphore;
+    private Semaphore producerSemaphore;
+    private Semaphore mutex;
+
+    public BoundedBlockingQueue(int capacity) {
+        this.queue = new LinkedList&lt;&gt;();
+        this.producerSemaphore = new Semaphore(capacity);
+        this.consumerSemaphore = new Semaphore(0);
+        this.mutex = new Semaphore(1);
+    }
+
+    public void enqueue(int element) throws InterruptedException {
+        this.producerSemaphore.acquire();
+        //use mutex with Linkedlist or use ConcurrentLinkedDeque&lt;Integer&gt; q without mutex
+        this.mutex.acquire();                  
+        this.queue.offer(element);
+        this.mutex.release();
+        this.consumerSemaphore.release();
+    }
+
+    public int dequeue() throws InterruptedException {
+        this.consumerSemaphore.acquire();
+        this.mutex.acquire();
+        Integer res = this.queue.poll();
+        this.mutex.release();
+        this.producerSemaphore.release();
+        return res == null ? -1 : res;
+    }
+
+    public int size() {
+        return this.queue.size();
+    }
+}
+
+
+class BoundedBlockingQueue {
+    
+    private Queue&lt;Integer&gt; queue;
+    
+    private int capacity;
+
+    public BoundedBlockingQueue(int capacity) {
+        this.capacity = capacity;
+        this.queue = new LinkedList&lt;&gt;();
+    }
+    
+    public void enqueue(int element) throws InterruptedException {
+        //object level synchronized so either enqueu or dequeue can run
+        synchronized(this) {
+            while (this.queue.size() == this.capacity) {
+                wait();
+            }
+            this.queue.offer(element);
+            notifyAll();
+        }
+    }
+    
+    public int dequeue() throws InterruptedException {
+        synchronized(this) {
+            while (this.queue.isEmpty()) {
+                wait();
+            }
+            int res = this.queue.poll();
+            notifyAll();
+            return res;
+        }
+    }
+    
+    public int size() {
+        return this.queue.size();
+    }
+}
+
+
+class BoundedBlockingQueue {
+
+    private int[] data;
+    private int capacity = 0, head = 0, tail = 0;
+    private volatile int size = 0;
+    private Lock lock = new ReentrantLock();
+    private Condition isFull = lock.newCondition(), isEmpty = lock.newCondition();
+    
+    public BoundedBlockingQueue(int capacity) {
+        this.data = new int[capacity];
+        this.capacity = capacity;
+    }
+    
+    public void enqueue(int element) throws InterruptedException {
+        try {
+            lock.lock();  
+            while (size == capacity) {
+                isFull.await();     // only one thread will get lock after all threads wake up by signalAll().
+            }
+            data[tail++ % capacity] = element;
+            size++;
+            isEmpty.signalAll();
+        } catch(InterruptedException e) {
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    public int dequeue() throws InterruptedException {
+        int res = 0;
+        try {
+            lock.lock();
+            while (size == 0) {
+                isEmpty.await();
+            }
+            isFull.signalAll();
+            res = data[head++ % capacity];
+            size--;
+        } catch(InterruptedException e) {
+        } finally {
+            lock.unlock();
+        }
+        return res;
+    }
+    
+    public int size() {
+        return size;
+    }
+}
+</code></pre>
+<p>In order for the two methods to run concurrently they would have to use different locks</p>
+<pre><code>class A {
+    private final Object lockA = new Object();
+    private final Object lockB = new Object();
+
+    public void methodA() {
+        synchronized(lockA) {
+            //method A
+        }
+    }
+
+    public void methodB() {
+        synchronized(lockB) {
+            //method B
+        }
+    }
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java JUC (java.util.concurrent) 6 - Exception]]></title>
+        <id>https://blog.ferretninja.com/post/java-juc-javautilconcurrent-6-exception/</id>
+        <link href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-6-exception/">
+        </link>
+        <updated>2021-03-29T09:34:39.000Z</updated>
+        <content type="html"><![CDATA[<p>To stop a thread</p>
+<ol>
+<li>stop()  // deprecated<br>
+throws ThreadDeath exception and release lock</li>
+<li>interrupt()   // isInterrupted()</li>
+</ol>
+<pre><code>public class MyThread extends Thread {
+    @Override
+    public void run() {
+        try {
+            for (int i=0; i&lt;50000; i++){
+                if (this.isInterrupted()) {
+                    System.out.println(&quot; 已经是停止状态了！&quot;);
+                    throw new InterruptedException();   // or intead use return;
+                }
+                System.out.println(i);
+            }
+            System.out.println(&quot; 不抛出异常，我会被执行的哦！&quot;);
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
+    }
+ 
+    public static void main(String[] args) throws InterruptedException {
+        MyThread myThread =new MyThread();
+        myThread.start();
+        Thread.sleep(100);
+        myThread.interrupt();
+    }
+ 
+}
+</code></pre>
+<p>suspend() and resume() // deprecated because occupy lock</p>
+<p>suspend can block println()</p>
+<pre><code>public void println(String x) {
+		synchronized (this) {
+				print(x);
+				newLine();
+		}
+}
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1572150142349.jpg" alt="" loading="lazy"></figure>
+<p><strong>uncaughtException</strong></p>
+<pre><code>ThreadGroup group = new ThreadGroup(&quot;&quot;){
+      @Override
+      public void uncaughtException(Thread t, Throwable e) {
+             super.uncaughtException(t, e);
+             // 一个线程出现异常，中断组内所有线程
+             this.interrupt();
+      }
+};
+</code></pre>
+<pre><code>public class MyThread{
+ 
+    public static void main(String[] args) {
+        ThreadGroup threadGroup = new ThreadGroup(&quot;ThreadGroup&quot;){
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                System.out.println(&quot; 线程组的异常处理 &quot;);
+                super.uncaughtException(t, e);
+            }
+        };
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                System.out.println(&quot; 线程类的异常处理 &quot;);
+            }
+        });
+        Thread thread = new Thread(threadGroup,&quot;Thread&quot;){
+            @Override
+            public void run() {
+                System.out.println(Thread.currentThread().getName()+&quot; 执行 &quot;);
+                int i= 2/0;
+            }
+        };
+//        thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+//            @Override
+//            public void uncaughtException(Thread t, Throwable e) {
+//                System.out.println(&quot; 线程对象的异常处理 &quot;);
+//            }
+//        });
+        thread.start();
+    }
+ 
+}
+
+//Thread 执行
+//线程组的异常处理
+//线程类的异常处理
+
+</code></pre>
 ]]></content>
     </entry>
 </feed>

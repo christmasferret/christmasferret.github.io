@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1625602827665">
+<link rel="shortcut icon" href="https://blog.ferretninja.com/favicon.ico?v=1628717780799">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://blog.ferretninja.com/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://blog.ferretninja.com">
-        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1625602827665" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://blog.ferretninja.com/images/avatar.png?v=1628717780799" alt="" width="32px" height="32px">
       </a>
       <a href="https://blog.ferretninja.com">
         <h1 class="site-title">Ferret Ninja - Yu Wang</h1>
@@ -82,7 +82,7 @@
           
           <h2 class="post-title">Java JUC (java.util.concurrent) 2 - Atomic Variables and Concurrent Collection</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-03-29</span>
+            <span><i class="icon-calendar-outline"></i> 2021-03-28</span>
             
           </div>
           <div class="post-content">
@@ -155,6 +155,7 @@ private synchronized static void add() {
 </code></pre>
 <p>However, volatile keyword as in <code>public static volatile int count = 0;</code> will not be able to ensure threadsafety to due CPU instruction reorder.</p>
 <p>ConcurrentHashMap, ConcurrentSkipListMap, ConcurrentSkipListSet, CopyOnWriteArrayList, CopyOnWriteArraySet are some typical concurrency collection classes in Java 8.</p>
+<p>CopyOnWriteArrayList is a thread-safe variant of ArrayList where operations which can change the ArrayList (add, update, set methods) creates a clone of the underlying array. CopyOnWriteArrayList is to be used in a Thread based environment where read operations are very frequent and update operations are rare. Iterator of CopyOnWriteArrayList will never throw ConcurrentModificationException. Any type of modification to CopyOnWriteArrayList will not reflect during iteration since the iterator was created. List modification methods like remove, set and add are not supported in the iteration. This method will throw UnsupportedOperationException. null can be added to the list.</p>
 <p><strong>CopyOnWriteArrayList</strong></p>
 <pre><code>// 请求总数
 public static int clientTotal = 5000;
@@ -194,9 +195,9 @@ private static void update(int i) {
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-1-aqsabstractqueuedsynchronizer/">
+            <a class="purple-link" href="https://blog.ferretninja.com/post/java-8-lambda-expressions-and-streams/">
               <h3 class="post-title">
-                下一篇：Java JUC (java.util.concurrent) 1 - AQS：AbstractQueuedSynchronizer
+                下一篇：Java 8 Lambda expressions and Streams
               </h3>
             </a>
           </div>

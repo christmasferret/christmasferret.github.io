@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.ferretninja.com</id>
     <title>Ferret Ninja - Yu Wang</title>
-    <updated>2021-09-01T23:16:47.857Z</updated>
+    <updated>2021-11-03T02:54:54.018Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.ferretninja.com"/>
     <link rel="self" href="https://blog.ferretninja.com/atom.xml"/>
@@ -215,166 +215,6 @@ let obj = {
         <content type="html"><![CDATA[<p>ctrl + shift + i open dev tools<br>
 ctrl + shift + C select element</p>
 <p>network: request status</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[NoSQL vs SQL]]></title>
-        <id>https://blog.ferretninja.com/post/nosql-vs-sql/</id>
-        <link href="https://blog.ferretninja.com/post/nosql-vs-sql/">
-        </link>
-        <updated>2021-03-29T09:38:15.000Z</updated>
-        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://blog.ferretninja.com/post-images/1576386520494.png" alt="" loading="lazy"></figure>
-<p><strong>RDMBS</strong></p>
-<p>Benefit</p>
-<ul>
-<li>SQL</li>
-<li>Joins</li>
-<li>Aggregation</li>
-<li>good for small data volume</li>
-<li>Secondary index</li>
-<li>model data independent of Queries</li>
-</ul>
-<p>Drawback</p>
-<ul>
-<li>only scale vertically</li>
-<li>schema not flexible</li>
-</ul>
-<p>Normalization  - reduce redundency and increase correctness<br>
-denormalization - increase performance for read heavy</p>
-<p><strong>Cassendra</strong></p>
-<ul>
-<li>table - group of partition</li>
-<li>Partition - collection of rows - unit of access</li>
-<li>PK - partition key (Sharding) + clustering columns (sorting within partition desc)</li>
-<li>Cassandra Collection: Set, List, Map</li>
-</ul>
-<p>Good for</p>
-<ul>
-<li>logging events</li>
-<li>IOT</li>
-<li>time series db</li>
-<li>heavy write<br>
-Bad for</li>
-<li>ad - hoc queries</li>
-<li>joins</li>
-</ul>
-<p>Denormalization is a must for cassendra / model queries no joins /  one query per table</p>
-<p><strong>MongoDB</strong></p>
-<p>Embedded and Referenced Relationships</p>
-<pre><code>Manual References
-{
-   &quot;_id&quot;:ObjectId(&quot;52ffc33cd85242f436000001&quot;),
-   &quot;contact&quot;: &quot;987654321&quot;,
-   &quot;dob&quot;: &quot;01-01-1991&quot;,
-   &quot;name&quot;: &quot;Tom Benzamin&quot;,
-   &quot;address_ids&quot;: [
-      ObjectId(&quot;52ffc4a5d85242602e000000&quot;),
-      ObjectId(&quot;52ffc4a5d85242602e000001&quot;)
-   ]
-}
-&gt;var result = db.users.findOne({&quot;name&quot;:&quot;Tom Benzamin&quot;},{&quot;address_ids&quot;:1})
-&gt;var addresses = db.address.find({&quot;_id&quot;:{&quot;$in&quot;:result[&quot;address_ids&quot;]}})
-
-DBRefs
-{
-   &quot;_id&quot;:ObjectId(&quot;53402597d852426020000002&quot;),
-   &quot;address&quot;: {
-   &quot;$ref&quot;: &quot;address_home&quot;,
-   &quot;$id&quot;: ObjectId(&quot;534009e4d852427820000002&quot;),
-   &quot;$db&quot;: &quot;tutorialspoint&quot;},
-   &quot;contact&quot;: &quot;987654321&quot;,
-   &quot;dob&quot;: &quot;01-01-1991&quot;,
-   &quot;name&quot;: &quot;Tom Benzamin&quot;
-}
-</code></pre>
-<p>Covered Queries</p>
-<pre><code>&gt;db.users.ensureIndex({gender:1,user_name:1})
-Covered Query (fetch the required data from indexed data which is very fast. not go looking into database documents.)
-&gt;db.users.find({gender:&quot;M&quot;},{user_name:1,_id:0}
-Not Covered Query (index does not include _id field)
-&gt;db.users.find({gender:&quot;M&quot;},{user_name:1})
-</code></pre>
-<p>Atomic Operations</p>
-<pre><code>&gt;db.products.findAndModify({ 
-   query:{_id:2,product_available:{$gt:0}}, 
-   update:{ 
-      $inc:{product_available:-1}, 
-      $push:{product_bought_by:{customer:&quot;rob&quot;,date:&quot;9-Jan-2014&quot;}} 
-   }    
-})
-</code></pre>
-<p>Indexing Array Fields and Sub-Document Fields</p>
-<p>An ObjectId is a 12-byte BSON type having the following structure −<br>
-The first 4 bytes representing the seconds since the unix epoch<br>
-The next 3 bytes are the machine identifier<br>
-The next 2 bytes consists of process id<br>
-The last 3 bytes are a random counter value</p>
-<p>Text search</p>
-<pre><code>&gt;db.adminCommand({setParameter:true,textSearchEnabled:true})
-&gt;db.posts.ensureIndex({post_text:&quot;text&quot;})
-&gt;db.posts.find({$text:{$search:&quot;tutorialspoint&quot;}})
-</code></pre>
-<p>Auto-Increment Sequence</p>
-<pre><code>&gt;function getNextSequenceValue(sequenceName){
-
-   var sequenceDocument = db.counters.findAndModify({
-      query:{_id: sequenceName },
-      update: {$inc:{sequence_value:1}},
-      new:true
-   });
-	
-   return sequenceDocument.sequence_value;
-}
-</code></pre>
-<p><strong>Mongodb diagnosis and optimization</strong></p>
-<p>web service response time &lt; 200ms<br>
-mongodb response time &lt; 100ms<br>
-long response time</p>
-<ol>
-<li>proper index use explain()</li>
-<li>cacheSizeGB ram size use mongostat()<br>
-connection fail</li>
-<li>maxIncomingConnections db.serverStatus().connections shows available connections</li>
-<li>ulimit -a -&gt; open files -&gt; max file descriptors</li>
-</ol>
-<p><strong>AWS redshift RDS table design optimization</strong></p>
-<ul>
-<li>
-<p>Distribution style<br>
-Even - The leader node distributes the rows across the slices in a round-robin fashion<br>
-Auto - Amazon Redshift assigns an optimal distribution style based on the size of the table data<br>
-Key - The leader node places matching values on the same node slice<br>
-ALL - replicate table on all nodes</p>
-</li>
-<li>
-<p>Sorting Key<br>
-define a colum as sort key</p>
-</li>
-</ul>
-<figure data-type="image" tabindex="2"><img src="https://blog.ferretninja.com/post-images/1573580426980.png" alt="" loading="lazy"></figure>
-<pre><code>CREATE TABLE part (
-  p_partkey     	integer     	not null	sortkey distkey,
-  p_name        	varchar(22) 	not null,
-  p_mfgr        	varchar(6)      not null,
-  p_category    	varchar(7)      not null,
-  p_brand1      	varchar(9)      not null,
-  p_color       	varchar(11) 	not null,
-  p_type        	varchar(25) 	not null,
-  p_size        	integer     	not null,
-  p_container   	varchar(10)     not null
-);
-</code></pre>
-<p>Distribution key and sort key significantly improve query time</p>
-<p><strong>Neo4J</strong></p>
-<pre><code>// Friend-of-a-friend 
-(user)-[:KNOWS]-(friend)-[:KNOWS]-(foaf)
-// Shortest path
-path = shortestPath( (user)-[:KNOWS*..5]-(other) )
-// Collaborative filtering
-(user)-[:PURCHASED]-&gt;(product)&lt;-[:PURCHASED]-()-[:PURCHASED]-&gt;(otherProduct)
-// Tree navigation 
-(root)&lt;-[:PARENT*]-(leaf:Category)-[:ITEM]-&gt;(data:Product)
-</code></pre>
 ]]></content>
     </entry>
     <entry>
@@ -2969,6 +2809,133 @@ ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 </code></pre>
 <p>The TheadLocal construct allows us to store data that will be accessible only by a specific thread.</p>
 <pre><code>private final static ThreadLocal&lt;Long&gt; requestHolder = new ThreadLocal&lt;&gt;();
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java JUC (java.util.concurrent) 4 - Lock]]></title>
+        <id>https://blog.ferretninja.com/post/java-juc-javautilconcurrent-4-lock/</id>
+        <link href="https://blog.ferretninja.com/post/java-juc-javautilconcurrent-4-lock/">
+        </link>
+        <updated>2021-03-29T09:34:00.000Z</updated>
+        <content type="html"><![CDATA[<p>Compare to <code>synchronized</code> keyword, Locks support various methods for finer grained control thus are more expressive than <code>synchronized</code>.</p>
+<p>Since <code>synchronized</code> keyword create lock implicitly, one can convert the  <code>synchronized</code> keyword to ReentrantLock.</p>
+<pre><code>private synchronized static void add() {
+        count++;
+}
+</code></pre>
+<pre><code>private final static Lock lock = new ReentrantLock();
+private static void add() {
+		lock.lock();
+		try {
+				count++;
+		} finally {
+				lock.unlock();
+		}
+}
+</code></pre>
+<p>Therefore, it is possible for both <code>synchronized</code> and Lock to introduce the well-know deadlock problem like below.</p>
+<pre><code>public class DeadLock implements Runnable {
+    public int flag = 1;
+    //静态对象是类的所有对象共享的
+    private static Object o1 = new Object(), o2 = new Object();
+
+    @Override
+    public void run() {
+        log.info(&quot;flag:{}&quot;, flag);
+        if (flag == 1) {
+            synchronized (o1) {
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                synchronized (o2) {
+                    log.info(&quot;1&quot;);
+                }
+            }
+        }
+        if (flag == 0) {
+            synchronized (o2) {
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                synchronized (o1) {
+                    log.info(&quot;0&quot;);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        DeadLock td1 = new DeadLock();
+        DeadLock td2 = new DeadLock();
+        td1.flag = 1;
+        td2.flag = 0;
+        //td1,td2都处于可执行状态，但JVM线程调度先执行哪个线程是不确定的。
+        //td2的run()可能在td1的run()之前运行
+        new Thread(td1).start();
+        new Thread(td2).start();
+    }
+}
+</code></pre>
+<p>The <code>synchronized</code> keyword provides a simplified model while Lock offers more APIs such as ReentrantReadWriteLock and Condition. The interface ReadWriteLock specifies a pair of locks for read and write access. This can improve performance and throughput in cases where write-accesses are much less frequent.</p>
+<pre><code>private final Map&lt;String, Data&gt; map = new TreeMap&lt;&gt;();
+
+private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+private final Lock readLock = lock.readLock();
+private final Lock writeLock = lock.writeLock();
+
+public Data get(String key) {
+		readLock.lock();
+		try {
+				return map.get(key);
+		} finally {
+				readLock.unlock();
+		}
+}
+
+public Data put(String key, Data value) {
+		writeLock.lock();
+		try {
+				return map.put(key, value);
+		} finally {
+				writeLock.unlock();
+		}
+}
+</code></pre>
+<p><code>Condition.signalAll()</code> is a very important API in consumer-producer model.</p>
+<pre><code>public static void main(String[] args) {
+		ReentrantLock reentrantLock = new ReentrantLock();
+		Condition condition = reentrantLock.newCondition();
+
+		new Thread(() -&gt; {
+				try {
+						reentrantLock.lock();
+						log.info(&quot;wait signal&quot;); // 1
+						condition.await();
+				} catch (InterruptedException e) {
+						e.printStackTrace();
+				}
+				log.info(&quot;get signal&quot;); // 4
+				reentrantLock.unlock();
+		}).start();
+
+		new Thread(() -&gt; {
+				reentrantLock.lock();
+				log.info(&quot;get lock&quot;); // 2
+				try {
+						Thread.sleep(3000);
+				} catch (InterruptedException e) {
+						e.printStackTrace();
+				}
+				condition.signalAll();
+				log.info(&quot;send signal ~ &quot;); // 3
+				reentrantLock.unlock();
+		}).start();
+}
 </code></pre>
 ]]></content>
     </entry>
